@@ -23,6 +23,8 @@ def start_ui():
         circle_center = (250, HEIGHT+280)
         circle_radius = 320
         pygame.draw.circle(screen, MAIN_COLOR, circle_center, circle_radius, 5)
+        pygame.draw.rect(screen, MAIN_COLOR, pygame.Rect(5,5,WIDTH-5,HEIGHT-5), 1)
+
         for i in range(100):
             angle = (-offset + i)*math.pi/50
             new_radius = circle_radius - 2
