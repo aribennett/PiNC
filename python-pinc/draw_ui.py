@@ -21,10 +21,11 @@ def start_ui():
 
         # Draw a solid blue circle in the center
         circle_center = (250, HEIGHT+180)
-        circle_radius = 240
+        circle_radius = 280
         # pygame.draw.circle(screen, MAIN_COLOR, circle_center, circle_radius)
+        pygame.draw.rect(screen, MAIN_COLOR, pygame.Rect(5,5,WIDTH-5,HEIGHT-5), 1)
         for i in range(100):
-            angle = (offset + i)*math.pi/50
+            angle = (-offset + i)*math.pi/50
             new_radius = circle_radius - 2
             vec = (new_radius*math.sin(angle), new_radius*math.cos(angle))
             tic_length = .95
