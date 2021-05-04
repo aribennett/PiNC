@@ -20,10 +20,10 @@ def start_ui():
         screen.fill(BLACK)
         offset = get_encoder_value()
         # Draw a solid blue circle in the center
-        circle_center = (250, HEIGHT+280)
+        circle_center = (250, HEIGHT+240)
         circle_radius = 320
         pygame.draw.circle(screen, MAIN_COLOR, circle_center, circle_radius, 5)
-        pygame.draw.rect(screen, MAIN_COLOR, pygame.Rect(5,5,WIDTH-5,HEIGHT-5), 1)
+        pygame.draw.rect(screen, MAIN_COLOR, pygame.Rect(5,5,WIDTH-10,HEIGHT-10), 1)
 
         for i in range(100):
             angle = (-offset + i)*math.pi/50
@@ -37,9 +37,9 @@ def start_ui():
             end2 = (circle_center[0] + vec2[0], circle_center[1] + vec2[1])
             pygame.draw.line(screen, MAIN_COLOR, end2, end)
 
-        font = pygame.font.SysFont(None, 24)
-        img = font.render(f'{offset}', True, MAIN_COLOR)
-        screen.blit(img, (circle_center[0], circle_center[1]-255))
+        # font = pygame.font.SysFont(None, 24)
+        # img = font.render(f'{offset}', True, MAIN_COLOR)
+        # screen.blit(img, (circle_center[0], circle_center[1]-255))
 
         # offset = int(time.monotonic() - start_time)
         # Flip the display
