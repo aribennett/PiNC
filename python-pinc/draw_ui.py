@@ -18,12 +18,6 @@ def start_ui():
     offset = 0
     while running:
         screen.fill(BLACK)
-        # Did the user click the window close button?
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-        # Fill the background with white
 
         # Draw a solid blue circle in the center
         circle_center = (250, HEIGHT+180)
@@ -45,9 +39,20 @@ def start_ui():
         img = font.render(f'{offset}', True, MAIN_COLOR)
         screen.blit(img, (circle_center[0], circle_center[1]-255))
 
-        offset = int(time.monotonic() - start_time)
+        # offset = int(time.monotonic() - start_time)
         # Flip the display
         pygame.display.flip()
+
+        # --- Main event loop
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                keys = pygame.key.get_pressed()
+                if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
+                    running = False
+                if keys[pygame.K_LEFT]:
+                    offset -= 1
+                if keys[pygame.K_RIGHT]:
+                    offset += 1
 
     # Done! Time to quit.
     pygame.quit()
