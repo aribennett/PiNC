@@ -20,8 +20,8 @@ def start_ui():
         screen.fill(BLACK)
         offset = get_encoder_value()
         # Draw a solid blue circle in the center
-        circle_center = (250, HEIGHT+300)
-        circle_radius = 350
+        circle_center = (250, HEIGHT+280)
+        circle_radius = 320
         pygame.draw.circle(screen, MAIN_COLOR, circle_center, circle_radius, 5)
         for i in range(100):
             angle = (-offset + i)*math.pi/50
