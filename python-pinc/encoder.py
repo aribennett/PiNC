@@ -30,7 +30,7 @@ GPIO.setup([ENC_A, ENC_B], GPIO.IN)
 GPIO.add_event_detect(ENC_A, GPIO.BOTH, handle_enc_a)
 
 def get_encoder_value():
-    return count
+    return count/2
 
 # while True:
 #     print(int(count/2))
