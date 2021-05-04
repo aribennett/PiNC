@@ -12,7 +12,7 @@ def start_ui():
     start_time = time.monotonic()
     pygame.init()
     # Set up the drawing window
-    screen = pygame.display.set_mode([WIDTH, HEIGHT])
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     # Run until the user asks to quit
     running = True
     offset = 0
