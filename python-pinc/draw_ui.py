@@ -1,7 +1,7 @@
 import pygame
 import math
 import time
-
+from .encoder import get_encoder_value
 WIDTH = 800
 HEIGHT = 480
 MAIN_COLOR = (0, 155, 195)
@@ -18,7 +18,7 @@ def start_ui():
     offset = 0
     while running:
         screen.fill(BLACK)
-
+        offset = get_encoder_value()
         # Draw a solid blue circle in the center
         circle_center = (250, HEIGHT+180)
         circle_radius = 280
