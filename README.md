@@ -1,2 +1,2 @@
 # PiNC
-Open Source Raspberry Pi Control Hardware
+Open Source Raspberry Pi CNC Control Hardware
