@@ -1,0 +1,15 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP NE555DR
+D Single Precision Timer
+K
+F http://www.ti.com/lit/ds/symlink/ne555.pdf
+$ENDCMP
+#
+$CMP ACSL-6420-00TE
+D Broadcom ACSL-6420-00TE DC Input Logic Gate Output Quad Optocoupler, Surface Mount, 16-Pin SOIC-N
+K
+F https://docs.broadcom.com/docs/AV02-0235EN
+$ENDCMP
+#
+#End Doc Library

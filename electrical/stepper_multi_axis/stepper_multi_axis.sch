@@ -1,0 +1,479 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 7
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Sheet
+S 5650 850  1250 1300
+U 60869CEA
+F0 "Stepper_Driver_X" 50
+F1 "Stepper_Driver_X.sch" 50
+F2 "STEP" I L 5650 950 50 
+F3 "DIR" I L 5650 1050 50 
+F4 "SDI" I L 5650 1300 50 
+F5 "SCK" I L 5650 1400 50 
+F6 "SDO" O L 5650 1500 50 
+F7 "CS" I L 5650 1600 50 
+F8 "EN" I L 5650 1150 50 
+F9 "Limit" O L 5650 1850 50 
+$EndSheet
+$Sheet
+S 5650 2350 1250 1300
+U 608DFF6C
+F0 "sheet608DFF62" 50
+F1 "Stepper_Driver_X.sch" 50
+F2 "STEP" I L 5650 2450 50 
+F3 "DIR" I L 5650 2550 50 
+F4 "SDI" I L 5650 2800 50 
+F5 "SCK" I L 5650 2900 50 
+F6 "SDO" O L 5650 3000 50 
+F7 "CS" I L 5650 3100 50 
+F8 "EN" I L 5650 2650 50 
+F9 "Limit" O L 5650 3350 50 
+$EndSheet
+Wire Wire Line
+	5650 1300 5300 1300
+Wire Wire Line
+	5300 1300 5300 2800
+Wire Wire Line
+	5300 2800 5650 2800
+Connection ~ 5300 2800
+Wire Wire Line
+	5200 2900 5650 2900
+Wire Wire Line
+	5200 1400 5650 1400
+Wire Wire Line
+	5650 1500 5100 1500
+Wire Wire Line
+	5100 1500 5100 3000
+Wire Wire Line
+	5100 3000 5650 3000
+Wire Wire Line
+	5200 1400 5200 2900
+Connection ~ 5200 2900
+Connection ~ 5100 3000
+Wire Wire Line
+	4800 5500 4800 3100
+Wire Wire Line
+	4800 3100 5650 3100
+Wire Wire Line
+	4700 5600 4700 1600
+Wire Wire Line
+	4700 1600 5650 1600
+Wire Wire Line
+	4600 1300 4600 950 
+Wire Wire Line
+	4600 950  5650 950 
+Wire Wire Line
+	4700 1400 4700 1050
+Wire Wire Line
+	4700 1050 5650 1050
+Wire Wire Line
+	5650 1150 4800 1150
+Wire Wire Line
+	4800 1150 4800 1500
+Wire Wire Line
+	4500 1600 4500 1850
+Wire Wire Line
+	4500 1850 5650 1850
+Wire Wire Line
+	5000 1950 5000 2450
+Wire Wire Line
+	5000 2450 5650 2450
+Wire Wire Line
+	4900 2050 4900 2550
+Wire Wire Line
+	4900 2550 5650 2550
+Wire Wire Line
+	4800 2150 4800 2650
+Wire Wire Line
+	4800 2650 5650 2650
+Wire Wire Line
+	4600 2250 4600 3350
+Wire Wire Line
+	4600 3350 5650 3350
+$Sheet
+S 7750 1050 1150 900 
+U 60A6FF98
+F0 "Power" 50
+F1 "Power.sch" 50
+$EndSheet
+$Comp
+L Connector_Generic:Conn_01x06 J13
+U 1 1 60B4FC75
+P 1150 1900
+F 0 "J13" H 1068 1375 50  0000 C CNN
+F 1 "Conn_01x06" H 1068 1466 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x06_P2.54mm_Vertical" H 1150 1900 50  0001 C CNN
+F 3 "~" H 1150 1900 50  0001 C CNN
+	1    1150 1900
+	-1   0    0    1   
+$EndComp
+$Sheet
+S 1500 1150 1700 4600
+U 5515D395
+F0 "RPi_GPIO" 60
+F1 "RPi_GPIO.sch" 60
+F2 "X_STEP" O R 3200 1300 50 
+F3 "X_DIR" O R 3200 1400 50 
+F4 "Y_STEP" O R 3200 1950 50 
+F5 "Y_DIR" O R 3200 2050 50 
+F6 "Z_STEP" O R 3200 2550 50 
+F7 "Z_DIR" O R 3200 2650 50 
+F8 "A_STEP" O R 3200 3200 50 
+F9 "A_DIR" O R 3200 3300 50 
+F10 "X_EN" O R 3200 1500 50 
+F11 "CNC_RESET" I L 1500 1600 50 
+F12 "FEED_HOLD" I L 1500 1700 50 
+F13 "CYCLE_START" I L 1500 1800 50 
+F14 "X_LIMIT" I R 3200 1600 50 
+F15 "Y_ENABLE" O R 3200 2150 50 
+F16 "Y_LIMIT" I R 3200 2250 50 
+F17 "Z_LIMIT" I R 3200 2850 50 
+F18 "A_LIMIT" I R 3200 3500 50 
+F19 "Z_ENABLE" O R 3200 2750 50 
+F20 "A_ENABLE" O R 3200 3400 50 
+F21 "B_ENABLE" O R 3200 3950 50 
+F22 "B_LIMIT" I R 3200 4050 50 
+F23 "B_STEP" O R 3200 3750 50 
+F24 "B_DIR" O R 3200 3850 50 
+F25 "SAFETY_DOOR" I L 1500 1900 50 
+F26 "PROBE" I L 1500 2000 50 
+F27 "COOLANT_FLOOD" O R 3200 4350 50 
+F28 "COOLANT_MIST" O R 3200 4250 50 
+F29 "SCL" I L 1500 5500 50 
+F30 "SDA" B L 1500 5600 50 
+F31 "CS0" O R 3200 5600 50 
+F32 "CS1" O R 3200 5500 50 
+F33 "SPI_CLK" O R 3200 5200 50 
+F34 "SPI_MISO" I R 3200 5100 50 
+F35 "SPI_MOSI" I R 3200 5000 50 
+F36 "CS2" O R 3200 5400 50 
+F37 "CS3" O R 3200 5300 50 
+$EndSheet
+Wire Wire Line
+	1500 1600 1350 1600
+Wire Wire Line
+	1500 1700 1350 1700
+Wire Wire Line
+	1500 1800 1350 1800
+Wire Wire Line
+	1500 1900 1350 1900
+Wire Wire Line
+	1500 2000 1350 2000
+$Comp
+L power:GND #PWR0158
+U 1 1 60B600ED
+P 1350 2250
+F 0 "#PWR0158" H 1350 2000 50  0001 C CNN
+F 1 "GND" H 1355 2077 50  0000 C CNN
+F 2 "" H 1350 2250 50  0001 C CNN
+F 3 "" H 1350 2250 50  0001 C CNN
+	1    1350 2250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1350 2100 1350 2250
+$Comp
+L Mechanical:MountingHole H1
+U 1 1 60F7C2E9
+P 9450 1150
+F 0 "H1" H 9550 1196 50  0000 L CNN
+F 1 "MountingHole" H 9550 1105 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 9450 1150 50  0001 C CNN
+F 3 "~" H 9450 1150 50  0001 C CNN
+	1    9450 1150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H2
+U 1 1 60F7D759
+P 9450 1300
+F 0 "H2" H 9550 1346 50  0000 L CNN
+F 1 "MountingHole" H 9550 1255 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 9450 1300 50  0001 C CNN
+F 3 "~" H 9450 1300 50  0001 C CNN
+	1    9450 1300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H3
+U 1 1 60F80BB5
+P 9450 1450
+F 0 "H3" H 9550 1496 50  0000 L CNN
+F 1 "MountingHole" H 9550 1405 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 9450 1450 50  0001 C CNN
+F 3 "~" H 9450 1450 50  0001 C CNN
+	1    9450 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H4
+U 1 1 60F84077
+P 9450 1600
+F 0 "H4" H 9550 1646 50  0000 L CNN
+F 1 "MountingHole" H 9550 1555 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 9450 1600 50  0001 C CNN
+F 3 "~" H 9450 1600 50  0001 C CNN
+	1    9450 1600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x01_Male J11
+U 1 1 610A5F1C
+P 3300 4800
+F 0 "J11" V 3362 4844 50  0000 L CNN
+F 1 "Conn_01x01_Male" V 3453 4844 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 3300 4800 50  0001 C CNN
+F 3 "~" H 3300 4800 50  0001 C CNN
+	1    3300 4800
+	0    1    1    0   
+$EndComp
+Connection ~ 3300 5000
+Wire Wire Line
+	3300 5000 5300 5000
+$Comp
+L Connector:Conn_01x01_Male J14
+U 1 1 610A70AF
+P 3350 4900
+F 0 "J14" V 3412 4944 50  0000 L CNN
+F 1 "Conn_01x01_Male" V 3503 4944 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 3350 4900 50  0001 C CNN
+F 3 "~" H 3350 4900 50  0001 C CNN
+	1    3350 4900
+	0    1    1    0   
+$EndComp
+Connection ~ 3350 5100
+$Comp
+L Connector:Conn_01x01_Male J17
+U 1 1 610A8D8B
+P 3400 5000
+F 0 "J17" V 3462 5044 50  0000 L CNN
+F 1 "Conn_01x01_Male" V 3553 5044 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 3400 5000 50  0001 C CNN
+F 3 "~" H 3400 5000 50  0001 C CNN
+	1    3400 5000
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3350 5100 5100 5100
+Connection ~ 3400 5200
+Wire Wire Line
+	3400 5200 5200 5200
+$Comp
+L Connector:Conn_01x01_Male J12
+U 1 1 610BC5BD
+P 3450 5100
+F 0 "J12" V 3512 5144 50  0000 L CNN
+F 1 "Conn_01x01_Male" V 3603 5144 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 3450 5100 50  0001 C CNN
+F 3 "~" H 3450 5100 50  0001 C CNN
+	1    3450 5100
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:Conn_01x01_Male J16
+U 1 1 610C3299
+P 3550 5300
+F 0 "J16" V 3612 5344 50  0000 L CNN
+F 1 "Conn_01x01_Male" V 3703 5344 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 3550 5300 50  0001 C CNN
+F 3 "~" H 3550 5300 50  0001 C CNN
+	1    3550 5300
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:Conn_01x01_Male J18
+U 1 1 610C6847
+P 3600 5400
+F 0 "J18" V 3662 5444 50  0000 L CNN
+F 1 "Conn_01x01_Male" V 3753 5444 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 3600 5400 50  0001 C CNN
+F 3 "~" H 3600 5400 50  0001 C CNN
+	1    3600 5400
+	0    1    1    0   
+$EndComp
+Connection ~ 3600 5600
+Wire Wire Line
+	3600 5600 4700 5600
+Connection ~ 3550 5500
+Wire Wire Line
+	3550 5500 4800 5500
+Connection ~ 3450 5300
+Wire Wire Line
+	3450 5300 5000 5300
+Wire Wire Line
+	4400 2650 4400 4050
+Wire Wire Line
+	4500 2550 4500 3950
+Wire Wire Line
+	4400 4050 5650 4050
+Wire Wire Line
+	4500 3950 5650 3950
+Wire Wire Line
+	4300 4150 5650 4150
+Wire Wire Line
+	4300 2750 4300 4150
+Wire Wire Line
+	3500 5400 4900 5400
+$Comp
+L Connector:Conn_01x01_Male J15
+U 1 1 610BFCE4
+P 3500 5200
+F 0 "J15" V 3562 5244 50  0000 L CNN
+F 1 "Conn_01x01_Male" V 3653 5244 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 3500 5200 50  0001 C CNN
+F 3 "~" H 3500 5200 50  0001 C CNN
+	1    3500 5200
+	0    1    1    0   
+$EndComp
+Connection ~ 3500 5400
+Wire Wire Line
+	4900 5400 4900 4600
+Wire Wire Line
+	4900 4600 5650 4600
+Wire Wire Line
+	5100 4500 5100 5100
+Wire Wire Line
+	5100 3000 5100 4500
+Connection ~ 5100 4500
+Wire Wire Line
+	5650 4500 5100 4500
+Wire Wire Line
+	5200 5200 5200 4400
+Wire Wire Line
+	5200 4400 5200 2900
+Connection ~ 5200 4400
+Wire Wire Line
+	5200 4400 5650 4400
+Wire Wire Line
+	5300 4300 5300 5000
+Wire Wire Line
+	5300 2800 5300 4300
+Connection ~ 5300 4300
+Wire Wire Line
+	5300 4300 5650 4300
+Wire Wire Line
+	4200 2850 4200 4850
+Wire Wire Line
+	4200 4850 5650 4850
+$Sheet
+S 5650 3850 1250 1300
+U 608FE26D
+F0 "sheet608FE262" 50
+F1 "Stepper_Driver_X.sch" 50
+F2 "STEP" I L 5650 3950 50 
+F3 "DIR" I L 5650 4050 50 
+F4 "SDI" I L 5650 4300 50 
+F5 "SCK" I L 5650 4400 50 
+F6 "SDO" O L 5650 4500 50 
+F7 "CS" I L 5650 4600 50 
+F8 "EN" I L 5650 4150 50 
+F9 "Limit" O L 5650 4850 50 
+$EndSheet
+Wire Wire Line
+	4000 6800 4000 3500
+Wire Wire Line
+	4050 6100 4050 3400
+Wire Wire Line
+	4100 6000 4100 3300
+Wire Wire Line
+	4150 5900 4150 3200
+Connection ~ 5100 5100
+Wire Wire Line
+	5100 5100 5100 6450
+Wire Wire Line
+	5000 5300 5000 6550
+Connection ~ 5200 5200
+Wire Wire Line
+	5200 5200 5200 6350
+Connection ~ 5300 5000
+Wire Wire Line
+	5300 5000 5300 6250
+Wire Wire Line
+	3200 1300 4600 1300
+Wire Wire Line
+	3200 5000 3300 5000
+Wire Wire Line
+	3200 5100 3350 5100
+Wire Wire Line
+	3200 5200 3400 5200
+Wire Wire Line
+	3200 5300 3450 5300
+Wire Wire Line
+	3200 5400 3500 5400
+Wire Wire Line
+	3200 5500 3550 5500
+Wire Wire Line
+	3200 5600 3600 5600
+Wire Wire Line
+	3200 3500 4000 3500
+Wire Wire Line
+	3200 3400 4050 3400
+Wire Wire Line
+	3200 3300 4100 3300
+Wire Wire Line
+	3200 3200 4150 3200
+Wire Wire Line
+	3200 2850 4200 2850
+Wire Wire Line
+	3200 2750 4300 2750
+Wire Wire Line
+	3200 2650 4400 2650
+Wire Wire Line
+	3200 2550 4500 2550
+Wire Wire Line
+	3200 2250 4600 2250
+Wire Wire Line
+	3200 2150 4800 2150
+Wire Wire Line
+	3200 2050 4900 2050
+Wire Wire Line
+	3200 1950 5000 1950
+Wire Wire Line
+	3200 1600 4500 1600
+Wire Wire Line
+	3200 1500 4800 1500
+Wire Wire Line
+	3200 1400 4700 1400
+Wire Wire Line
+	5650 6800 4000 6800
+Wire Wire Line
+	5650 6100 4050 6100
+Wire Wire Line
+	5000 6550 5650 6550
+Wire Wire Line
+	5100 6450 5650 6450
+Wire Wire Line
+	5650 6350 5200 6350
+Wire Wire Line
+	5300 6250 5650 6250
+Wire Wire Line
+	5650 6000 4100 6000
+Wire Wire Line
+	5650 5900 4150 5900
+$Sheet
+S 5650 5800 1250 1300
+U 608FE277
+F0 "sheet608FE263" 50
+F1 "Stepper_Driver_X.sch" 50
+F2 "STEP" I L 5650 5900 50 
+F3 "DIR" I L 5650 6000 50 
+F4 "SDI" I L 5650 6250 50 
+F5 "SCK" I L 5650 6350 50 
+F6 "SDO" O L 5650 6450 50 
+F7 "CS" I L 5650 6550 50 
+F8 "EN" I L 5650 6100 50 
+F9 "Limit" O L 5650 6800 50 
+$EndSheet
+$EndSCHEMATC

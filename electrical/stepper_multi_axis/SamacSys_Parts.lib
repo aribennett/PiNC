@@ -1,0 +1,65 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#SamacSys ECAD Model NE555DR
+#/6648/2/2.37/8/4/Integrated Circuit
+DEF NE555DR IC 0 30 Y Y 1 F N
+F0 "IC" 1050 600 50 H V L CNN
+F1 "NE555DR" 1050 500 50 H V L CNN
+F2 "SOIC127P600X175-8N" 1050 400 50 H I L CNN
+F3 "http://www.ti.com/lit/ds/symlink/ne555.pdf" 1050 300 50 H I L CNN
+F4 "Single Precision Timer" 1050 200 50 H I L CNN "Description"
+F5 "1.75" 1050 100 50 H I L CNN "Height"
+F6 "Texas Instruments" 1050 0 50 H I L CNN "Manufacturer_Name"
+F7 "NE555DR" 1050 -100 50 H I L CNN "Manufacturer_Part_Number"
+F8 "595-NE555DR" 1050 -200 50 H I L CNN "Mouser Part Number"
+F9 "https://www.mouser.com/Search/Refine.aspx?Keyword=595-NE555DR" 1050 -300 50 H I L CNN "Mouser Price/Stock"
+F10 "1218414" 1050 -400 50 H I L CNN "RS Part Number"
+F11 "http//uk.rs-online.com/web/p/products/1218414" 1050 -500 50 H I L CNN "RS Price/Stock"
+DRAW
+X GND 1 600 -1000 200 U 50 50 0 0 B
+X TRIG 2 0 -400 200 R 50 50 0 0 B
+X OUT 3 1200 -200 200 L 50 50 0 0 B
+X ~RESET 4 0 0 200 R 50 50 0 0 B
+X CONT 5 500 600 200 D 50 50 0 0 B
+X THRES 6 0 -300 200 R 50 50 0 0 B
+X DISCH 7 0 -100 200 R 50 50 0 0 B
+X VCC 8 700 600 200 D 50 50 0 0 B
+P 5 0 1 6 200 400 1000 400 1000 -800 200 -800 200 400 N
+ENDDRAW
+ENDDEF
+#
+#SamacSys ECAD Model ACSL-6420-00TE
+#/533743/571649/2.49/16/4/Integrated Circuit
+DEF ACSL-6420-00TE IC 0 30 Y Y 1 F N
+F0 "IC" 950 300 50 H V L CNN
+F1 "ACSL-6420-00TE" 950 200 50 H V L CNN
+F2 "SOIC127P599X177-16N" 950 100 50 H I L CNN
+F3 "https://docs.broadcom.com/docs/AV02-0235EN" 950 0 50 H I L CNN
+F4 "Broadcom ACSL-6420-00TE DC Input Logic Gate Output Quad Optocoupler, Surface Mount, 16-Pin SOIC-N" 950 -100 50 H I L CNN "Description"
+F5 "1.773" 950 -200 50 H I L CNN "Height"
+F6 "630-ACSL-6420-00TE" 950 -300 50 H I L CNN "Mouser Part Number"
+F7 "https://www.mouser.co.uk/ProductDetail/Broadcom-Avago/ACSL-6420-00TE?qs=RuhU64sK2%252BuxikEwVomcUA%3D%3D" 950 -400 50 H I L CNN "Mouser Price/Stock"
+F8 "Avago Technologies" 950 -500 50 H I L CNN "Manufacturer_Name"
+F9 "ACSL-6420-00TE" 950 -600 50 H I L CNN "Manufacturer_Part_Number"
+DRAW
+X GND1 1 0 0 200 R 50 50 0 0 P
+X V04 2 0 -100 200 R 50 50 0 0 P
+X V03 3 0 -200 200 R 50 50 0 0 P
+X VDD1 4 0 -300 200 R 50 50 0 0 P
+X A1 5 0 -400 200 R 50 50 0 0 P
+X K1 6 0 -500 200 R 50 50 0 0 P
+X A2 7 0 -600 200 R 50 50 0 0 P
+X K2 8 0 -700 200 R 50 50 0 0 P
+X A4 16 1100 0 200 L 50 50 0 0 P
+X K4 15 1100 -100 200 L 50 50 0 0 P
+X A3 14 1100 -200 200 L 50 50 0 0 P
+X K3 13 1100 -300 200 L 50 50 0 0 P
+X VDD2 12 1100 -400 200 L 50 50 0 0 P
+X V01 11 1100 -500 200 L 50 50 0 0 P
+X V02 10 1100 -600 200 L 50 50 0 0 P
+X GND2 9 1100 -700 200 L 50 50 0 0 P
+P 5 0 1 6 200 100 900 100 900 -800 200 -800 200 100 N
+ENDDRAW
+ENDDEF
+#
+#End Library

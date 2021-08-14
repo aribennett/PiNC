@@ -1,0 +1,7 @@
+(fp_lib_table
+  (lib (name MCU_RaspberryPi_and_Boards)(type KiCad)(uri ${KIPRJMOD}/MCU_RaspberryPi_and_Boards.pretty)(options "")(descr ""))
+  (lib (name Trinamic)(type KiCad)(uri ${KIPRJMOD}/Trinamic.pretty)(options "")(descr ""))
+  (lib (name teensy)(type KiCad)(uri ${KIPRJMOD}/teensy.pretty)(options "")(descr ""))
+  (lib (name sl_connector)(type KiCad)(uri ${KIPRJMOD}/sl_connector.pretty)(options "")(descr ""))
+  (lib (name SamacSys_Parts)(type KiCad)(uri ${KIPRJMOD}/SamacSys_Parts.pretty)(options "")(descr ""))
+)

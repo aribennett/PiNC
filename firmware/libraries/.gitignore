@@ -1,3 +1,5 @@
 *
 !.gitignore
 !link arduino libraries here
+!StepperHFC/
+!StepperHFC/*

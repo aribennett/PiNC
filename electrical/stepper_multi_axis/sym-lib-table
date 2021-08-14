@@ -1,0 +1,7 @@
+(sym_lib_table
+  (lib (name RPi_Hat)(type Legacy)(uri ${KIPRJMOD}/RPi_Hat.lib)(options "")(descr ""))
+  (lib (name MCU_RaspberryPi_and_Boards)(type Legacy)(uri ${KIPRJMOD}/MCU_RaspberryPi_and_Boards.lib)(options "")(descr ""))
+  (lib (name TMC2208_SILENTSTEPSTICK)(type Legacy)(uri ${KIPRJMOD}/TMC2208_SILENTSTEPSTICK.lib)(options "")(descr ""))
+  (lib (name teensy)(type Legacy)(uri ${KIPRJMOD}/teensy.lib)(options "")(descr ""))
+  (lib (name SamacSys_Parts)(type Legacy)(uri ${KIPRJMOD}/SamacSys_Parts.lib)(options "")(descr ""))
+)
