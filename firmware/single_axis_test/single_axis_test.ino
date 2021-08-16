@@ -31,7 +31,7 @@ void loop()
   if (millis() - commandTime > 1)
   {
     xy1_driver.setOmega(sin((float)(millis() - startTime) / 1000.0)*5);
-    xy2_driver.setOmega(sin((float)(millis() - startTime) / 1000.0)*5);
+    xy2_driver.setOmega(cos((float)(millis() - startTime) / 1000.0)*5);
     commandTime = millis();
   }
 
