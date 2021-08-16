@@ -3,3 +3,9 @@
 !link arduino libraries here
 !StepperHFC/
 !StepperHFC/*
+!SerialClient/
+!SerialClient/*
+!Motor/
+!Motor/*
+!Sensor/
+!Sensor/*

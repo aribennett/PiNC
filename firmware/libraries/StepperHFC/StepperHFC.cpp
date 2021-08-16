@@ -1,15 +1,20 @@
 #include "StepperHFC.h"
 #include <TMCStepper.h>
 #include <arduino.h>
-#include "../../../../interface/interface.h"  // Ugly import to work around arduino issues in a shared codebase
+#include <SerialClient.h>
 
 #define MICROSTEPS 16
 #define STALL_VALUE -10 // [-64..63]
 #define STEPS_PER_REV 200
 #define CONTROL_INTERVAL 500 //microseconds
 
-StepperHFC::StepperHFC(uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver)
+StepperHFC::StepperHFC(const char* name, uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver)
 {
+    // make sure we do not overrun the descriptor field
+    if(strlen(name) < DESCRIPTOR_LENGTH)
+    {
+        strcpy(_desc, name);
+    }
     _en_pin = en;
     _step_pin = step;
     _dir_pin = dir;
@@ -75,23 +80,4 @@ void StepperHFC::run()
             --_step_count;
         }
     }
-}
-
-void StepperHFC::setAlpha(float alpha)
-{
-    _alpha = alpha;
-}
-
-void StepperHFC::setOmega(float omega)
-{
-    _omega = omega;
-}
-
-ThetaOmegaAlpha StepperHFC::getTOA()
-{
-    ThetaOmegaAlpha status;
-    status.alpha = _alpha;
-    status.theta = _theta;
-    status.omega = _omega;
-    return (status);
 }

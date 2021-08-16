@@ -3,24 +3,19 @@
 
 #include <Arduino.h>
 #include <TMCStepper.h>
-#include "../../../../interface/interface.h" // Ugly import to work around arduino issues in a shared codebase
+#include <SerialClient.h>
+#include <Motor.h>
 
-class StepperHFC
+class StepperHFC: public Motor
 {
 public:
-    StepperHFC(uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver);
+    StepperHFC(const char* name, uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver);
     void coldStart();
     void run();
-    void setAlpha(float alpha);
-    void setOmega(float omega);
-    ThetaOmegaAlpha getTOA();
 
 private:
     // define a dummy drive to replace later. prevents need to extend stepper library
     TMC5160Stepper *_driver;
-    float _theta = 0;
-    float _omega = 0;
-    float _alpha = 0;
     int32_t _step = 0;
     bool _dir = false;
     uint16_t _en_pin;
@@ -33,8 +28,6 @@ private:
     int32_t _step_count = 0;
     bool _motor_stopped = true;
     int32_t _time_period = 0;
-
-
 };
 
 #endif
