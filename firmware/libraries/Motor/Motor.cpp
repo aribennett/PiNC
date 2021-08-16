@@ -13,19 +13,12 @@ void Motor::setOmega(float omega)
     _omega = omega;
 }
 
-ThetaOmegaAlpha Motor::getTOA()
-{
-    ThetaOmegaAlpha status;
-    status.alpha = _alpha;
-    status.theta = _theta;
-    status.omega = _omega;
-    return (status);
-}
-
 MotorPacket Motor::getMotorState()
 {
     MotorPacket toSend;
-    toSend.toa = getTOA();
+    toSend.theta = _theta;
+    toSend.omega = _omega;
+    toSend.alpha = _alpha;
     toSend.motorId = _id;
     toSend.motorStatus = 1;
     strcpy(toSend.motorDescriptor, _desc);
@@ -36,6 +29,7 @@ MotorPacket Motor::getMotorState()
 void MotorList::addMotor(Motor* motor)
 {
     _motorList[_motorCount] = motor;
+    motor->setId(_motorCount);
     ++_motorCount;
 }
 

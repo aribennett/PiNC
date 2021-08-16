@@ -15,7 +15,6 @@ public:
     void setOmega(float omega);
     void setId(uint8_t id){ _id=id; };
     uint8_t getId(){ return(_id); };
-    ThetaOmegaAlpha getTOA();
     MotorPacket getMotorState();
 
 protected:

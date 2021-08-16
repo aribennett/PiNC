@@ -3,41 +3,35 @@
 #include <arduino.h>
 
 #define BAUD_RATE 4000000
-#define DESCRIPTOR_LENGTH 10
+#define DESCRIPTOR_LENGTH 5
 
 enum SerialCommand : uint8_t 
 {
-    REPORT_STATUS,
-    GET_STATUS,
-    RUN_MOTOR,
-    RESET
+    REPORT_STATUS = 1,
+    GET_STATUS = 2,
+    RUN_MOTOR = 3,
+    RESET = 4,
 };
 
-struct MsgHeader
+struct HeaderPacket
 {
-    SerialCommand command;
+    uint8_t command;
     uint16_t length;
     uint16_t motorCount;
     uint16_t sensorCount;
 } __attribute__ ((packed));
-static_assert(sizeof(MsgHeader) == 7, "Header packet packing issue");
-
-struct ThetaOmegaAlpha
-{
-    float theta;
-    float omega;
-    float alpha;
-} __attribute__ ((packed));
-static_assert(sizeof(ThetaOmegaAlpha) == 12, "TOA packet packing issue");
+static_assert(sizeof(HeaderPacket) == 7, "Header packet packing issue");
 
 struct MotorPacket
 {
     uint8_t motorId;
     uint8_t motorStatus;
     char motorDescriptor[DESCRIPTOR_LENGTH];
-    ThetaOmegaAlpha toa;
+    float theta;
+    float omega;
+    float alpha;
 } __attribute__ ((packed));
-static_assert(sizeof(MotorPacket) == DESCRIPTOR_LENGTH + 2 + sizeof(ThetaOmegaAlpha), "Axis packet packing issue");
+static_assert(sizeof(MotorPacket) == DESCRIPTOR_LENGTH + 14, "Axis packet packing issue");
 
 struct SensorPacket
 {
@@ -47,11 +41,11 @@ struct SensorPacket
 } __attribute__ ((packed));
 static_assert(sizeof(SensorPacket) == DESCRIPTOR_LENGTH + 6, "Sensor packet packing issue");
 
-struct MsgFooter
+struct FooterPacket
 {
     uint16_t checksum;
 } __attribute__ ((packed));
-static_assert(sizeof(MsgFooter) == 2, "Footer packet packing issue");
+static_assert(sizeof(FooterPacket) == 2, "Footer packet packing issue");
 
 
 class SerialClient

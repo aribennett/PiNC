@@ -13,12 +13,12 @@ void SerialClient::coldStart()
 void SerialClient::sendStatusReport()
 {
     // Buffer the header into the serial bus
-    MsgHeader header;
-    MsgFooter footer;
+    HeaderPacket header;
+    FooterPacket footer;
     header.command = REPORT_STATUS;
     header.motorCount = motorList.getMotorCount();
     header.sensorCount = 0;
-    header.length = sizeof(MsgHeader) + header.motorCount*sizeof(MotorPacket) + header.sensorCount*sizeof(SensorPacket) + sizeof(MsgFooter);
+    header.length = sizeof(HeaderPacket) + header.motorCount*sizeof(MotorPacket) + header.sensorCount*sizeof(SensorPacket) + sizeof(FooterPacket);
     Serial.write((uint8_t*) &header, sizeof(header));
 
     // Print out motor states in order
