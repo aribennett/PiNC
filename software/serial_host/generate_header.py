@@ -2,12 +2,12 @@ import CppHeaderParser
 from struct import calcsize
 
 type_map = {
-    'uint8_t': 'B',
-    'uint16_t': 'H',
-    'uint32_t': 'L',
-    'int32_t': 'l',
-    'float': 'f',
-    'char': 's',
+    'uint8_t': {'format': 'B', 'default': '0'},
+    'uint16_t': {'format': 'H', 'default': '0'},
+    'uint32_t': {'format': 'L', 'default': '0'},
+    'int32_t': {'format': 'l', 'default': '0'},
+    'float': {'format': 'f', 'default': '0'},
+    'char': {'format': 's', 'default': "b''"},
 }
 
 defines = {}
@@ -27,21 +27,29 @@ print(header.enums)
 print("STRUCTS")
 
 tuple_list = []
+arg_list = []
+default_list = []
 format_list = []
 name_list = []
 for packet_class in header.classes:
     if "Packet" in packet_class:
         format_string = '='
         named_tuple = f"namedtuple('{packet_class}', '"
+        args = ''
+        defaults = ''
         for prop in header.classes[packet_class]['properties']['public']:
             print(prop)
             if 'array_size' in prop:
                 format_string += defines[prop['array_size']]
-            format_string += type_map[prop['type']]
+            format_string += type_map[prop['type']]['format']
             named_tuple += prop['name'] + ' '
+            defaults += f"{prop['name']}={type_map[prop['type']]['default']}, "
+            args += f"{prop['name']}, "
         
         type_map[packet_class] = format_string[1:]
         named_tuple += "')"
+        arg_list.append(args[:-2])
+        default_list.append(defaults[:-2])
         tuple_list.append(named_tuple)
         format_list.append(format_string)
         name_list.append(packet_class)
@@ -54,12 +62,23 @@ from collections import namedtuple
 from struct import unpack, pack
 
 """)
+
+    for enum in header.enums:
+        print(enum['name'])
+        f.write(f"class {enum['name']}():\n")
+        for value in enum['values']:
+            f.write(f"  {value['name']} = {value['value']}\n")
+        f.write('\n')
+
     for tup, name in zip(tuple_list, name_list):
         f.write(f'{name} = {tup}\n')
     for format, name in zip(format_list, name_list):
         f.write(f'size_{name} = {calcsize(format)}\n')
-    for format, name in zip(format_list, name_list):
+    for format, name, args, defaults in zip(format_list, name_list, arg_list, default_list):
         f.write(f"""
 def unpack_{name}(bytes):
     return {name}._make(unpack('{format}',bytes))
+
+def pack_{name}({defaults}):
+    return pack('{format}', {args})
 """)

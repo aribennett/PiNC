@@ -2,23 +2,52 @@
 from collections import namedtuple
 from struct import unpack, pack
 
+class SerialCommand():
+  REPORT_STATUS = 1
+  GET_STATUS = 2
+  RUN_MOTOR = 3
+  RESET = 4
+
+class MotorCommand():
+  STATUS = 1
+  SET_OMEGA = 2
+  SET_ALPHA = 3
+  SET_THETA = 4
+
+class SerialState():
+  IDLE = 0
+  WAITING_FOR_HEADER = 1
+  WAITING_FOR_BODY = 2
+
 HeaderPacket = namedtuple('HeaderPacket', 'command length motorCount sensorCount ')
-MotorPacket = namedtuple('MotorPacket', 'motorId motorStatus motorDescriptor theta omega alpha ')
+MotorPacket = namedtuple('MotorPacket', 'motorId motorCommand motorStatus motorDescriptor theta omega alpha ')
 SensorPacket = namedtuple('SensorPacket', 'sensorID sensorValue sensorDescriptor ')
 FooterPacket = namedtuple('FooterPacket', 'checksum ')
 size_HeaderPacket = 7
-size_MotorPacket = 19
+size_MotorPacket = 20
 size_SensorPacket = 11
 size_FooterPacket = 2
 
 def unpack_HeaderPacket(bytes):
     return HeaderPacket._make(unpack('=BHHH',bytes))
 
+def pack_HeaderPacket(command=0, length=0, motorCount=0, sensorCount=0):
+    return pack('=BHHH', command, length, motorCount, sensorCount)
+
 def unpack_MotorPacket(bytes):
-    return MotorPacket._make(unpack('=BB5sfff',bytes))
+    return MotorPacket._make(unpack('=BBB5sfff',bytes))
+
+def pack_MotorPacket(motorId=0, motorCommand=0, motorStatus=0, motorDescriptor=b'', theta=0, omega=0, alpha=0):
+    return pack('=BBB5sfff', motorId, motorCommand, motorStatus, motorDescriptor, theta, omega, alpha)
 
 def unpack_SensorPacket(bytes):
     return SensorPacket._make(unpack('=Hl5s',bytes))
 
+def pack_SensorPacket(sensorID=0, sensorValue=0, sensorDescriptor=b''):
+    return pack('=Hl5s', sensorID, sensorValue, sensorDescriptor)
+
 def unpack_FooterPacket(bytes):
     return FooterPacket._make(unpack('=H',bytes))
+
+def pack_FooterPacket(checksum=0):
+    return pack('=H', checksum)

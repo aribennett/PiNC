@@ -25,16 +25,6 @@ void setup()
 
 void loop()
 {
-  static uint32_t commandTime = millis();
-  static uint32_t startTime = millis();
-
-  if (millis() - commandTime > 1)
-  {
-    xy1_driver.setOmega(sin((float)(millis() - startTime) / 1000.0)*5);
-    xy2_driver.setOmega(cos((float)(millis() - startTime) / 1000.0)*5);
-    commandTime = millis();
-  }
-
   serialClient.run();
   motorList.runMotors();
 }

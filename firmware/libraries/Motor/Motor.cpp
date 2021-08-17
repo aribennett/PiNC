@@ -16,6 +16,7 @@ void Motor::setOmega(float omega)
 MotorPacket Motor::getMotorState()
 {
     MotorPacket toSend;
+    toSend.motorCommand = STATUS;
     toSend.theta = _theta;
     toSend.omega = _omega;
     toSend.alpha = _alpha;
