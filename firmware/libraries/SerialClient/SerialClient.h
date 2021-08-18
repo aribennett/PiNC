@@ -2,9 +2,7 @@
 #define SERIAL_CLIENT
 #include <arduino.h>
 
-#define BAUD_RATE 4000000
-#define DESCRIPTOR_LENGTH 5
-#define SERIAL_TIMEOUT 1000
+#define TX_TIMEOUT 250
 #define WATCHDOG_TIMEOUT 200
 
 enum SerialCommand : uint8_t 
@@ -34,38 +32,27 @@ enum SerialState : uint8_t
 struct HeaderPacket
 {
     uint8_t command;
-    uint16_t length;
-    uint16_t motorCount;
-    uint16_t sensorCount;
+    uint8_t motorCount;
+    uint8_t sensorCount;
 } __attribute__ ((packed));
-static_assert(sizeof(HeaderPacket) == 7, "Header packet packing issue");
+static_assert(sizeof(HeaderPacket) == 3, "Header packet packing issue");
 
 struct MotorPacket
 {
     uint8_t motorId;
     uint8_t motorCommand;
-    uint8_t motorStatus;
-    char motorDescriptor[DESCRIPTOR_LENGTH];
     float theta;
     float omega;
     float alpha;
 } __attribute__ ((packed));
-static_assert(sizeof(MotorPacket) == DESCRIPTOR_LENGTH + 15, "Axis packet packing issue");
+static_assert(sizeof(MotorPacket) == 14, "Axis packet packing issue");
 
 struct SensorPacket
 {
-    uint16_t sensorID;
+    uint8_t sensorID;
     int32_t sensorValue;
-    char sensorDescriptor[DESCRIPTOR_LENGTH];
 } __attribute__ ((packed));
-static_assert(sizeof(SensorPacket) == DESCRIPTOR_LENGTH + 6, "Sensor packet packing issue");
-
-struct FooterPacket
-{
-    uint16_t checksum;
-} __attribute__ ((packed));
-static_assert(sizeof(FooterPacket) == 2, "Footer packet packing issue");
-
+static_assert(sizeof(SensorPacket) == 5, "Sensor packet packing issue");
 
 class SerialClient
 {
@@ -74,17 +61,17 @@ public:
     void run();
 
 private:
-    // define a dummy drive to replace later. prevents need to extend stepper library
-    uint8_t _inputBuffer[1000];
+    uint8_t _inputBuffer[64];
+    uint8_t _hidMsg[64];
+    uint8_t _msgLength = 0;
     SerialState _state = IDLE;
     HeaderPacket* _headerPointer = (HeaderPacket *)_inputBuffer; 
-    uint32_t _bufferIndex = 0;
-    uint32_t _messageLength = 0;
-    uint32_t _rxStartTime = 0;
     uint32_t _lastRxTime = 0;
+    uint32_t _lastTxTime = 0;
     void sendStatusReport();
     void checkTimeout();
     void handleInputPacket();
+    void addToMessage(uint8_t* msg, uint8_t length);
 };
 
 extern SerialClient serialClient;

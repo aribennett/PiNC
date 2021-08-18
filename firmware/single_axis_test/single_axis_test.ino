@@ -8,9 +8,9 @@
 uint32_t stall_guard = 0;
 
 TMC5160Stepper xy1_spi(34, R_SENSE);
-StepperHFC xy1_driver("xy1", 2, 3, 10, &xy1_spi);
+StepperHFC xy1_driver(2, 3, 10, &xy1_spi);
 TMC5160Stepper xy2_spi(33, R_SENSE);
-StepperHFC xy2_driver("xy2", 4, 5, 40, &xy2_spi);
+StepperHFC xy2_driver(4, 5, 40, &xy2_spi);
 
 void setup()
 {

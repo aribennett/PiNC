@@ -14,29 +14,34 @@ void SerialClient::sendStatusReport()
 {
     // Buffer the header into the serial bus
     HeaderPacket header;
-    FooterPacket footer;
+    _msgLength = 0;
     header.command = REPORT_STATUS;
     header.motorCount = motorList.getMotorCount();
     header.sensorCount = 0;
-    header.length = sizeof(HeaderPacket) + header.motorCount*sizeof(MotorPacket) + header.sensorCount*sizeof(SensorPacket) + sizeof(FooterPacket);
-    Serial.write((uint8_t*) &header, sizeof(header));
-
+    
+    addToMessage((uint8_t*) &header, sizeof(header));
     // Print out motor states in order
     for(uint8_t i = 0; i < header.motorCount; ++i)
     {
         MotorPacket mp = motorList.getMotor(i)->getMotorState();
-        Serial.write((uint8_t*) &mp, sizeof(mp));
+        addToMessage((uint8_t*) &mp, sizeof(mp));
     }
 
-    footer.checksum = 0xffff;
-    Serial.write((uint8_t*) &footer, sizeof(footer));
-    Serial.send_now();
+    usb_rawhid_send(_hidMsg, 0);
+}
+
+void SerialClient::addToMessage(uint8_t* msg, uint8_t length)
+{
+    memcpy(_hidMsg + _msgLength, msg, length);
+    _msgLength += length;
 }
 
 void SerialClient::handleInputPacket()
 {   
     // create a base pointer to the motor commands
     uint8_t motorCount = _headerPointer->motorCount;
+    Serial.println(motorCount);
+    Serial.println(_headerPointer->command);
     _lastRxTime = millis();
 
     MotorPacket* motorPackets = (MotorPacket*)(_inputBuffer+sizeof(HeaderPacket));
@@ -51,7 +56,7 @@ void SerialClient::handleInputPacket()
         break;
 
     case RUN_MOTOR:
-        
+        Serial.println("RunMotor");
         for(uint8_t i = 0; i < motorCount; ++i)
         {
             MotorCommand cmd = (MotorCommand)motorPackets[i].motorCommand;
@@ -66,6 +71,7 @@ void SerialClient::handleInputPacket()
                 break;
             
             case SET_OMEGA:
+                Serial.println(motorPackets[i].omega);
                 motorList.getMotor(motorPackets[i].motorId)->setOmega(motorPackets[i].omega);
                 break;
             
@@ -77,7 +83,6 @@ void SerialClient::handleInputPacket()
                 break;
             }
         }
-        sendStatusReport();
         break;
     
     case RESET:
@@ -91,10 +96,6 @@ void SerialClient::handleInputPacket()
 
 void SerialClient::checkTimeout()
 {
-    if(_state != IDLE && micros() - _rxStartTime > SERIAL_TIMEOUT)
-    {
-        _state = IDLE;
-    }
 
     if(millis()-_lastRxTime > WATCHDOG_TIMEOUT)
     {
@@ -106,38 +107,20 @@ void SerialClient::checkTimeout()
         }
         _lastRxTime = millis();
     }
+
+    if(micros()-_lastTxTime > TX_TIMEOUT)
+    {
+        sendStatusReport();
+        _lastTxTime = micros();
+    }
 }
 
 void SerialClient::run()
-{
-    if (Serial.available() > 0) 
+{   
+    // HAVE TO ADJUST TEENSY SOURCE TO ACCOUNT FOR 1 MS HANG AT 0 TIMEOUT
+    if(usb_rawhid_recv(_inputBuffer, 0) > 0)
     {
-        if(_state == IDLE)
-        {
-            _rxStartTime = micros();
-            _state = WAITING_FOR_HEADER;
-            _messageLength = 0;
-            _bufferIndex = 0;
-        }
-
-        // Add the character to the buffer
-        _inputBuffer[_bufferIndex] = Serial.read();
-        ++_bufferIndex;
-
-        // If we have a header, set up the rest of the transfer
-        if(_bufferIndex == sizeof(HeaderPacket))
-        {
-            _rxStartTime = micros();
-            _state = WAITING_FOR_BODY;
-            _messageLength = _headerPointer->length;
-        }
-
-        // If we have the complet message, respond
-        if (_state == WAITING_FOR_BODY && _bufferIndex == _messageLength)
-        {
-            handleInputPacket();
-            _state = IDLE;
-        }
+        handleInputPacket();
     }
     checkTimeout();
 }

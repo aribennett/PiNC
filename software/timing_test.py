@@ -1,12 +1,12 @@
 from time import time, time_ns, sleep
-
+from arduino_timing import delayMicroseconds
 start_time = time()
 interval_time = time_ns()
 count = 0
 while True:
-    if time_ns() - interval_time > 1000000:
-        count += 1
-        interval_time = time_ns()
+    delayMicroseconds(1000)
+    count += 1
+    interval_time = time_ns()
     if count == 1000:
         break
 

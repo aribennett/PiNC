@@ -8,14 +8,8 @@
 #define STEPS_PER_REV 200
 #define CONTROL_INTERVAL 500 //microseconds
 
-StepperHFC::StepperHFC(const char* name, uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver)
+StepperHFC::StepperHFC(uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver)
 {
-    // make sure we do not overrun the descriptor field
-    if(strlen(name) < DESCRIPTOR_LENGTH)
-    {
-        strcpy(_desc, name);
-    }
-    _en_pin = en;
     _step_pin = step;
     _dir_pin = dir;
     _driver = driver;

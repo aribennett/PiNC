@@ -22,7 +22,6 @@ protected:
     float _theta = 0;
     float _omega = 0;
     float _alpha = 0;
-    char _desc[10];
 };
 
 class MotorList

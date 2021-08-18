@@ -9,7 +9,7 @@
 class StepperHFC: public Motor
 {
 public:
-    StepperHFC(const char* name, uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver);
+    StepperHFC(uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver);
     void coldStart();
     void run();
 

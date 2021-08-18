@@ -21,8 +21,6 @@ MotorPacket Motor::getMotorState()
     toSend.omega = _omega;
     toSend.alpha = _alpha;
     toSend.motorId = _id;
-    toSend.motorStatus = 1;
-    strcpy(toSend.motorDescriptor, _desc);
     return(toSend);
 }
 
