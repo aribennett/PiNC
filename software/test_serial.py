@@ -60,7 +60,6 @@ def embedded_service():
 
 if __name__ == "__main__":
 
-    # embedded_service()
     embedded_thread = Thread(target=embedded_service, daemon=True)
     embedded_thread.start()
 
