@@ -1,5 +1,6 @@
 libhidapi-hidraw0
-add git credentials
+git config --global user.name "Ari Bennett"
+git config --global user.email aridbennett@gmail.com
 sudo apt install gnome-keyring
 add line to boot
 install vscode
