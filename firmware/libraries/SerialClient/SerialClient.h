@@ -2,7 +2,7 @@
 #define SERIAL_CLIENT
 #include <arduino.h>
 
-#define TX_TIMEOUT 250
+#define TX_TIMEOUT 1000
 #define WATCHDOG_TIMEOUT 200
 
 enum SerialCommand : uint8_t 

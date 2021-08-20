@@ -25,8 +25,8 @@ void StepperHFC::coldStart()
 
     // Enable one according to your setup
     _driver->begin();  //  SPI: Init CS pins and possible SW SPI pins
-    _driver->toff(5);  // Enables driver in software
-    _driver->irun(12); // Set motor RMS current
+    _driver->ihold(8); // Set motor RMS current
+    _driver->irun(8); // Set motor RMS current
     _driver->microsteps(MICROSTEPS);
     _driver->dedge(true);
     _driver->intpol(true);
