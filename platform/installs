@@ -1,1 +1,9 @@
 libhidapi-hidraw0
+add git credentials
+sudo apt install gnome-keyring
+add line to boot
+install vscode
+install arduino
+install udev rules
+install teensyduino
+modify teesnyduino source
