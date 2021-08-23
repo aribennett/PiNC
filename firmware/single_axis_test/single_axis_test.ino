@@ -20,11 +20,11 @@ void setup()
   xy2_driver.coldStart();
   motorList.addMotor(&xy1_driver);
   motorList.addMotor(&xy2_driver);
+  startMotorTimer();
 }
 
 
 void loop()
 {
   serialClient.run();
-  motorList.runMotors();
 }

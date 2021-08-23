@@ -19,15 +19,14 @@ private:
     int32_t _step = 0;
     bool _dir = false;
     uint16_t _en_pin;
-    uint16_t _step_pin;
-    bool _edge_state = false;
-    uint16_t _dir_pin;
-    uint32_t _last_commutate_time = ARM_DWT_CYCCNT;
-    uint32_t _last_control_time = 0;
-    uint32_t _step_accumulator = 0;
-    int32_t _step_count = 0;
-    bool _motor_stopped = true;
-    int32_t _time_period = 0;
+    uint16_t _stepPin;
+    bool _edgeState = false;
+    uint16_t _dirPin;
+    uint32_t _controlAccumulator = 0;
+    uint32_t _stepAccumulator = 0;
+    int32_t _stepCount = 0;
+    bool _motorStopped = true;
+    int32_t _timePeriod = 0;
 };
 
 #endif

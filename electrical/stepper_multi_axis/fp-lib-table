@@ -4,4 +4,5 @@
   (lib (name teensy)(type KiCad)(uri ${KIPRJMOD}/teensy.pretty)(options "")(descr ""))
   (lib (name sl_connector)(type KiCad)(uri ${KIPRJMOD}/sl_connector.pretty)(options "")(descr ""))
   (lib (name SamacSys_Parts)(type KiCad)(uri ${KIPRJMOD}/SamacSys_Parts.pretty)(options "")(descr ""))
+  (lib (name trinamic-footprints)(type KiCad)(uri ${KIPRJMOD}/TrinamicEval/trinamic-footprints.pretty)(options "")(descr ""))
 )

@@ -1,0 +1,307 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 8 8
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L trinamic:TMC5160-BOB U?
+U 1 1 6123775B
+P 5500 3725
+AR Path="/6123775B" Ref="U?"  Part="1" 
+AR Path="/61235537/6123775B" Ref="U11"  Part="1" 
+AR Path="/613BBAC7/6123775B" Ref="U8"  Part="1" 
+F 0 "U8" H 5500 4608 40  0000 C CNN
+F 1 "TMC5160-BOB" H 5500 4532 40  0000 C CNN
+F 2 "trinamic-footprints:22pin1,5x1,1-BOB" H 6350 3925 40  0001 L CNN
+F 3 "https://www.trinamic.com/fileadmin/assets/Products/Eval_Documents/TMC5160-BOB_datasheet_Rev1.0.pdf" H 6350 4025 40  0001 L CNN
+F 4 "1460-1250-ND" H 6350 4125 60  0001 L CNN "Digi-Key_PN"
+F 5 "TMC5160-BOB" H 6350 4225 60  0001 L CNN "MPN"
+F 6 "Development Boards, Kits, Programmers" H 6350 4325 60  0001 L CNN "Category"
+F 7 "Evaluation and Demonstration Boards and Kits" H 6350 4425 60  0001 L CNN "Family"
+F 8 "https://www.trinamic.com/fileadmin/assets/Products/Eval_Documents/TMC5160-BOB_datasheet_Rev1.0.pdf" H 6350 4525 60  0001 L CNN "DK_Datasheet_Link"
+F 9 "/product-detail/en/trinamic-motion-control-gmbh/TMC5160-BOB/1460-1250-ND/8440397" H 6350 4625 60  0001 L CNN "DK_Detail_Page"
+F 10 "BREAKOUTBOARD WITH TMC5160" H 6350 4725 60  0001 L CNN "Description"
+F 11 "Trinamic Motion Control GmbH" H 6350 4825 60  0001 L CNN "Manufacturer"
+F 12 "Active" H 6350 4925 60  0001 L CNN "Status"
+	1    5500 3725
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x04_Male J?
+U 1 1 6123C803
+P 6550 3700
+AR Path="/60869CEA/6123C803" Ref="J?"  Part="1" 
+AR Path="/608DFF6C/6123C803" Ref="J?"  Part="1" 
+AR Path="/608FE26D/6123C803" Ref="J?"  Part="1" 
+AR Path="/608FE277/6123C803" Ref="J?"  Part="1" 
+AR Path="/61235537/6123C803" Ref="J20"  Part="1" 
+AR Path="/613BBAC7/6123C803" Ref="J21"  Part="1" 
+F 0 "J21" H 6522 3674 50  0000 R CNN
+F 1 "Conn_01x04_Male" H 6522 3583 50  0000 R CNN
+F 2 "sl_connector:1719740104" H 6550 3700 50  0001 C CNN
+F 3 "~" H 6550 3700 50  0001 C CNN
+	1    6550 3700
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6050 3550 6200 3550
+Wire Wire Line
+	6200 3550 6200 3500
+Wire Wire Line
+	6200 3500 6350 3500
+Wire Wire Line
+	6050 3625 6250 3625
+Wire Wire Line
+	6250 3625 6250 3600
+Wire Wire Line
+	6250 3600 6350 3600
+Wire Wire Line
+	6050 3700 6350 3700
+Wire Wire Line
+	6050 3775 6300 3775
+Wire Wire Line
+	6300 3775 6300 3800
+Wire Wire Line
+	6300 3800 6350 3800
+$Comp
+L power:+3V3 #PWR0143
+U 1 1 6123E863
+P 5375 2775
+AR Path="/61235537/6123E863" Ref="#PWR0143"  Part="1" 
+AR Path="/613BBAC7/6123E863" Ref="#PWR0130"  Part="1" 
+F 0 "#PWR0130" H 5375 2625 50  0001 C CNN
+F 1 "+3V3" H 5390 2948 50  0000 C CNN
+F 2 "" H 5375 2775 50  0001 C CNN
+F 3 "" H 5375 2775 50  0001 C CNN
+	1    5375 2775
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VBUS #PWR0144
+U 1 1 6123FF89
+P 5675 2775
+AR Path="/61235537/6123FF89" Ref="#PWR0144"  Part="1" 
+AR Path="/613BBAC7/6123FF89" Ref="#PWR0131"  Part="1" 
+F 0 "#PWR0131" H 5675 2625 50  0001 C CNN
+F 1 "VBUS" H 5690 2948 50  0000 C CNN
+F 2 "" H 5675 2775 50  0001 C CNN
+F 3 "" H 5675 2775 50  0001 C CNN
+	1    5675 2775
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5575 3000 5675 3000
+Wire Wire Line
+	5675 3000 5675 2775
+Wire Wire Line
+	5500 3000 5375 3000
+Wire Wire Line
+	5375 3000 5375 2775
+$Comp
+L power:GND #PWR0145
+U 1 1 61241499
+P 5550 4500
+AR Path="/61235537/61241499" Ref="#PWR0145"  Part="1" 
+AR Path="/613BBAC7/61241499" Ref="#PWR0132"  Part="1" 
+F 0 "#PWR0132" H 5550 4250 50  0001 C CNN
+F 1 "GND" H 5555 4327 50  0000 C CNN
+F 2 "" H 5550 4500 50  0001 C CNN
+F 3 "" H 5550 4500 50  0001 C CNN
+	1    5550 4500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5425 4375 5425 4500
+Wire Wire Line
+	5425 4500 5500 4500
+Wire Wire Line
+	5550 4500 5575 4500
+Wire Wire Line
+	5650 4500 5650 4375
+Connection ~ 5550 4500
+Wire Wire Line
+	5575 4375 5575 4500
+Connection ~ 5575 4500
+Wire Wire Line
+	5575 4500 5650 4500
+Wire Wire Line
+	5500 4375 5500 4500
+Connection ~ 5500 4500
+Wire Wire Line
+	5500 4500 5550 4500
+Text HLabel 4950 3575 0    50   Output ~ 0
+SDO
+Text HLabel 4950 3500 0    50   Input ~ 0
+SDI
+Text HLabel 4950 3425 0    50   Input ~ 0
+SCK
+Text HLabel 4950 3350 0    50   Input ~ 0
+CSN
+Text HLabel 4950 3225 0    50   Input ~ 0
+EN
+Text HLabel 4950 3700 0    50   Input ~ 0
+STEP
+Text HLabel 4950 3775 0    50   Input ~ 0
+DIR
+$Comp
+L Device:CP1 C?
+U 1 1 61246CE7
+P 6325 2900
+AR Path="/60869CEA/61246CE7" Ref="C?"  Part="1" 
+AR Path="/608DFF6C/61246CE7" Ref="C?"  Part="1" 
+AR Path="/608FE26D/61246CE7" Ref="C?"  Part="1" 
+AR Path="/608FE277/61246CE7" Ref="C?"  Part="1" 
+AR Path="/61235537/61246CE7" Ref="C11"  Part="1" 
+AR Path="/613BBAC7/61246CE7" Ref="C4"  Part="1" 
+F 0 "C4" H 6440 2946 50  0000 L CNN
+F 1 "10uF" H 6440 2855 50  0000 L CNN
+F 2 "Capacitor_SMD:CP_Elec_8x6.7" H 6325 2900 50  0001 C CNN
+F 3 "~" H 6325 2900 50  0001 C CNN
+	1    6325 2900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 61246CED
+P 6325 3050
+AR Path="/60869CEA/61246CED" Ref="#PWR?"  Part="1" 
+AR Path="/608DFF6C/61246CED" Ref="#PWR?"  Part="1" 
+AR Path="/608FE26D/61246CED" Ref="#PWR?"  Part="1" 
+AR Path="/608FE277/61246CED" Ref="#PWR?"  Part="1" 
+AR Path="/61235537/61246CED" Ref="#PWR0146"  Part="1" 
+AR Path="/613BBAC7/61246CED" Ref="#PWR0133"  Part="1" 
+F 0 "#PWR0133" H 6325 2800 50  0001 C CNN
+F 1 "GND" H 6330 2877 50  0000 C CNN
+F 2 "" H 6325 3050 50  0001 C CNN
+F 3 "" H 6325 3050 50  0001 C CNN
+	1    6325 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VBUS #PWR?
+U 1 1 61246CF3
+P 6325 2750
+AR Path="/60869CEA/61246CF3" Ref="#PWR?"  Part="1" 
+AR Path="/608DFF6C/61246CF3" Ref="#PWR?"  Part="1" 
+AR Path="/608FE26D/61246CF3" Ref="#PWR?"  Part="1" 
+AR Path="/608FE277/61246CF3" Ref="#PWR?"  Part="1" 
+AR Path="/61235537/61246CF3" Ref="#PWR0147"  Part="1" 
+AR Path="/613BBAC7/61246CF3" Ref="#PWR0134"  Part="1" 
+F 0 "#PWR0134" H 6325 2600 50  0001 C CNN
+F 1 "VBUS" H 6340 2923 50  0000 C CNN
+F 2 "" H 6325 2750 50  0001 C CNN
+F 3 "" H 6325 2750 50  0001 C CNN
+	1    6325 2750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x05_Male J19
+U 1 1 612534D3
+P 6525 2025
+AR Path="/61235537/612534D3" Ref="J19"  Part="1" 
+AR Path="/613BBAC7/612534D3" Ref="J9"  Part="1" 
+F 0 "J9" H 6497 1957 50  0000 R CNN
+F 1 "Conn_01x05_Male" H 6497 2048 50  0000 R CNN
+F 2 "sl_connector:1719740105" H 6525 2025 50  0001 C CNN
+F 3 "~" H 6525 2025 50  0001 C CNN
+	1    6525 2025
+	-1   0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0148
+U 1 1 61258AB7
+P 5950 1825
+AR Path="/61235537/61258AB7" Ref="#PWR0148"  Part="1" 
+AR Path="/613BBAC7/61258AB7" Ref="#PWR0135"  Part="1" 
+F 0 "#PWR0135" H 5950 1575 50  0001 C CNN
+F 1 "GND" H 5955 1652 50  0000 C CNN
+F 2 "" H 5950 1825 50  0001 C CNN
+F 3 "" H 5950 1825 50  0001 C CNN
+	1    5950 1825
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6325 1825 5950 1825
+$Comp
+L power:+5V #PWR0149
+U 1 1 61259353
+P 6200 2125
+AR Path="/61235537/61259353" Ref="#PWR0149"  Part="1" 
+AR Path="/613BBAC7/61259353" Ref="#PWR0136"  Part="1" 
+F 0 "#PWR0136" H 6200 1975 50  0001 C CNN
+F 1 "+5V" V 6215 2253 50  0000 L CNN
+F 2 "" H 6200 2125 50  0001 C CNN
+F 3 "" H 6200 2125 50  0001 C CNN
+	1    6200 2125
+	0    -1   -1   0   
+$EndComp
+Text HLabel 5125 2025 0    50   Output ~ 0
+ENC_A
+Text HLabel 5125 2225 0    50   Output ~ 0
+ENC_B
+$Comp
+L Device:R_Pack04 RN1
+U 1 1 6125AF92
+P 5400 2225
+AR Path="/61235537/6125AF92" Ref="RN1"  Part="1" 
+AR Path="/613BBAC7/6125AF92" Ref="RN2"  Part="1" 
+F 0 "RN2" V 4983 2225 50  0000 C CNN
+F 1 "R_1K_4" V 5074 2225 50  0000 C CNN
+F 2 "Resistor_SMD:R_Array_Concave_4x0603" V 5675 2225 50  0001 C CNN
+F 3 "~" H 5400 2225 50  0001 C CNN
+	1    5400 2225
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6325 2025 5600 2025
+Wire Wire Line
+	6325 2225 5600 2225
+Wire Wire Line
+	5200 2225 5200 2325
+Wire Wire Line
+	5200 2025 5200 2125
+$Comp
+L power:GND #PWR0150
+U 1 1 61264E0D
+P 5600 2125
+AR Path="/61235537/61264E0D" Ref="#PWR0150"  Part="1" 
+AR Path="/613BBAC7/61264E0D" Ref="#PWR0152"  Part="1" 
+F 0 "#PWR0152" H 5600 1875 50  0001 C CNN
+F 1 "GND" H 5605 1952 50  0000 C CNN
+F 2 "" H 5600 2125 50  0001 C CNN
+F 3 "" H 5600 2125 50  0001 C CNN
+	1    5600 2125
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6325 2125 6200 2125
+$Comp
+L power:GND #PWR0151
+U 1 1 6126654C
+P 5600 2325
+AR Path="/61235537/6126654C" Ref="#PWR0151"  Part="1" 
+AR Path="/613BBAC7/6126654C" Ref="#PWR0153"  Part="1" 
+F 0 "#PWR0153" H 5600 2075 50  0001 C CNN
+F 1 "GND" H 5605 2152 50  0000 C CNN
+F 2 "" H 5600 2325 50  0001 C CNN
+F 3 "" H 5600 2325 50  0001 C CNN
+	1    5600 2325
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5200 2025 5125 2025
+Connection ~ 5200 2025
+Wire Wire Line
+	5200 2225 5125 2225
+Connection ~ 5200 2225
+$EndSCHEMATC

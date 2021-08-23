@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 7 7
+Sheet 4 8
 Title ""
 Date ""
 Rev ""
@@ -234,7 +234,7 @@ Y_LIMIT
 Text HLabel 9400 2750 2    50   Input ~ 0
 Z_LIMIT
 Text HLabel 9400 2650 2    50   Input ~ 0
-A_LIMIT
+A_ENCA
 Wire Wire Line
 	9400 2650 9250 2650
 Wire Wire Line
@@ -245,16 +245,16 @@ Text HLabel 9400 4050 2    50   Output ~ 0
 Z_ENABLE
 Text HLabel 9400 4150 2    50   Output ~ 0
 A_ENABLE
-Text HLabel 9400 4250 2    50   Output ~ 0
+Text HLabel 9400 3850 2    50   Output ~ 0
 B_ENABLE
 Wire Wire Line
 	9400 4050 9250 4050
 Wire Wire Line
 	9250 4150 9400 4150
 Wire Wire Line
-	9400 4250 9250 4250
+	9400 3850 9250 3850
 Text HLabel 6700 4250 0    50   Input ~ 0
-B_LIMIT
+B_ENCA
 Wire Wire Line
 	6700 4250 7050 4250
 Text HLabel 6700 4050 0    50   Output ~ 0
@@ -273,8 +273,8 @@ Wire Wire Line
 	9250 3450 9400 3450
 Wire Wire Line
 	7050 4350 6700 4350
-Text HLabel 9400 3050 2    50   Output ~ 0
-COOLANT_FLOOD
+Text HLabel 9400 3050 2    50   Input ~ 0
+A_ENCB
 Text HLabel 9400 3150 2    50   Output ~ 0
 COOLANT_MIST
 Wire Wire Line
@@ -293,28 +293,26 @@ Wire Wire Line
 	5250 2450 7050 2450
 Wire Wire Line
 	5250 2550 7050 2550
-Text HLabel 9700 4550 2    50   Output ~ 0
+Text HLabel 9900 4550 2    50   Output ~ 0
 CS0
 Text HLabel 9700 4650 2    50   Output ~ 0
 CS1
 Wire Wire Line
-	9450 4550 9700 4550
-Wire Wire Line
-	9450 4650 9700 4650
+	9650 4550 9900 4550
 Wire Wire Line
 	3350 3250 3050 3250
 Wire Wire Line
 	3350 3150 3050 3150
 Wire Wire Line
 	3350 3050 3050 3050
-Text HLabel 9750 4450 2    50   Output ~ 0
+Text HLabel 9950 4450 2    50   Output ~ 0
 CS2
-Text HLabel 9750 4350 2    50   Output ~ 0
+Text HLabel 9950 4350 2    50   Output ~ 0
 CS3
 Wire Wire Line
-	9450 4450 9750 4450
+	9650 4450 9950 4450
 Wire Wire Line
-	9750 4350 9450 4350
+	9950 4350 9650 4350
 Text Label 5550 2950 0    50   ~ 0
 SWDIO
 Text Label 5550 3150 0    50   ~ 0
@@ -377,52 +375,25 @@ F 3 "~" H 9350 3650 50  0001 C CNN
 	1    9350 3650
 	0    -1   -1   0   
 $EndComp
+Text HLabel 9950 4250 2    50   Output ~ 0
+CS4
+Wire Wire Line
+	9650 4250 9950 4250
+Text HLabel 6700 4450 0    50   Input ~ 0
+B_ENCB
+Wire Wire Line
+	6700 4450 7050 4450
 $Comp
-L Device:R_Small_US R?
-U 1 1 6108AB49
-P 9350 4350
-AR Path="/60869CEA/6108AB49" Ref="R?"  Part="1" 
-AR Path="/608DFF6C/6108AB49" Ref="R?"  Part="1" 
-AR Path="/608FE26D/6108AB49" Ref="R?"  Part="1" 
-AR Path="/608FE277/6108AB49" Ref="R?"  Part="1" 
-AR Path="/5515D395/6108AB49" Ref="R8"  Part="1" 
-F 0 "R8" H 9418 4396 50  0000 L CNN
-F 1 "100" H 9418 4305 50  0000 L CNN
-F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" H 9350 4350 50  0001 C CNN
-F 3 "~" H 9350 4350 50  0001 C CNN
-	1    9350 4350
-	0    -1   -1   0   
+L Device:R_Pack04 RN3
+U 1 1 613D08E2
+P 9450 4350
+F 0 "RN3" V 9775 4350 50  0000 C CNN
+F 1 "R_100_4" V 9684 4350 50  0000 C CNN
+F 2 "Resistor_SMD:R_Array_Concave_4x0603" V 9725 4350 50  0001 C CNN
+F 3 "~" H 9450 4350 50  0001 C CNN
+	1    9450 4350
+	0    1    -1   0   
 $EndComp
-$Comp
-L Device:R_Small_US R?
-U 1 1 6108C4B0
-P 9350 4450
-AR Path="/60869CEA/6108C4B0" Ref="R?"  Part="1" 
-AR Path="/608DFF6C/6108C4B0" Ref="R?"  Part="1" 
-AR Path="/608FE26D/6108C4B0" Ref="R?"  Part="1" 
-AR Path="/608FE277/6108C4B0" Ref="R?"  Part="1" 
-AR Path="/5515D395/6108C4B0" Ref="R9"  Part="1" 
-F 0 "R9" H 9418 4496 50  0000 L CNN
-F 1 "100" H 9418 4405 50  0000 L CNN
-F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" H 9350 4450 50  0001 C CNN
-F 3 "~" H 9350 4450 50  0001 C CNN
-	1    9350 4450
-	0    -1   -1   0   
-$EndComp
-$Comp
-L Device:R_Small_US R?
-U 1 1 6108DDAE
-P 9350 4550
-AR Path="/60869CEA/6108DDAE" Ref="R?"  Part="1" 
-AR Path="/608DFF6C/6108DDAE" Ref="R?"  Part="1" 
-AR Path="/608FE26D/6108DDAE" Ref="R?"  Part="1" 
-AR Path="/608FE277/6108DDAE" Ref="R?"  Part="1" 
-AR Path="/5515D395/6108DDAE" Ref="R10"  Part="1" 
-F 0 "R10" H 9418 4596 50  0000 L CNN
-F 1 "100" H 9418 4505 50  0000 L CNN
-F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" H 9350 4550 50  0001 C CNN
-F 3 "~" H 9350 4550 50  0001 C CNN
-	1    9350 4550
-	0    -1   -1   0   
-$EndComp
+Wire Wire Line
+	9450 4650 9700 4650
 $EndSCHEMATC

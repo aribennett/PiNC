@@ -1,7 +1,9 @@
 #include <Motor.h>
 #include <SerialClient.h>
+#include <IntervalTimer.h>
 
 MotorList motorList;
+IntervalTimer motorTimer;
 
 void Motor::setAlpha(float alpha)
 {
@@ -24,12 +26,21 @@ MotorPacket Motor::getMotorState()
     return(toSend);
 }
 
-
 void MotorList::addMotor(Motor* motor)
 {
     _motorList[_motorCount] = motor;
     motor->setId(_motorCount);
     ++_motorCount;
+}
+
+void runMotorsAlias()
+{
+    motorList.runMotors();
+}
+
+void startMotorTimer()
+{
+    motorTimer.begin(runMotorsAlias, COMMUTATION_INTERVAL);
 }
 
 void MotorList::runMotors()

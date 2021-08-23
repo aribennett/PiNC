@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <SerialClient.h>
 
+#define COMMUTATION_INTERVAL 1
 
 // Motor superclass. Only to be inherited from, never to be used directly!
 class Motor
@@ -19,22 +20,24 @@ public:
 
 protected:
     uint8_t _id;
-    float _theta = 0;
-    float _omega = 0;
-    float _alpha = 0;
+    volatile float _theta = 0;
+    volatile float _omega = 0;
+    volatile float _alpha = 0;
 };
 
 class MotorList
 {
     public:
+        void runMotors();
         void addMotor(Motor* motor);
         Motor* getMotor(uint8_t index){return(_motorList[index]); };
         uint8_t getMotorCount(){ return(_motorCount); };
-        void runMotors();
     private:
         Motor* _motorList[64];
         uint8_t _motorCount;
 };
+
+void startMotorTimer();
 
 extern MotorList motorList;
 

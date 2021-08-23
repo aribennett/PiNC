@@ -2,26 +2,29 @@
 #include <TMCStepper.h>
 #include <arduino.h>
 #include <SerialClient.h>
+#include <Motor.h>
 
 #define MICROSTEPS 16
 #define STALL_VALUE -10 // [-64..63]
 #define STEPS_PER_REV 200
-#define CONTROL_INTERVAL 500 //microseconds
+#define CONTROL_INTERVAL 200 //microseconds
+#define CONTROL_BASE 1000000
+#define MIN_DIVISOR 2
 
 StepperHFC::StepperHFC(uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver)
 {
-    _step_pin = step;
-    _dir_pin = dir;
+    _stepPin = step;
+    _dirPin = dir;
     _driver = driver;
 }
 
 void StepperHFC::coldStart()
 {
     pinMode(_en_pin, OUTPUT);
-    pinMode(_step_pin, OUTPUT);
-    pinMode(_dir_pin, OUTPUT);
+    pinMode(_stepPin, OUTPUT);
+    pinMode(_dirPin, OUTPUT);
     digitalWrite(_en_pin, LOW); // Enable driver in hardware
-    digitalWrite(_dir_pin, _dir);
+    digitalWrite(_dirPin, _dir);
 
     // Enable one according to your setup
     _driver->begin();  //  SPI: Init CS pins and possible SW SPI pins
@@ -34,44 +37,46 @@ void StepperHFC::coldStart()
 
 void StepperHFC::run()
 {
-    if (micros() - _last_control_time > CONTROL_INTERVAL)
+    _controlAccumulator += COMMUTATION_INTERVAL;
+    _stepAccumulator += COMMUTATION_INTERVAL;
+
+    // Manage control loop
+    if(_controlAccumulator > CONTROL_INTERVAL)
     {
         _omega += _alpha * CONTROL_INTERVAL / 1000000.0;
-        _theta = (TWO_PI * (float)_step_count) / (STEPS_PER_REV * MICROSTEPS);
+        _theta = (TWO_PI * (float)_stepCount) / (STEPS_PER_REV * MICROSTEPS);
 
         float divisor = _omega * MICROSTEPS * STEPS_PER_REV;
-        if (abs(divisor) < 20)
+        if (abs(divisor) < MIN_DIVISOR)
         {
-            _motor_stopped = true;
+            _motorStopped = true;
         }
         else
         {
-            _motor_stopped = false;
-            _time_period = TWO_PI * (float)F_CPU_ACTUAL / divisor;
+            _motorStopped = false;
+            _timePeriod = TWO_PI * (float)CONTROL_BASE / divisor;
         }
-        _last_control_time = micros();
+        _controlAccumulator = 0;
     }
-    // commutate motor
-    _step_accumulator += (ARM_DWT_CYCCNT - _last_commutate_time);
-    _last_commutate_time = ARM_DWT_CYCCNT;
 
-    if (_step_accumulator > abs(_time_period) && !_motor_stopped)
+    // commutate motor
+    if (_stepAccumulator > abs(_timePeriod) && !_motorStopped)
     {
-        if (((_time_period < 0) != _dir))
+        if (((_timePeriod < 0) != _dir))
         {
             _dir = !_dir;
-            digitalWriteFast(_dir_pin, _dir);
+            digitalWriteFast(_dirPin, _dir);
         }
-        digitalWriteFast(_step_pin, _edge_state);
-        _edge_state = !_edge_state;
-        _step_accumulator = 0;
+        digitalWriteFast(_stepPin, _edgeState);
+        _edgeState = !_edgeState;
         if (!_dir)
         {
-            ++_step_count;
+            ++_stepCount;
         }
         else
         {
-            --_step_count;
+            --_stepCount;
         }
+        _stepAccumulator = 0;
     }
 }
