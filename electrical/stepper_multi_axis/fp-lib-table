@@ -5,4 +5,7 @@
   (lib (name sl_connector)(type KiCad)(uri ${KIPRJMOD}/sl_connector.pretty)(options "")(descr ""))
   (lib (name SamacSys_Parts)(type KiCad)(uri ${KIPRJMOD}/SamacSys_Parts.pretty)(options "")(descr ""))
   (lib (name trinamic-footprints)(type KiCad)(uri ${KIPRJMOD}/TrinamicEval/trinamic-footprints.pretty)(options "")(descr ""))
+  (lib (name HDMI)(type KiCad)(uri ${KIPRJMOD}/HDMI.pretty)(options "")(descr ""))
+  (lib (name RPi_Compute_Module_4)(type KiCad)(uri ${KIPRJMOD}/RPi_Compute_Module_4.pretty)(options "")(descr ""))
+  (lib (name usbmux)(type KiCad)(uri ${KIPRJMOD}/usbmux.pretty)(options "")(descr ""))
 )

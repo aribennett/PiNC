@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 4 8
+Sheet 4 10
 Title ""
 Date ""
 Rev ""
@@ -13,117 +13,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L RPi_Hat:RPi_GPIO J2
-U 1 1 5516AE26
-P 3550 2150
-AR Path="/5516AE26" Ref="J2"  Part="1" 
-AR Path="/5515D395/5516AE26" Ref="J2"  Part="1" 
-F 0 "J2" H 4300 2400 60  0000 C CNN
-F 1 "RPi_GPIO" H 4300 2300 60  0000 C CNN
-F 2 "RPi_Hat:Pin_Header_Straight_2x20" H 3550 2150 60  0001 C CNN
-F 3 "" H 3550 2150 60  0000 C CNN
-	1    3550 2150
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR0102
-U 1 1 604AF549
-P 3200 4150
-F 0 "#PWR0102" H 3200 3900 50  0001 C CNN
-F 1 "GND" H 3205 3977 50  0000 C CNN
-F 2 "" H 3200 4150 50  0001 C CNN
-F 3 "" H 3200 4150 50  0001 C CNN
-	1    3200 4150
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR0103
-U 1 1 604B0835
-P 5400 4150
-F 0 "#PWR0103" H 5400 3900 50  0001 C CNN
-F 1 "GND" H 5405 3977 50  0000 C CNN
-F 2 "" H 5400 4150 50  0001 C CNN
-F 3 "" H 5400 4150 50  0001 C CNN
-	1    5400 4150
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5250 2350 5400 2350
-Wire Wire Line
-	5400 2350 5400 2750
-Wire Wire Line
-	5250 2750 5400 2750
-Connection ~ 5400 2750
-Wire Wire Line
-	5400 2750 5400 3050
-Wire Wire Line
-	5250 3050 5400 3050
-Connection ~ 5400 3050
-Wire Wire Line
-	5400 3050 5400 3550
-Wire Wire Line
-	5250 3550 5400 3550
-Connection ~ 5400 3550
-Wire Wire Line
-	5400 3550 5400 3750
-Wire Wire Line
-	5250 3750 5400 3750
-Connection ~ 5400 3750
-Wire Wire Line
-	5400 3750 5400 4150
-Wire Wire Line
-	3200 4150 3200 4050
-Wire Wire Line
-	3200 2550 3350 2550
-Wire Wire Line
-	3350 3350 3200 3350
-Connection ~ 3200 3350
-Wire Wire Line
-	3200 3350 3200 2550
-Wire Wire Line
-	3350 4050 3200 4050
-Connection ~ 3200 4050
-Wire Wire Line
-	3200 4050 3200 3350
-$Comp
-L Device:D_Schottky D26
-U 1 1 605A89CC
-P 9500 2350
-F 0 "D26" H 9500 2567 50  0000 C CNN
-F 1 "D_Schottky" H 9500 2476 50  0000 C CNN
-F 2 "Diode_SMD:D_SOD-128" H 9500 2350 50  0001 C CNN
-F 3 "~" H 9500 2350 50  0001 C CNN
-	1    9500 2350
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+5V #PWR0106
-U 1 1 605AA90B
-P 9650 2350
-F 0 "#PWR0106" H 9650 2200 50  0001 C CNN
-F 1 "+5V" V 9650 2450 50  0000 L CNN
-F 2 "" H 9650 2350 50  0001 C CNN
-F 3 "" H 9650 2350 50  0001 C CNN
-	1    9650 2350
-	0    1    1    0   
-$EndComp
-$Comp
-L power:+5V #PWR0107
-U 1 1 605AC150
-P 5250 2050
-F 0 "#PWR0107" H 5250 1900 50  0001 C CNN
-F 1 "+5V" H 5265 2223 50  0000 C CNN
-F 2 "" H 5250 2050 50  0001 C CNN
-F 3 "" H 5250 2050 50  0001 C CNN
-	1    5250 2050
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5250 2250 5250 2150
-Wire Wire Line
-	5250 2150 5250 2050
-Connection ~ 5250 2150
 $Comp
 L power:+3V3 #PWR0115
 U 1 1 608B771D
@@ -152,10 +41,6 @@ F 3 "" H 6550 2350 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	7050 2350 6550 2350
-Text Label 5750 2450 0    50   ~ 0
-PI_TX
-Text Label 5750 2550 0    50   ~ 0
-PI_RX
 $Comp
 L teensy:Teensy4.1 U10
 U 1 1 60952E67
@@ -289,22 +174,12 @@ Wire Wire Line
 	6700 3850 7050 3850
 Wire Wire Line
 	7050 3950 6700 3950
-Wire Wire Line
-	5250 2450 7050 2450
-Wire Wire Line
-	5250 2550 7050 2550
 Text HLabel 9900 4550 2    50   Output ~ 0
 CS0
 Text HLabel 9700 4650 2    50   Output ~ 0
 CS1
 Wire Wire Line
 	9650 4550 9900 4550
-Wire Wire Line
-	3350 3250 3050 3250
-Wire Wire Line
-	3350 3150 3050 3150
-Wire Wire Line
-	3350 3050 3050 3050
 Text HLabel 9950 4450 2    50   Output ~ 0
 CS2
 Text HLabel 9950 4350 2    50   Output ~ 0
@@ -313,14 +188,6 @@ Wire Wire Line
 	9650 4450 9950 4450
 Wire Wire Line
 	9950 4350 9650 4350
-Text Label 5550 2950 0    50   ~ 0
-SWDIO
-Text Label 5550 3150 0    50   ~ 0
-SCLK
-Wire Wire Line
-	5250 2950 5550 2950
-Wire Wire Line
-	5250 3150 5550 3150
 Text HLabel 6500 3550 0    50   Input ~ 0
 SPI_MOSI
 Text HLabel 6700 3650 0    50   Input ~ 0
@@ -340,6 +207,7 @@ F 0 "R6" H 9418 4696 50  0000 L CNN
 F 1 "100" H 9418 4605 50  0000 L CNN
 F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" H 9350 4650 50  0001 C CNN
 F 3 "~" H 9350 4650 50  0001 C CNN
+F 4 "C105588" H 9350 4650 50  0001 C CNN "LCSC"
 	1    9350 4650
 	0    -1   -1   0   
 $EndComp
@@ -356,6 +224,7 @@ F 0 "R5" H 7018 3596 50  0000 L CNN
 F 1 "100" H 7018 3505 50  0000 L CNN
 F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" H 6950 3550 50  0001 C CNN
 F 3 "~" H 6950 3550 50  0001 C CNN
+F 4 "C105588" H 6950 3550 50  0001 C CNN "LCSC"
 	1    6950 3550
 	0    -1   -1   0   
 $EndComp
@@ -372,6 +241,7 @@ F 0 "R7" H 9418 3696 50  0000 L CNN
 F 1 "100" H 9418 3605 50  0000 L CNN
 F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" H 9350 3650 50  0001 C CNN
 F 3 "~" H 9350 3650 50  0001 C CNN
+F 4 "C105588" H 9350 3650 50  0001 C CNN "LCSC"
 	1    9350 3650
 	0    -1   -1   0   
 $EndComp
@@ -391,9 +261,35 @@ F 0 "RN3" V 9775 4350 50  0000 C CNN
 F 1 "R_100_4" V 9684 4350 50  0000 C CNN
 F 2 "Resistor_SMD:R_Array_Concave_4x0603" V 9725 4350 50  0001 C CNN
 F 3 "~" H 9450 4350 50  0001 C CNN
+F 4 "742C083101JPCT-ND" V 9450 4350 50  0001 C CNN "Digi-Key_PN"
+F 5 "C79203" V 9450 4350 50  0001 C CNN "LCSC"
 	1    9450 4350
 	0    1    -1   0   
 $EndComp
 Wire Wire Line
 	9450 4650 9700 4650
+$Comp
+L power:+5V #PWR0106
+U 1 1 605AA90B
+P 9650 2350
+F 0 "#PWR0106" H 9650 2200 50  0001 C CNN
+F 1 "+5V" V 9650 2450 50  0000 L CNN
+F 2 "" H 9650 2350 50  0001 C CNN
+F 3 "" H 9650 2350 50  0001 C CNN
+	1    9650 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:D_Schottky D26
+U 1 1 605A89CC
+P 9500 2350
+F 0 "D26" H 9500 2567 50  0000 C CNN
+F 1 "D_Schottky" H 9500 2476 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-128" H 9500 2350 50  0001 C CNN
+F 3 "~" H 9500 2350 50  0001 C CNN
+F 4 "1727-7810-1-ND" H 9500 2350 50  0001 C CNN "Digi-Key_PN"
+F 5 "C456127" H 9500 2350 50  0001 C CNN "LCSC"
+	1    9500 2350
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

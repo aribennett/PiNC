@@ -1,0 +1,31 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#(c) SnapEDA 2016 (snapeda.com)
+#This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA) with Design Exception 1.0
+#
+# FSUSB42MUX
+#
+DEF FSUSB42MUX U 0 40 Y Y 1 L N
+F0 "U" -400 630 50 H V L BNN
+F1 "FSUSB42MUX" -400 -800 50 H V L BNN
+F2 "SOP50P490X110-10N" 0 0 50 H I L BNN
+F3 "" 0 0 50 H I L BNN
+F4 "ON Semiconductor" 0 0 50 H I L BNN "MANUFACTURER"
+F5 "1.25" 0 0 50 H I L BNN "PARTREV"
+F6 "IPC-7351B" 0 0 50 H I L BNN "STANDARD"
+DRAW
+S -400 -700 400 600 0 0 10 f
+X VCC 1 600 500 200 L 40 40 0 0 W 
+X D+ 3 600 0 200 L 40 40 0 0 B 
+X D- 4 600 -300 200 L 40 40 0 0 B 
+X GND 5 600 -600 200 L 40 40 0 0 W 
+X HSD1+ 7 -600 0 200 R 40 40 0 0 B 
+X HSD1- 6 -600 -300 200 R 40 40 0 0 B 
+X SEL 2 -600 300 200 R 40 40 0 0 I 
+X HSD2- 8 -600 -400 200 R 40 40 0 0 B 
+X HSD2+ 9 -600 -100 200 R 40 40 0 0 B 
+X ~OE 10 -600 200 200 R 40 40 0 0 I 
+ENDDRAW
+ENDDEF
+#
+# End Library
