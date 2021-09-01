@@ -1,10 +1,14 @@
-libhidapi-hidraw0
 git config --global user.name "Ari Bennett"
 git config --global user.email aridbennett@gmail.com
 sudo apt install gnome-keyring
+create default keyring
 add line to boot
 install vscode
 install arduino
 install udev rules
 install teensyduino
 modify teesnyduino source
+modify arduino 
+python xbox360 controller
+enable camera
+sudo wget https://datasheets.raspberrypi.org/cmio/dt-blob-cam1.bin -O /boot/dt-blob.bin

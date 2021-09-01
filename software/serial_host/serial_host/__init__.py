@@ -15,7 +15,7 @@ def cold_start(device_name=None):
     device = hid.Device(vid, pid)
   else:
     flags = os.O_RDWR
-    device = os.open('/dev/hidraw0', flags)
+    device = os.open(device_name, flags)
   pass
 
 
