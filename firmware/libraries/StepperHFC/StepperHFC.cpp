@@ -11,11 +11,12 @@
 #define CONTROL_BASE 1000000
 #define MIN_DIVISOR 2
 
-StepperHFC::StepperHFC(uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver)
+StepperHFC::StepperHFC(uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver, uint16_t irun)
 {
     _stepPin = step;
     _dirPin = dir;
     _driver = driver;
+    _irun = irun;
 }
 
 void StepperHFC::coldStart()
@@ -28,8 +29,8 @@ void StepperHFC::coldStart()
 
     // Enable one according to your setup
     _driver->begin();  //  SPI: Init CS pins and possible SW SPI pins
-    _driver->ihold(8); // Set motor RMS current
-    _driver->irun(8); // Set motor RMS current
+    _driver->ihold(_irun/2); // Set motor RMS current
+    _driver->irun(_irun); // Set motor RMS current
     _driver->microsteps(MICROSTEPS);
     _driver->dedge(true);
     _driver->intpol(true);

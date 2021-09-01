@@ -9,7 +9,7 @@
 class StepperHFC: public Motor
 {
 public:
-    StepperHFC(uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver);
+    StepperHFC(uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver, uint16_t irun);
     void coldStart();
     void run();
 
@@ -22,6 +22,7 @@ private:
     uint16_t _stepPin;
     bool _edgeState = false;
     uint16_t _dirPin;
+    uint16_t _irun;
     uint32_t _controlAccumulator = 0;
     uint32_t _stepAccumulator = 0;
     int32_t _stepCount = 0;

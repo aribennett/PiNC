@@ -6,3 +6,5 @@ Designator,Val,Package,Mid X,Mid Y,Rotation,Layer
 # zip stuff
 # Filp hdmi, move down 1.5 mm
 # rotate usbmux
+# rotate optos 180
+# rotate diodes 180
