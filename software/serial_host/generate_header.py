@@ -8,6 +8,7 @@ type_map = {
     'int32_t': {'format': 'l', 'default': '0'},
     'float': {'format': 'f', 'default': '0'},
     'char': {'format': 's', 'default': "b''"},
+    'int16_t': {'format': 'h', 'default': '0'},
 }
 
 defines = {}

@@ -18,19 +18,18 @@ StepperHFC xy1_driver(26, 27, 41, &xy1_spi, 24);
 
 void setup()
 {
-  SPI.begin();
-  serialClient.coldStart();
-  xy1_driver.coldStart();
-  xy2_driver.coldStart();
-  z1_driver.coldStart();
-  motorList.addMotor(&xy1_driver);
-  motorList.addMotor(&xy2_driver);
-  motorList.addMotor(&z1_driver);
-  startMotorTimer();
+    SPI.begin();
+    serialClient.coldStart();
+    xy1_driver.coldStart();
+    xy2_driver.coldStart();
+    z1_driver.coldStart();
+    motorList.addMotor(&xy1_driver);
+    motorList.addMotor(&xy2_driver);
+    motorList.addMotor(&z1_driver);
+    startMotorTimer();
 }
-
 
 void loop()
 {
-  serialClient.run();
+    serialClient.run();
 }

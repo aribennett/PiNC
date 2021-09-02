@@ -15,13 +15,11 @@ void Motor::setOmega(float omega)
     _omega = omega;
 }
 
-MotorPacket Motor::getMotorState()
+MotorStatePacket Motor::getMotorState()
 {
-    MotorPacket toSend;
-    toSend.motorCommand = STATUS;
+    MotorStatePacket toSend;
     toSend.theta = _theta;
     toSend.omega = _omega;
-    toSend.alpha = _alpha;
     toSend.motorId = _id;
     return(toSend);
 }

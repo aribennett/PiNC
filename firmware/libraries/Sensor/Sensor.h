@@ -9,7 +9,7 @@ public:
     Sensor(){};
     void coldStart();
     void run();
-    float getReading();
+    int16_t getReading();
 private:
 };
 

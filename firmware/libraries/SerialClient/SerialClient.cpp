@@ -23,7 +23,7 @@ void SerialClient::sendStatusReport()
     // Print out motor states in order
     for(uint8_t i = 0; i < header.motorCount; ++i)
     {
-        MotorPacket mp = motorList.getMotor(i)->getMotorState();
+        MotorStatePacket mp = motorList.getMotor(i)->getMotorState();
         addToMessage((uint8_t*) &mp, sizeof(mp));
     }
 
@@ -44,7 +44,7 @@ void SerialClient::handleInputPacket()
     Serial.println(_headerPointer->command);
     _lastRxTime = millis();
 
-    MotorPacket* motorPackets = (MotorPacket*)(_inputBuffer+sizeof(HeaderPacket));
+    MotorCommandPacket* motorPackets = (MotorCommandPacket*)(_inputBuffer+sizeof(HeaderPacket));
     switch (_headerPointer->command)
     {
     case REPORT_STATUS:
@@ -56,13 +56,12 @@ void SerialClient::handleInputPacket()
         break;
 
     case RUN_MOTOR:
-        Serial.println("RunMotor");
         for(uint8_t i = 0; i < motorCount; ++i)
         {
             MotorCommand cmd = (MotorCommand)motorPackets[i].motorCommand;
             switch (cmd)
             {
-            case STATUS:
+            case NONE:
                 //do nothing
                 break;
             
@@ -71,12 +70,11 @@ void SerialClient::handleInputPacket()
                 break;
             
             case SET_OMEGA:
-                Serial.println(motorPackets[i].omega);
-                motorList.getMotor(motorPackets[i].motorId)->setOmega(motorPackets[i].omega);
+                motorList.getMotor(motorPackets[i].motorId)->setOmega(motorPackets[i].control);
                 break;
             
             case SET_ALPHA:
-                motorList.getMotor(motorPackets[i].motorId)->setAlpha(motorPackets[i].alpha);
+                motorList.getMotor(motorPackets[i].motorId)->setAlpha(motorPackets[i].control);
                 break;
             
             default:
