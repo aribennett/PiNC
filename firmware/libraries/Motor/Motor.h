@@ -14,6 +14,7 @@ public:
     virtual void run(){};
     void setAlpha(float alpha);
     void setOmega(float omega);
+    void setTheta(float theta);
     void setId(uint8_t id){ _id=id; };
     uint8_t getId(){ return(_id); };
     MotorStatePacket getMotorState();

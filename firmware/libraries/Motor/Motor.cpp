@@ -15,6 +15,11 @@ void Motor::setOmega(float omega)
     _omega = omega;
 }
 
+void Motor::setTheta(float theta)
+{
+    _theta = theta;
+}
+
 MotorStatePacket Motor::getMotorState()
 {
     MotorStatePacket toSend;

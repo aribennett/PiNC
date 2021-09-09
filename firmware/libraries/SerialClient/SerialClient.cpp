@@ -40,8 +40,6 @@ void SerialClient::handleInputPacket()
 {   
     // create a base pointer to the motor commands
     uint8_t motorCount = _headerPointer->motorCount;
-    Serial.println(motorCount);
-    Serial.println(_headerPointer->command);
     _lastRxTime = millis();
 
     MotorCommandPacket* motorPackets = (MotorCommandPacket*)(_inputBuffer+sizeof(HeaderPacket));
@@ -66,7 +64,7 @@ void SerialClient::handleInputPacket()
                 break;
             
             case SET_THETA:
-                //TODO implement set method
+                motorList.getMotor(motorPackets[i].motorId)->setTheta(motorPackets[i].control);
                 break;
             
             case SET_OMEGA:
