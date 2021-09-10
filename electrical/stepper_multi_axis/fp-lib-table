@@ -8,4 +8,5 @@
   (lib (name HDMI)(type KiCad)(uri ${KIPRJMOD}/HDMI.pretty)(options "")(descr ""))
   (lib (name RPi_Compute_Module_4)(type KiCad)(uri ${KIPRJMOD}/RPi_Compute_Module_4.pretty)(options "")(descr ""))
   (lib (name usbmux)(type KiCad)(uri ${KIPRJMOD}/usbmux.pretty)(options "")(descr ""))
+  (lib (name SparkFun-MicroMod)(type Eagle)(uri ${KIPRJMOD}/SparkFun-MicroMod.lbr)(options "")(descr ""))
 )

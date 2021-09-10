@@ -292,4 +292,322 @@ F 5 "C456127" H 9500 2350 50  0001 C CNN "LCSC"
 	1    9500 2350
 	1    0    0    -1  
 $EndComp
+$Comp
+L power:+3.3VA #PWR?
+U 1 1 6149B605
+P 2250 2050
+AR Path="/613FBD86/6149B605" Ref="#PWR?"  Part="1" 
+AR Path="/5515D395/6149B605" Ref="#PWR0182"  Part="1" 
+F 0 "#PWR0182" H 2250 1900 50  0001 C CNN
+F 1 "+3.3VA" H 2265 2223 50  0000 C CNN
+F 2 "" H 2250 2050 50  0001 C CNN
+F 3 "" H 2250 2050 50  0001 C CNN
+	1    2250 2050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0183
+U 1 1 6149D33F
+P 2250 5850
+F 0 "#PWR0183" H 2250 5600 50  0001 C CNN
+F 1 "GND" H 2255 5677 50  0000 C CNN
+F 2 "" H 2250 5850 50  0001 C CNN
+F 3 "" H 2250 5850 50  0001 C CNN
+	1    2250 5850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2250 5750 2250 5850
+$Comp
+L Connector:Conn_01x02_Male J36
+U 1 1 6149FF47
+P 1350 2150
+F 0 "J36" H 1458 2331 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 1458 2240 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 1350 2150 50  0001 C CNN
+F 3 "~" H 1350 2150 50  0001 C CNN
+	1    1350 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Male J37
+U 1 1 614A12FE
+P 1350 2400
+F 0 "J37" H 1458 2581 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 1458 2490 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 1350 2400 50  0001 C CNN
+F 3 "~" H 1350 2400 50  0001 C CNN
+	1    1350 2400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2250 2150 1550 2150
+Wire Wire Line
+	1850 2250 1850 2400
+Wire Wire Line
+	1850 2400 1550 2400
+Wire Wire Line
+	1850 2250 2250 2250
+$Comp
+L power:GND #PWR0184
+U 1 1 614A55CE
+P 1550 2250
+F 0 "#PWR0184" H 1550 2000 50  0001 C CNN
+F 1 "GND" H 1555 2077 50  0000 C CNN
+F 2 "" H 1550 2250 50  0001 C CNN
+F 3 "" H 1550 2250 50  0001 C CNN
+	1    1550 2250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR0185
+U 1 1 614A6690
+P 1550 2500
+F 0 "#PWR0185" H 1550 2250 50  0001 C CNN
+F 1 "GND" H 1555 2327 50  0000 C CNN
+F 2 "" H 1550 2500 50  0001 C CNN
+F 3 "" H 1550 2500 50  0001 C CNN
+	1    1550 2500
+	0    -1   -1   0   
+$EndComp
+Text HLabel 1950 2950 0    50   BiDi ~ 0
+USB_TEENSY_P
+Text HLabel 1950 2850 0    50   BiDi ~ 0
+USB_TEENSY_N
+Wire Wire Line
+	2250 2850 1950 2850
+Wire Wire Line
+	1950 2950 2250 2950
+$Comp
+L power:+5V #PWR0186
+U 1 1 614ABEF8
+P 2000 2750
+F 0 "#PWR0186" H 2000 2600 50  0001 C CNN
+F 1 "+5V" V 2015 2878 50  0000 L CNN
+F 2 "" H 2000 2750 50  0001 C CNN
+F 3 "" H 2000 2750 50  0001 C CNN
+	1    2000 2750
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2250 2750 2000 2750
+Text HLabel 4400 3550 2    50   Output ~ 0
+X_STEP
+Wire Wire Line
+	4050 3550 4400 3550
+Text HLabel 4400 3450 2    50   Output ~ 0
+X_DIR
+Wire Wire Line
+	4400 3450 4050 3450
+Text HLabel 4400 3650 2    50   Output ~ 0
+Y_STEP
+Wire Wire Line
+	4050 3650 4400 3650
+Text HLabel 4400 3750 2    50   Output ~ 0
+Y_DIR
+Wire Wire Line
+	4400 3750 4050 3750
+Text HLabel 4400 5250 2    50   Output ~ 0
+Z_STEP
+Wire Wire Line
+	4050 5250 4400 5250
+Text HLabel 1900 4150 0    50   Output ~ 0
+Z_DIR
+Wire Wire Line
+	1900 4150 2250 4150
+Text HLabel 1900 4250 0    50   Output ~ 0
+A_STEP
+Wire Wire Line
+	2250 4250 1900 4250
+Text HLabel 4400 5350 2    50   Output ~ 0
+A_DIR
+Wire Wire Line
+	4400 5350 4050 5350
+Text HLabel 4400 3050 2    50   Output ~ 0
+X_EN
+Wire Wire Line
+	4050 3050 4400 3050
+Wire Wire Line
+	4600 2850 4250 2850
+Text HLabel 4600 2850 2    50   Input ~ 0
+SPI_MOSI
+$Comp
+L Device:R_Small_US R?
+U 1 1 61602A9A
+P 4150 2850
+AR Path="/60869CEA/61602A9A" Ref="R?"  Part="1" 
+AR Path="/608DFF6C/61602A9A" Ref="R?"  Part="1" 
+AR Path="/608FE26D/61602A9A" Ref="R?"  Part="1" 
+AR Path="/608FE277/61602A9A" Ref="R?"  Part="1" 
+AR Path="/5515D395/61602A9A" Ref="R14"  Part="1" 
+F 0 "R14" H 4218 2896 50  0000 L CNN
+F 1 "100" H 4218 2805 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" H 4150 2850 50  0001 C CNN
+F 3 "~" H 4150 2850 50  0001 C CNN
+F 4 "C105588" H 4150 2850 50  0001 C CNN "LCSC"
+	1    4150 2850
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4050 2950 4400 2950
+Text HLabel 4400 2950 2    50   Input ~ 0
+SPI_MISO
+Text HLabel 1900 4950 0    50   Input ~ 0
+SCL
+Wire Wire Line
+	1900 4950 2250 4950
+Text HLabel 1900 5050 0    50   BiDi ~ 0
+SDA
+Wire Wire Line
+	2250 5050 1900 5050
+Text HLabel 4400 5450 2    50   Output ~ 0
+B_STEP
+Wire Wire Line
+	4050 5450 4400 5450
+Text HLabel 4400 5750 2    50   Output ~ 0
+B_DIR
+Wire Wire Line
+	4400 5750 4050 5750
+Text HLabel 1900 2450 0    50   Input ~ 0
+B_ENCA
+Wire Wire Line
+	1900 2450 2250 2450
+Text HLabel 1900 3550 0    50   Input ~ 0
+B_ENCB
+Wire Wire Line
+	1900 3550 2250 3550
+Text HLabel 2100 4050 0    50   Input ~ 0
+A_ENCA
+Wire Wire Line
+	2100 4050 2250 4050
+Text HLabel 2100 5250 0    50   Input ~ 0
+Z_LIMIT
+Wire Wire Line
+	2250 5250 2100 5250
+Text HLabel 2100 4350 0    50   Input ~ 0
+X_LIMIT
+Wire Wire Line
+	2100 4350 2250 4350
+Text HLabel 2100 4650 0    50   Input ~ 0
+A_ENCB
+Wire Wire Line
+	2250 4650 2100 4650
+Wire Wire Line
+	4250 2750 4400 2750
+Text HLabel 4400 2750 2    50   Output ~ 0
+SPI_CLK
+$Comp
+L Device:R_Small_US R?
+U 1 1 61634E8F
+P 4150 2750
+AR Path="/60869CEA/61634E8F" Ref="R?"  Part="1" 
+AR Path="/608DFF6C/61634E8F" Ref="R?"  Part="1" 
+AR Path="/608FE26D/61634E8F" Ref="R?"  Part="1" 
+AR Path="/608FE277/61634E8F" Ref="R?"  Part="1" 
+AR Path="/5515D395/61634E8F" Ref="R13"  Part="1" 
+F 0 "R13" H 4218 2796 50  0000 L CNN
+F 1 "100" H 4218 2705 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" H 4150 2750 50  0001 C CNN
+F 3 "~" H 4150 2750 50  0001 C CNN
+F 4 "C105588" H 4150 2750 50  0001 C CNN "LCSC"
+	1    4150 2750
+	0    -1   -1   0   
+$EndComp
+Text HLabel 4200 4750 2    50   Output ~ 0
+B_ENABLE
+Wire Wire Line
+	4200 4750 4050 4750
+Text HLabel 4200 4650 2    50   Output ~ 0
+Y_ENABLE
+Wire Wire Line
+	4200 4650 4050 4650
+Text HLabel 4200 2550 2    50   Output ~ 0
+Z_ENABLE
+Wire Wire Line
+	4200 2550 4050 2550
+Text HLabel 4200 2450 2    50   Output ~ 0
+A_ENABLE
+Wire Wire Line
+	4050 2450 4200 2450
+Text HLabel 4500 5650 2    50   Output ~ 0
+CS1
+$Comp
+L Device:R_Small_US R?
+U 1 1 6164C287
+P 4150 5650
+AR Path="/60869CEA/6164C287" Ref="R?"  Part="1" 
+AR Path="/608DFF6C/6164C287" Ref="R?"  Part="1" 
+AR Path="/608FE26D/6164C287" Ref="R?"  Part="1" 
+AR Path="/608FE277/6164C287" Ref="R?"  Part="1" 
+AR Path="/5515D395/6164C287" Ref="R15"  Part="1" 
+F 0 "R15" H 4218 5696 50  0000 L CNN
+F 1 "100" H 4218 5605 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" H 4150 5650 50  0001 C CNN
+F 3 "~" H 4150 5650 50  0001 C CNN
+F 4 "C105588" H 4150 5650 50  0001 C CNN "LCSC"
+	1    4150 5650
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	4250 5650 4500 5650
+Text HLabel 4950 2350 2    50   Output ~ 0
+CS0
+Wire Wire Line
+	4700 2350 4950 2350
+Text HLabel 5000 2250 2    50   Output ~ 0
+CS2
+Text HLabel 5000 2150 2    50   Output ~ 0
+CS3
+Wire Wire Line
+	4700 2250 5000 2250
+Wire Wire Line
+	5000 2150 4700 2150
+Text HLabel 5000 2050 2    50   Output ~ 0
+CS4
+Wire Wire Line
+	4700 2050 5000 2050
+$Comp
+L Device:R_Pack04 RN4
+U 1 1 61653365
+P 4500 2150
+F 0 "RN4" V 4825 2150 50  0000 C CNN
+F 1 "R_100_4" V 4734 2150 50  0000 C CNN
+F 2 "Resistor_SMD:R_Array_Concave_4x0603" V 4775 2150 50  0001 C CNN
+F 3 "~" H 4500 2150 50  0001 C CNN
+F 4 "742C083101JPCT-ND" V 4500 2150 50  0001 C CNN "Digi-Key_PN"
+F 5 "C79203" V 4500 2150 50  0001 C CNN "LCSC"
+	1    4500 2150
+	0    1    -1   0   
+$EndComp
+$Comp
+L MicroMod_Processor_Board:MICROMOD-2222-C J35
+U 1 1 6148C025
+P 3150 4050
+F 0 "J35" H 3150 6336 59  0000 C CNN
+F 1 "MICROMOD-2222-C" H 3150 6231 59  0000 C CNN
+F 2 "SparkFun-MicroMod:M.2-CONNECTOR-E" H 3150 4050 50  0001 C CNN
+F 3 "" H 3150 4050 50  0001 C CNN
+	1    3150 4050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4050 2350 4300 2350
+Wire Wire Line
+	4050 2250 4300 2250
+Wire Wire Line
+	4050 2150 4150 2150
+Wire Wire Line
+	4150 2150 4150 2100
+Wire Wire Line
+	4150 2100 4250 2100
+Wire Wire Line
+	4250 2100 4250 2050
+Wire Wire Line
+	4250 2050 4300 2050
+Wire Wire Line
+	4300 2150 4200 2150
+Wire Wire Line
+	4200 2150 4200 2050
+Wire Wire Line
+	4200 2050 4050 2050
 $EndSCHEMATC

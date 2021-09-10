@@ -8,4 +8,5 @@
   (lib (name 1827059-3)(type Legacy)(uri ${KIPRJMOD}/1827059-3.lib)(options "")(descr ""))
   (lib (name FSUSB42MUX)(type Legacy)(uri ${KIPRJMOD}/FSUSB42MUX.lib)(options "")(descr ""))
   (lib (name Raspberry_Pi_Compute_Module_4)(type Legacy)(uri ${KIPRJMOD}/Raspberry_Pi_Compute_Module_4.lib)(options "")(descr ""))
+  (lib (name MicroMod_Processor_Board)(type Legacy)(uri ${KIPRJMOD}/MicroMod_Processor_Board.lib)(options "")(descr ""))
 )
