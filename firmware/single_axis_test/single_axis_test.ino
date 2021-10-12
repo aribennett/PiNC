@@ -5,11 +5,11 @@
 #define R_SENSE 0.11f // SilentStepStick series use 0.11
 
 TMC5160Stepper x_spi(34, R_SENSE);
-StepperHFC x_driver(2, 3, 10, &x_spi, 8);
+StepperHFC x_driver(2, 3, 10, &x_spi, 6);
 TMC5160Stepper y_spi(33, R_SENSE);
-StepperHFC y_driver(4, 5, 40, &y_spi, 8);
+StepperHFC y_driver(4, 5, 40, &y_spi, 6);
 TMC5160Stepper z_spi(35, R_SENSE);
-StepperHFC z_driver(6, 7, 39, &z_spi, 8);
+StepperHFC z_driver(6, 7, 39, &z_spi, 6);
 TMC5160Stepper a_spi(37, R_SENSE);
 StepperHFC a_driver(26, 27, 41, &a_spi, 24);
 TMC5160Stepper b_spi(36, R_SENSE);
