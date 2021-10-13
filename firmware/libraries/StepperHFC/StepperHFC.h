@@ -12,6 +12,7 @@ public:
     StepperHFC(uint16_t step, uint16_t dir, uint16_t en, TMC5160Stepper *driver, uint16_t irun);
     void coldStart();
     void run();
+    void setEnable(bool enable);
 
 private:
     // define a dummy drive to replace later. prevents need to extend stepper library

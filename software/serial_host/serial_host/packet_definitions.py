@@ -13,6 +13,8 @@ class MotorCommand():
   SET_OMEGA = 2
   SET_ALPHA = 3
   SET_THETA = 4
+  ENABLE = 5
+  DISABLE = 6
 
 HeaderPacket = namedtuple('HeaderPacket', 'command motorCount sensorCount ')
 MotorStatePacket = namedtuple('MotorStatePacket', 'motorId theta omega ')

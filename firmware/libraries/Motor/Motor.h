@@ -12,6 +12,7 @@ class Motor
 public:
     virtual void coldStart(){};
     virtual void run(){};
+    virtual void setEnable(bool enable);
     void setAlpha(float alpha);
     void setOmega(float omega);
     void setTheta(float theta);
@@ -21,6 +22,7 @@ public:
 
 protected:
     uint8_t _id;
+    bool _enable = false;
     volatile float _theta = 0;
     volatile float _omega = 0;
     volatile float _alpha = 0;
