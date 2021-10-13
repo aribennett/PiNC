@@ -25,7 +25,7 @@ void StepperHFC::coldStart()
     pinMode(_stepPin, OUTPUT);
     pinMode(_dirPin, OUTPUT);
     digitalWrite(_dirPin, _dir);
-    self.setEnable(true);
+    setEnable(true);
 
     // Enable one according to your setup
     _driver->begin();  //  SPI: Init CS pins and possible SW SPI pins
