@@ -24,8 +24,8 @@ void StepperHFC::coldStart()
     pinMode(_en_pin, OUTPUT);
     pinMode(_stepPin, OUTPUT);
     pinMode(_dirPin, OUTPUT);
-    digitalWrite(_en_pin, LOW); // Enable driver in hardware
     digitalWrite(_dirPin, _dir);
+    self.setEnable(true);
 
     // Enable one according to your setup
     _driver->begin();  //  SPI: Init CS pins and possible SW SPI pins
@@ -34,6 +34,12 @@ void StepperHFC::coldStart()
     _driver->microsteps(MICROSTEPS);
     _driver->dedge(true);
     _driver->intpol(true);
+}
+
+void StepperHFC::setEnable(bool enable)
+{
+    _enable = enable;
+    digitalWrite(_en_pin, !enable); // Enable driver in hardware
 }
 
 void StepperHFC::run()
