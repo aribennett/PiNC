@@ -8,10 +8,10 @@ import math
 from time import time, sleep
 import os
 from xbox360controller import Xbox360Controller
-
+from gcode_solver import GcodeSolver
 CONTROLLER_DEAD_ZONE = 0.2
 CONTROLLER_JOG_RATE = 100
-MAX_ACCELERATION = 100
+MAX_ACCELERATION = 1000
 XY_MM_PER_RAD = 6.36619783227
 
 x_nominal = 0
@@ -23,25 +23,19 @@ v_errorx = 0
 v_errory = 0
 x_velocity_nominal = 0
 y_velocity_nominal = 0
-
+start_time = None
 embedded_motors = {}
 embedded_sensors = {}
 jog_controller = None
 
-def handleSlider(value):
-    global x_nominal
-    x_nominal = float(value)
+with open('box_gcode.gcode', 'r') as f:
+  gcode = f.read()
 
-
-def handleSlider2(value):
-    global y_nominal
-    y_nominal = float(value)
-
-
+path_planner = GcodeSolver(gcode)
 
 def embedded_service():
     global errorx, errory, x_velocity_nominal, y_velocity_nominal, v_errorx, v_errory
-    KP = 10000
+    KP = 5000
     KP_VELOCITY = 1000
     KD = 0
     KI = 0
@@ -83,20 +77,23 @@ def embedded_service():
             # x_nominal = 0
             # y_nominal = 0
             z_nominal = 0
-        RADIUS = 10
-        SPEED = .5
-        x_nominal = math.sin(SPEED*time())*RADIUS
-        y_nominal = math.cos(SPEED*time())*RADIUS
+        # RADIUS = 10
+        # SPEED = .5
+        # x_nominal = math.sin(SPEED*time())*RADIUS
+        # y_nominal = math.cos(SPEED*time())*RADIUS
+        positions, velocities = path_planner.get_solution(time()-start_time)
+        position = positions[0]
+        x_nominal = position[0]/XY_MM_PER_RAD
+        y_nominal = position[1]/XY_MM_PER_RAD
+        x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
+        y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
+        v_errorx = x_velocity_nominal - embedded_motors[4].omega
+        v_errory = y_velocity_nominal - embedded_motors[3].omega
 
-        x_velocity_nominal = SPEED*math.cos(SPEED*time())*RADIUS
-        y_velocity_nominal = -SPEED*math.sin(SPEED*time())*RADIUS
-        v_errorx = x_velocity_nominal + y_velocity_nominal - embedded_motors[4].omega
-        v_errory = x_velocity_nominal - y_velocity_nominal - embedded_motors[3].omega
-
-        errorx = x_nominal + y_nominal - embedded_motors[4].theta
+        errorx = x_nominal - embedded_motors[4].theta
         control_inputx = np.clip(KP*errorx - KD*embedded_motors[4].omega + KP_VELOCITY*v_errorx, -MAX_ACCELERATION, MAX_ACCELERATION)
 
-        errory = x_nominal - y_nominal - embedded_motors[3].theta
+        errory = y_nominal - embedded_motors[3].theta
         control_inputy = np.clip(KP*errory - KD*embedded_motors[3].omega + KP_VELOCITY*v_errory, -MAX_ACCELERATION, MAX_ACCELERATION)
 
         errorz2 = z_nominal - embedded_motors[2].omega
@@ -125,12 +122,15 @@ if __name__ == "__main__":
     os.system(f"taskset -p -c 3 {os.getpid()}")
     cold_start('/dev/hidraw2')
     with Xbox360Controller(0, axis_threshold=0.2) as controller:
+        start_time = time()
         jog_controller = controller
         embedded_thread = Thread(target=embedded_service, daemon=True)
         embedded_thread.start()
-
         while True:
             sleep(.1)
-            pos_error = math.sqrt(errorx**2 + errory**2)*XY_MM_PER_RAD
-            vel_error = math.sqrt(v_errorx**2 + v_errory**2)*XY_MM_PER_RAD
-            print(str(pos_error).ljust(30, ' '), v_errorx, v_errory)
+            # pos_error = math.sqrt(errorx**2 + errory**2)*XY_MM_PER_RAD
+            # vel_error = math.sqrt(v_errorx**2 + v_errory**2)*XY_MM_PER_RAD
+            # print(str(pos_error).ljust(30, ' '), v_errorx, v_errory)
+            # print(str(pos_error))
+            # pos, vel = path_planner.get_solution(time()-start_time)
+            # print(pos[0], vel)

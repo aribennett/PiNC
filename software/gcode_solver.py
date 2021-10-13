@@ -16,7 +16,7 @@ class GcodeSolver(object):
         vz = 0
         ve = 0
 
-        self.motion_list = [[x, y, z, e, f, t]]
+        self.motion_list = [[x, y, z, e, f, t, vx, vy, vz, ve]]
 
         count = 0
         for line in lines:
@@ -40,9 +40,16 @@ class GcodeSolver(object):
                     dy = y - prev[1]
                     dz = z - prev[2]
                     distance = np.sqrt(np.square(dx) + np.square(dy) + np.square(dz))
-                    t += distance/f
+                    dt = distance/f
+                    vx = dx/dt
+                    vy = dy/dt
+                    vz = dz/dt
+                    t += dt
                 elif e != self.motion_list[-1][3]:
                     # solely extruder move
+                    vx = 0
+                    vy = 0
+                    vz = 0
                     t += abs(prev[3]-e)/f
                     
                 else:
@@ -50,15 +57,17 @@ class GcodeSolver(object):
                     output = False
 
                 if output:
-                    self.motion_list.append([x, y, z, e, f, t])
+                    self.motion_list.append([x, y, z, e, f, t, vx, vy, vz, ve])
 
         self.output_array = np.array(self.motion_list)
         self.time_array = self.output_array[:, 5]
         self.posistion_array = self.output_array [:, 0:4]
+        self.velocity_array = self.output_array [:, 6:10]
 
     def get_solution(self, time):
         insert_index = np.searchsorted(self.time_array, time)
         interp = (time - self.time_array[insert_index-1])/(self.time_array[insert_index] - self.time_array[insert_index-1])
         axis_interp = np.transpose(np.tile(interp, (4, 1)))
         position = axis_interp*(self.posistion_array[insert_index] - self.posistion_array[insert_index-1]) + self.posistion_array[insert_index-1]
-        return position
+        velocity = self.velocity_array[insert_index]
+        return position, velocity
