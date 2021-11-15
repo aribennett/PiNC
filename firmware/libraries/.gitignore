@@ -13,3 +13,5 @@
 !PWMMotor/*
 !RCServo/
 !RCServo/*
+!TMCConfig/
+!TMCConfig/*
