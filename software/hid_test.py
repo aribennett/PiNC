@@ -1,8 +1,14 @@
 import hid
 from serial_host import packet_definitions as pkt
 from time import time
+from gcode_solver import GcodeSolver
 pid = 1158
 vid = 5824
+
+with open('box_gcode.gcode', 'r') as f:
+  gcode = f.read()
+
+path_planner = GcodeSolver(gcode)
 
 with hid.Device(vid, pid) as h:
     print(f'Device manufacturer: {h.manufacturer}')
