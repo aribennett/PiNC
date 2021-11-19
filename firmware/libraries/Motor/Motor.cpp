@@ -13,11 +13,14 @@ void Motor::setAlpha(float alpha)
 void Motor::setOmega(float omega)
 {
     _omega = omega;
+    _alpha = 0;
 }
 
 void Motor::setTheta(float theta)
 {
     _theta = theta;
+    _omega = 0;
+    _alpha = 0;
 }
 
 MotorStatePacket Motor::getMotorState()
