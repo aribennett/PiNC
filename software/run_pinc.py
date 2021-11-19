@@ -2,7 +2,7 @@ import tkinter
 from numpy.lib.function_base import vectorize
 from serial_host import packet_definitions as pkt
 from serial_host import cold_start, read, write
-from marker_tracking import get_laser_displacement, run_tracking_loop, get_error, end_tracking_loop
+from marker_tracking import get_laser_displacement, run_tracking_loop, get_error, end_tracking_loop, enable_fiducial_sensing, enable_laser_sensing
 from threading import Thread
 import numpy as np
 import math
@@ -71,6 +71,7 @@ def embedded_service():
         if first_message:
             first_message = False
             if current_state == "HOMING":
+                enable_fiducial_sensing()
                 control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=1)
                 control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
                 write(control_packet)
@@ -88,6 +89,7 @@ def embedded_service():
                 control_packet += pkt.pack_MotorCommandPacket(embedded_motors[0].motorId, pkt.MotorCommand.ENABLE)
                 write(control_packet)
             elif current_state == "HOME_Z":
+                enable_laser_sensing()
                 control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=5)
                 control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
                 control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)

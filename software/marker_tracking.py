@@ -14,6 +14,18 @@ error_x = None
 error_y = None
 laser_x = 0
 kill_loop = False
+enable_fiducial = False
+enable_laser = False
+
+def enable_laser_sensing():
+    global enable_laser
+    enable_laser = True
+
+
+def enable_fiducial_sensing():
+    global enable_fiducial
+    enable_fiducial = True
+
 
 def get_laser_displacement():
     return laser_x-RESOLUTION[0]/2
@@ -54,7 +66,7 @@ def find_laser(image):
         laser_x = 400
 
 def run_tracking_loop(debug=False):
-    global kill_loop
+    global kill_loop, enable_fiducial, enable_laser
     kill_loop = False
     with PiCamera() as camera:
         camera.resolution = RESOLUTION
@@ -62,6 +74,13 @@ def run_tracking_loop(debug=False):
         camera.shutter_speed = 2000
         raw_capture = PiRGBArray(camera, size=RESOLUTION)
         for capture in camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
+            if enable_laser:
+                camera.shutter_speed = 500
+                enable_laser = False
+            elif enable_fiducial:
+                camera.shutter_speed = 0
+                enable_fiducial = False
+
             frame = capture.array
             # do tracking
             find_markers(frame)
