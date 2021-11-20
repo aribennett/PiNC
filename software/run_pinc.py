@@ -7,9 +7,12 @@ from threading import Thread
 import numpy as np
 import math
 from time import time, sleep
+from queue import Queue
 import os
 from xbox360controller import Xbox360Controller
 from gcode_solver import GcodeSolver
+from pinc_state import State
+
 CONTROLLER_DEAD_ZONE = 0.2
 CONTROLLER_JOG_RATE = 100
 MAX_ACCELERATION = 1000
@@ -45,14 +48,56 @@ with open('box_gcode.gcode', 'r') as f:
 
 path_planner = GcodeSolver(gcode)
 
-def embedded_service():
-    global errorx, errory, x_velocity_nominal, y_velocity_nominal, v_errorx, v_errory, current_state, home_x, home_y, home_z, z_velocity_nominal
+state = None
+event_queue = Queue()
+
+def post_event(event) -> None:
+    event_queue.put(event)
+
+
+def handle_events() -> str:
+    global state
+    if not event_queue.empty():
+        state = state.on_event(event_queue.get())
+
+class HomeState(state):
+    def __init__(self):
+        super().__init__()
+        self.event_map['found home'] = FineHoming
+        enable_fiducial_sensing()
+        control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=1)
+        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
+        write(control_packet)
+
+    def run(self):
+        control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=1)
+        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.SET_OMEGA, control=HOMING_SPEED)
+        write(control_packet)
+
+        e_x, e_y = get_error()
+        if e_x is None or e_y is None:
+            post_event('found home')
+
+class FineHomeStaet(state):
+    def __init__(self):
+        super().__init__()
+        control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=2)
+        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
+        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
+        write(control_packet)
+
+    def run(self):
+        pass
+
+def embedded_service() -> None:
+    global errorx, errory, x_velocity_nominal, y_velocity_nominal, v_errorx, v_errory, current_state, home_x, home_y, home_z, z_velocity_nominal, state
     KP = 5000
     KP_VELOCITY = 1000
     KD = 0
     count = 0
     start_time = time()
     first_message = True
+    
     while True:
         hid_msg = read()
         header = pkt.unpack_HeaderPacket(hid_msg[:pkt.size_HeaderPacket])
@@ -67,19 +112,16 @@ def embedded_service():
                 hid_msg[unpack_index:unpack_index+pkt.size_SensorPacket])
             embedded_sensors[sensor_packet.sensorId] = sensor_packet
             unpack_index += pkt.size_SensorPacket
+        handle_events()
+        state.run()
+        continue
 
         if first_message:
             first_message = False
             if current_state == "HOMING":
-                enable_fiducial_sensing()
-                control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=1)
-                control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
-                write(control_packet)
+                
             elif current_state == "FINE_HOME":
-                control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=2)
-                control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
-                control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
-                write(control_packet)
+                
             elif current_state == "MANUAL_CONTROL":
                 control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=5)
                 control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
