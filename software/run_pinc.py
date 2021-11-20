@@ -3,7 +3,8 @@ from numpy import core
 from numpy.lib.function_base import vectorize
 from serial_host import packet_definitions as pkt
 from serial_host import cold_start, read, write
-from kinematics import corexy_inverse, corexy_transform
+from kinematics import corexy_inverse, corexy_transform, z0, z1, z2, center_home
+import kinematics
 from marker_tracking import get_laser_displacement, run_tracking_loop, get_error, end_tracking_loop, enable_fiducial_sensing, enable_laser_sensing
 from threading import Thread
 import numpy as np
@@ -80,13 +81,15 @@ class JogState(State):
     
     def run(self):
         self.xpos, self.ypos = corexy_inverse(embedded_motors[3].theta - FineHomeState.home_3, embedded_motors[4].theta- FineHomeState.home_4)
+        self.xvel, self.yvel = corexy_inverse(embedded_motors[3].omega, embedded_motors[4].omega)
 
 class HomeState(State):
     def __init__(self):
         super().__init__()
         self.event_map['found home'] = FineHomeState
         enable_fiducial_sensing()
-        control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=1)
+        control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=2)
+        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.DISABLE)
         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
         write(control_packet)
 
@@ -105,7 +108,8 @@ class FineHomeState(State):
     home_4 = 0
     def __init__(self):
         super().__init__()
-        self.event_map['fine home complete'] = JogHome1State
+        self.event_map['fine home complete'] = JogHomeCenterState
+        self.event_map['lost tracking'] = HomeState
         control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=2)
         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
@@ -114,6 +118,9 @@ class FineHomeState(State):
     def run(self):
         global home_x, home_y
         e_x, e_y = get_error()
+        if e_x is None or e_y is None:
+            post_event("lost tracking")
+            return
         errorx = -e_x + e_y
         errory = -e_x - e_y
         control_packet = pkt.pack_HeaderPacket(
@@ -125,41 +132,39 @@ class FineHomeState(State):
         if np.sqrt(errorx**2 + errory**2) < 1:
             FineHomeState.home_4 = embedded_motors[4].theta
             FineHomeState.home_3 = embedded_motors[3].theta
+            enable_laser_sensing()
             post_event('fine home complete')
 
-class JogHome1State(JogState):
+class JogHomeState(JogState):
     def __init__(self):
         super().__init__()
-        self.event_map['at home 1'] = HomeZ1State
+        self.home_event = 'at home'
+        self.home_x = 30
+        self.home_y = 30
 
     def run(self):
         super().run()
-        x_nominal = 200/XY_MM_PER_RAD
-        y_nominal = 200/XY_MM_PER_RAD
-        e_x = x_nominal-self.xpos
-        e_y = y_nominal-self.xpos
-        control_x = e_x*20
-        control_y = e_y*20
+        errorx = self.home_x-self.xpos
+        errory = self.home_y-self.ypos
+        control_x = errorx*20 - self.xvel*10
+        control_y = errory*20 - self.yvel*20
         control_3, control_4 = corexy_transform(control_x, control_y)
         control_packet = pkt.pack_HeaderPacket(
             pkt.SerialCommand.RUN_MOTOR, motorCount=2)
-        control_input4 = np.clip(control_4 - 20*embedded_motors[4].omega, -MAX_ACCELERATION, MAX_ACCELERATION)
-        control_input3 = np.clip(control_3 - 20*embedded_motors[3].omega, -MAX_ACCELERATION, MAX_ACCELERATION)
         control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[4].motorId, pkt.MotorCommand.SET_ALPHA, control=control_input4)
+            embedded_motors[3].motorId, pkt.MotorCommand.SET_ALPHA, control=control_3)
         control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[3].motorId, pkt.MotorCommand.SET_ALPHA, control=control_input3)
+            embedded_motors[4].motorId, pkt.MotorCommand.SET_ALPHA, control=control_4)
+
         write(control_packet)
-        if np.sqrt(e_x**2 + e_y**2) < .005:
-            post_event('at home 1')
+        if np.sqrt(errorx**2 + errory**2) < .005:
+            post_event(self.home_event)
 
-
-class HomeZ1State(State):
+class HomeZState(State):
     def __init__(self):
         super().__init__()
-        self.event_map['z 1 home'] = ManualState
 
-        enable_laser_sensing()
+        self.motor_index = 'all'
         control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=5)
         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
@@ -170,30 +175,152 @@ class HomeZ1State(State):
 
     def run(self):
         z_nominal = np.clip(get_laser_displacement()/10, -10, 10)
-        control_packet = pkt.pack_HeaderPacket(
-            pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[4].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[3].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[2].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[1].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[0].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        write(control_packet)
+        if self.motor_index == 'all':
+            control_packet = pkt.pack_HeaderPacket(
+                pkt.SerialCommand.RUN_MOTOR, motorCount=5)
+            control_packet += pkt.pack_MotorCommandPacket(
+                embedded_motors[4].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+            control_packet += pkt.pack_MotorCommandPacket(
+                embedded_motors[3].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+            control_packet += pkt.pack_MotorCommandPacket(
+                embedded_motors[2].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
+            control_packet += pkt.pack_MotorCommandPacket(
+                embedded_motors[1].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
+            control_packet += pkt.pack_MotorCommandPacket(
+                embedded_motors[0].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
+            write(control_packet)
+        else:
+            control_packet = pkt.pack_HeaderPacket(
+                pkt.SerialCommand.RUN_MOTOR, motorCount=5)
+            for motor in embedded_motors:
+                if embedded_motors[motor].motorId != self.motor_index:
+                    control_packet += pkt.pack_MotorCommandPacket(
+                        embedded_motors[motor].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+                else:
+                    control_packet += pkt.pack_MotorCommandPacket(
+                        embedded_motors[self.motor_index].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
+            write(control_packet)
+
         if z_nominal == 0:
-            post_event('z 1 home')
+            post_event('z home')
             home_z = embedded_motors[0].theta
 
 
-class JogHome2State(State):
+class JogHomeCenterState(JogHomeState):
     def __init__(self):
         super().__init__()
+        self.event_map['at home'] = HomeCenterState
+        self.home_x = center_home[0]
+        self.home_y = center_home[1]
 
+
+class HomeCenterState(HomeZState):
+    def __init__(self):
+        super().__init__()
+        self.event_map['z home'] = JogHome0State
+
+
+class JogHome0State(JogHomeState):
+    def __init__(self):
+        super().__init__()
+        self.event_map['at home'] = HomeZ0State
+        self.home_x = z0[0]
+        self.home_y = z0[1]
+
+
+class HomeZ0State(HomeZState):
+    def __init__(self):
+        super().__init__()
+        self.motor_index = 0
+        self.event_map['z home'] = JogHome1State
+
+
+class JogHome1State(JogHomeState):
+    def __init__(self):
+        super().__init__()
+        self.event_map['at home'] = HomeZ1State
+        self.home_x = z1[0]
+        self.home_y = z1[1]
+
+
+class HomeZ1State(HomeZState):
+    def __init__(self):
+        super().__init__()
+        self.event_map['z home'] = JogHome2State
+        self.motor_index = 1
+
+
+class JogHome2State(JogHomeState):
+    def __init__(self):
+        super().__init__()
+        self.event_map['at home'] = HomeZ2State
+        self.home_x = z2[0]
+        self.home_y = z2[1]
+
+
+class HomeZ2State(HomeZState):
+    def __init__(self):
+        super().__init__()
+        self.event_map['z home'] = Jog00State
+        self.motor_index = 2
+
+class Jog00State(JogHomeState):
+    def __init__(self):
+        super().__init__()
+        end_tracking_loop()
+        self.event_map['at home'] = PrintState
+        self.home_x = 0
+        self.home_y = 0
+
+class PrintState(JogState):
+    def __init__(self):
+        super().__init__()
+        self.start_time = time()
+    
     def run(self):
-        pass
+        super().run()
+        KP = 5000
+        KP_VELOCITY = 1000
+        positions, velocities = path_planner.get_solution(time()-self.start_time)
+        position = positions[0]
+        x_nominal = position[0]/XY_MM_PER_RAD
+        y_nominal = position[1]/XY_MM_PER_RAD
+        z_nominal = position[2]/Z_MM_PER_RAD
+        x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
+        y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
+        z_velocity_nominal = velocities[2]/Z_MM_PER_RAD
+        v_errorx = x_velocity_nominal - self.xvel
+        v_errory = y_velocity_nominal - self.yvel
+
+        errorx = x_nominal - self.xpos
+        control_inputx = np.clip(KP*errorx + KP_VELOCITY*v_errorx, -MAX_ACCELERATION, MAX_ACCELERATION)
+        
+        errory = y_nominal - self.ypos
+        control_inputy = np.clip(KP*errory + KP_VELOCITY*v_errory, -MAX_ACCELERATION, MAX_ACCELERATION)
+
+        control3, control4 = corexy_transform(control_inputx, control_inputy)
+
+        # errorz2 = z_nominal - embedded_motors[2].theta
+        # control_inputz2 = KP*errorz2 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[2].omega)
+        # errorz1 = z_nominal - embedded_motors[1].theta
+        # control_inputz1 = KP*errorz1 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[1].omega)
+        # errorz0 = z_nominal - embedded_motors[0].theta
+        # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
+
+        control_packet = pkt.pack_HeaderPacket(
+            pkt.SerialCommand.RUN_MOTOR, motorCount=5)
+        control_packet += pkt.pack_MotorCommandPacket(
+            embedded_motors[4].motorId, pkt.MotorCommand.SET_ALPHA, control=control4)
+        control_packet += pkt.pack_MotorCommandPacket(
+            embedded_motors[3].motorId, pkt.MotorCommand.SET_ALPHA, control=control3)
+        control_packet += pkt.pack_MotorCommandPacket(
+            embedded_motors[2].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+        control_packet += pkt.pack_MotorCommandPacket(
+            embedded_motors[1].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+        control_packet += pkt.pack_MotorCommandPacket(
+            embedded_motors[0].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+        write(control_packet)
+
 
 class ManualState(State):
     Z_JOG = 10
@@ -272,39 +399,6 @@ def embedded_service():
         state.run()
         # continue
 
-        # if first_message:
-        #     first_message = False
-        #     if current_state == "HOMING":
-                
-        #     elif current_state == "FINE_HOME":
-                
-        #     elif current_state == "MANUAL_CONTROL":
-        #         control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[2].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[1].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[0].motorId, pkt.MotorCommand.ENABLE)
-        #         write(control_packet)
-        #     elif current_state == "HOME_Z":
-        #         enable_laser_sensing()
-        #         control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[2].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[1].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[0].motorId, pkt.MotorCommand.ENABLE)
-        #         write(control_packet)
-        #     else:
-        #         start_time = time()
-        #         control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[2].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[1].motorId, pkt.MotorCommand.ENABLE)
-        #         control_packet += pkt.pack_MotorCommandPacket(embedded_motors[0].motorId, pkt.MotorCommand.ENABLE)
-        #         write(control_packet)
-
         # if current_state != "RUNNING":
         #     positions, velocities = path_planner.get_solution(0)
         # else:
@@ -320,99 +414,7 @@ def embedded_service():
         # v_errorx = x_velocity_nominal - embedded_motors[4].omega
         # v_errory = y_velocity_nominal - embedded_motors[3].omega
 
-        # e_x, e_y = get_error()
 
-        # if (e_x is None or e_y is None) and current_state not in ["JOG_HOME", "RUNNING"]:
-        #     if current_state == "HOMING":
-        #         errory = 100
-        #         errorx = 0
-        # elif current_state == "HOMING":
-        #     e_x = e_y = 0
-        #     current_state = "FINE_HOME"
-        #     first_message = True
-        #     print("Saw home")
-        #     continue
-        # elif current_state == "FINE_HOME":
-        #     errorx = -e_x + e_y
-        #     errory = -e_x - e_y
-        #     if np.sqrt(errorx**2 + errory**2) < 1:
-        #         print("Homed")
-        #         current_state = "JOG_HOME"
-        #         # end_tracking_loop()
-        #         home_x = embedded_motors[4].theta
-        #         home_y = embedded_motors[3].theta
-        #         print(home_x, home_y)
-        #         continue
-        # elif current_state == "JOG_HOME":
-        #     errorx = -(embedded_motors[4].theta - home_x)
-        #     errory = (-300/XY_MM_PER_RAD + home_y) - embedded_motors[3].theta
-        #     if np.sqrt(errorx**2 + errory**2) < .005:
-        #         print("Jogged to home")
-        #         # current_state = "RUNNING"
-        #         current_state = "HOME_Z"
-        #         first_message = True
-        #         home_x = embedded_motors[4].theta
-        #         home_y = embedded_motors[3].theta
-        #         print(home_x, home_y)
-        #         continue
-
-        
-        # if current_state == "HOMING":
-        #     control_packet = pkt.pack_HeaderPacket(
-        #         pkt.SerialCommand.RUN_MOTOR, motorCount=1)
-        #     control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.SET_OMEGA, control=HOMING_SPEED)
-        #     write(control_packet)
-        # elif current_state == "FINE_HOME":
-        #     control_packet = pkt.pack_HeaderPacket(
-        #         pkt.SerialCommand.RUN_MOTOR, motorCount=2)
-        #     control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.SET_OMEGA, control=-errory/10)
-        #     control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.SET_OMEGA, control=-errorx/10)
-        #     write(control_packet)
-        # elif current_state == "JOG_HOME":
-        #     control_packet = pkt.pack_HeaderPacket(
-        #         pkt.SerialCommand.RUN_MOTOR, motorCount=2)
-        #     control_inputx = np.clip(50*errorx - 20*embedded_motors[4].omega, -MAX_ACCELERATION, MAX_ACCELERATION)
-        #     control_inputy = np.clip(50*errory - 20*embedded_motors[3].omega, -MAX_ACCELERATION, MAX_ACCELERATION)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[4].motorId, pkt.MotorCommand.SET_ALPHA, control=control_inputx)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[3].motorId, pkt.MotorCommand.SET_ALPHA, control=control_inputy)
-        #     write(control_packet)
-        # elif current_state == "HOME_Z":
-        #     z_nominal = np.clip(get_laser_displacement()/10, -10, 10)
-        #     control_packet = pkt.pack_HeaderPacket(
-        #         pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[4].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[3].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[2].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[1].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[0].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        #     write(control_packet)
-        #     if z_nominal == 0:
-        #         current_state = "MANUAL_CONTROL"
-        #         first_message = True
-        #         home_z = embedded_motors[0].theta
-        # elif current_state == "MANUAL_CONTROL":
-        #     if jog_controller.button_a.is_pressed:
-        #         z_nominal = 20
-        #     elif jog_controller.button_b.is_pressed:
-        #         z_nominal = -20
-        #     else:
-        #         z_nominal = 0
-        #     control_packet = pkt.pack_HeaderPacket(
-        #         pkt.SerialCommand.RUN_MOTOR, motorCount=3)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[2].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[1].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[0].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        #     write(control_packet)
         # else:
         #     errorx = x_nominal - embedded_motors[4].theta
         #     control_inputx = np.clip(KP*errorx - KD*embedded_motors[4].omega + KP_VELOCITY*v_errorx, -MAX_ACCELERATION, MAX_ACCELERATION)
@@ -456,7 +458,7 @@ if __name__ == "__main__":
         embedded_thread.start()
         print("Started controls")
         while True:
-            sleep(1)
+            sleep(.25)
             # print(embedded_motors[4].theta, embedded_motors[3].theta, errorx, errory)
             # print(-100/XY_MM_PER_RAD, embedded_motors[3].theta, home_y)
             # print((-100/XY_MM_PER_RAD + home_y) - embedded_motors[3].theta)
@@ -468,5 +470,5 @@ if __name__ == "__main__":
             # pos, vel = path_planner.get_solution(time()-start_time)
             # print(pos[0], vel)
 
-            print(get_laser_displacement(), get_error(), state, controller.trigger_l.value)
+            # print(get_laser_displacement(), get_error(), state, controller.trigger_l.value)
             # print(corexy_inverse(embedded_motors[3].theta - FineHomeState.home_3, embedded_motors[4].theta- FineHomeState.home_4))
