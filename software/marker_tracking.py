@@ -7,7 +7,7 @@ from picamera.array import PiRGBArray
 from time import sleep
 DICTIONARY = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_250)
 PARAMETERS = cv2.aruco.DetectorParameters_create()
-RESOLUTION = (400, 400)
+RESOLUTION = (600, 600)
 FRAMERATE = 30
 
 error_x = None
@@ -47,23 +47,15 @@ def find_markers(frame):
 def find_laser(image):
     global laser_x
     image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    lower = np.array([0,0,240])
-    upper = np.array([255,255,255])
+    lower = np.array([120,0,100])
+    upper = np.array([200,255,255])
     mask = cv2.inRange(image, lower, upper)
     M = cv2.moments(mask)
     # calculate x coordinate of center
     if M["m00"] != 0:
         laser_x = int(M["m10"] / M["m00"])
     else:
-        laser_x = 400
-
-    lower_red = np.array([155,90,100])
-    upper_red = np.array([179,255,255])
-    mask2 = cv2.inRange(image, lower_red, upper_red)
-    M2 = cv2.moments(mask2)
-    # no laser
-    if M2["m00"] == 0:
-        laser_x = 400
+        laser_x = RESOLUTION[0]
 
 def run_tracking_loop(debug=False):
     global kill_loop, enable_fiducial, enable_laser
@@ -71,11 +63,10 @@ def run_tracking_loop(debug=False):
     with PiCamera() as camera:
         camera.resolution = RESOLUTION
         camera.framerate = FRAMERATE
-        camera.shutter_speed = 2000
         raw_capture = PiRGBArray(camera, size=RESOLUTION)
         for capture in camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
             if enable_laser:
-                camera.shutter_speed = 500
+                camera.shutter_speed = 25
                 enable_laser = False
             elif enable_fiducial:
                 camera.shutter_speed = 0
