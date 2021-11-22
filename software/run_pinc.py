@@ -24,28 +24,14 @@ XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.795774715
 HOMING_SPEED = 10
 
-x_nominal = 0
-y_nominal = 0
-z_nominal = 0
-
-home_x = 0
-home_y = 0
-home_z = 0
+# ------ Debug Variables --------
 errorx = 0
 errory = 0
-v_errorx = 0
-v_errory = 0
+# -------------------------------
 
-x_velocity_nominal = 0
-y_velocity_nominal = 0
-z_velocity_nominal = 0
-start_time = None
 embedded_motors = {}
 embedded_sensors = {}
 jog_controller = None
-
-# current_state = "MANUAL_CONTROL"
-current_state = "HOMING"
 
 with open('box_gcode.gcode', 'r') as f:
   gcode = f.read()
@@ -279,6 +265,7 @@ class PrintState(JogState):
     
     def run(self):
         super().run()
+        global errorx, errory
         KP = 5000
         KP_VELOCITY = 1000
         positions, velocities = path_planner.get_solution(time()-self.start_time)
@@ -293,10 +280,10 @@ class PrintState(JogState):
         v_errory = y_velocity_nominal - self.yvel
 
         errorx = x_nominal - self.xpos
-        control_inputx = np.clip(KP*errorx + KP_VELOCITY*v_errorx, -MAX_ACCELERATION, MAX_ACCELERATION)
+        control_inputx = KP*errorx + KP_VELOCITY*v_errorx
         
         errory = y_nominal - self.ypos
-        control_inputy = np.clip(KP*errory + KP_VELOCITY*v_errory, -MAX_ACCELERATION, MAX_ACCELERATION)
+        control_inputy = KP*errory + KP_VELOCITY*v_errory
 
         control3, control4 = corexy_transform(control_inputx, control_inputy)
 
@@ -372,13 +359,7 @@ class ManualState(State):
 
 
 def embedded_service():
-    global errorx, errory, x_velocity_nominal, y_velocity_nominal, v_errorx, v_errory, current_state, home_x, home_y, home_z, z_velocity_nominal, state
-    KP = 5000
-    KP_VELOCITY = 1000
-    KD = 0
-    count = 0
-    start_time = time()
-    first_message = True
+    global state
     state = InitState()
     
     while True:
@@ -397,52 +378,6 @@ def embedded_service():
             unpack_index += pkt.size_SensorPacket
         handle_events()
         state.run()
-        # continue
-
-        # if current_state != "RUNNING":
-        #     positions, velocities = path_planner.get_solution(0)
-        # else:
-        #     positions, velocities = path_planner.get_solution(time()-start_time)
-
-        # position = positions[0]
-        # x_nominal = position[0]/XY_MM_PER_RAD + home_x
-        # y_nominal = position[1]/XY_MM_PER_RAD + home_y
-        # z_nominal = position[2]/Z_MM_PER_RAD + home_z
-        # x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
-        # y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
-        # z_velocity_nominal = velocities[2]/Z_MM_PER_RAD
-        # v_errorx = x_velocity_nominal - embedded_motors[4].omega
-        # v_errory = y_velocity_nominal - embedded_motors[3].omega
-
-
-        # else:
-        #     errorx = x_nominal - embedded_motors[4].theta
-        #     control_inputx = np.clip(KP*errorx - KD*embedded_motors[4].omega + KP_VELOCITY*v_errorx, -MAX_ACCELERATION, MAX_ACCELERATION)
-            
-        #     errory = y_nominal - embedded_motors[3].theta
-        #     control_inputy = np.clip(KP*errory - KD*embedded_motors[3].omega + KP_VELOCITY*v_errory, -MAX_ACCELERATION, MAX_ACCELERATION)
-
-        #     errorz2 = z_nominal - embedded_motors[2].theta
-        #     control_inputz2 = KP*errorz2 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[2].omega)
-        #     errorz1 = z_nominal - embedded_motors[1].theta
-        #     control_inputz1 = KP*errorz1 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[1].omega)
-        #     errorz0 = z_nominal - embedded_motors[0].theta
-        #     control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
-
-        #     control_packet = pkt.pack_HeaderPacket(
-        #         pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[4].motorId, pkt.MotorCommand.SET_ALPHA, control=control_inputx)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[3].motorId, pkt.MotorCommand.SET_ALPHA, control=control_inputy)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[2].motorId, pkt.MotorCommand.SET_ALPHA, control=control_inputz2)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[1].motorId, pkt.MotorCommand.SET_ALPHA, control=control_inputz1)
-        #     control_packet += pkt.pack_MotorCommandPacket(
-        #         embedded_motors[0].motorId, pkt.MotorCommand.SET_ALPHA, control=control_inputz0)
-        #     write(control_packet)
-
 
 if __name__ == "__main__":
     os.system(f"taskset -p -c 3 {os.getpid()}")
@@ -465,7 +400,7 @@ if __name__ == "__main__":
             # print(current_state)
             # pos_error = math.sqrt(errorx**2 + errory**2)*XY_MM_PER_RAD
             # vel_error = math.sqrt(v_errorx**2 + v_errory**2)*XY_MM_PER_RAD
-            # print(str(pos_error).ljust(30, ' '), v_errorx, v_errory)
+            # print(str(pos_error).ljust(30, ' '))
             # print(str(pos_error))
             # pos, vel = path_planner.get_solution(time()-start_time)
             # print(pos[0], vel)
