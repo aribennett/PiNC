@@ -5,15 +5,22 @@
 MotorList motorList;
 IntervalTimer motorTimer;
 
+void Motor::setJerk(float jerk)
+{
+    _jerk = jerk;
+}
+
 void Motor::setAlpha(float alpha)
 {
     _alpha = alpha;
+    _jerk = 0;
 }
 
 void Motor::setOmega(float omega)
 {
     _omega = omega;
     _alpha = 0;
+    _jerk = 0;
 }
 
 void Motor::setTheta(float theta)
@@ -21,6 +28,7 @@ void Motor::setTheta(float theta)
     _theta = theta;
     _omega = 0;
     _alpha = 0;
+    _jerk = 0;
 }
 
 MotorStatePacket Motor::getMotorState()
@@ -28,6 +36,7 @@ MotorStatePacket Motor::getMotorState()
     MotorStatePacket toSend;
     toSend.theta = _theta;
     toSend.omega = _omega;
+    toSend.alpha = _alpha;
     toSend.motorId = _id;
     return(toSend);
 }
