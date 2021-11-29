@@ -13,6 +13,7 @@ public:
     virtual void coldStart(){};
     virtual void run(){};
     virtual void setEnable(bool enable);
+    void setJerk(float jerk);
     void setAlpha(float alpha);
     void setOmega(float omega);
     void setTheta(float theta);
@@ -26,6 +27,7 @@ protected:
     volatile float _theta = 0;
     volatile float _omega = 0;
     volatile float _alpha = 0;
+    volatile float _jerk = 0;
 };
 
 class MotorList
