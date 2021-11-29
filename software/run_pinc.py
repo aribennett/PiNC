@@ -342,7 +342,7 @@ class PrintState(JogState):
 
 
 class ManualState(State):
-    Z_JOG = 100
+    Z_JOG = 30
     XY_JOG = 20
     def __init__(self):
         super().__init__()
