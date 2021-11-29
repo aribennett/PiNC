@@ -12,6 +12,7 @@ device = None
 
 error_count = 0
 MAX_SEND_ERRORS = 10
+HID_MESSAGE_SIZE = 1024
 
 
 def cold_start(device_name=None):
@@ -42,6 +43,6 @@ def write(packet):
 
 def read():
     if is_windows:
-        return device.read(64, 1000)
+        return device.read(HID_MESSAGE_SIZE, 1000)
     else:
-        return os.read(device, 64)
+        return os.read(device, HID_MESSAGE_SIZE)
