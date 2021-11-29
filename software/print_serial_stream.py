@@ -28,10 +28,10 @@ def embedded_service():
             unpack_index += pkt.size_SensorPacket
 
 if __name__ == "__main__":
-    cold_start()
+    cold_start('/dev/hidraw0')
     embedded_thread = Thread(target=embedded_service, daemon=True)
     embedded_thread.start()
     while True:
         sleep(1)
-        print(embedded_motors)
+        print(embedded_motors, packet_count)
 
