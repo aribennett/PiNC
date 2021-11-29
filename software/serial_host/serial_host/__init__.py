@@ -12,7 +12,7 @@ device = None
 
 error_count = 0
 MAX_SEND_ERRORS = 10
-HID_ENDPOINT_SIZE = 1024
+HID_ENDPOINT_SIZE = 128
 
 
 def cold_start(device_name=None):

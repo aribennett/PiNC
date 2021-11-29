@@ -64,7 +64,7 @@ public:
 
 private:
     uint8_t _inputBuffer[64];
-    uint8_t _hidMsg[1024];
+    uint8_t _hidMsg[128];
     uint8_t _msgLength = 0;
     HeaderPacket* _headerPointer = (HeaderPacket *)_inputBuffer; 
     uint32_t _lastRxTime = 0;
