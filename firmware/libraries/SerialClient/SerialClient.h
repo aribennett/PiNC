@@ -19,8 +19,9 @@ enum MotorCommand : uint8_t
     SET_OMEGA = 2,
     SET_ALPHA = 3,
     SET_THETA = 4,
-    ENABLE = 5,
-    DISABLE = 6,
+    SET_JERK = 5,
+    ENABLE = 6,
+    DISABLE = 7,
 };
 
 struct HeaderPacket
@@ -36,8 +37,9 @@ struct MotorStatePacket
     uint8_t motorId;
     float theta;
     float omega;
+    float alpha;
 } __attribute__ ((packed));
-static_assert(sizeof(MotorStatePacket) == 9, "Axis packet packing issue");
+static_assert(sizeof(MotorStatePacket) == 13, "Axis packet packing issue");
 
 struct MotorCommandPacket
 {
@@ -62,7 +64,7 @@ public:
 
 private:
     uint8_t _inputBuffer[64];
-    uint8_t _hidMsg[64];
+    uint8_t _hidMsg[1024];
     uint8_t _msgLength = 0;
     HeaderPacket* _headerPointer = (HeaderPacket *)_inputBuffer; 
     uint32_t _lastRxTime = 0;
