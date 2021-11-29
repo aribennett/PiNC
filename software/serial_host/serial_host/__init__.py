@@ -46,3 +46,4 @@ def read():
         return device.read(HID_ENDPOINT_SIZE, 1000)
     else:
         return os.read(device, HID_ENDPOINT_SIZE)
+
