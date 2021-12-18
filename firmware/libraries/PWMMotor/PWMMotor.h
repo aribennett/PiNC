@@ -11,6 +11,7 @@ public:
     PWMMotor(uint16_t en);
     void coldStart();
     void run();
+    void setEnable(bool enable);
 
 private:
     // define a dummy drive to replace later. prevents need to extend stepper library

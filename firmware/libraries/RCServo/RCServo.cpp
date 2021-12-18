@@ -14,6 +14,11 @@ void RCServo::coldStart()
     _servo.attach(_en_pin);
 }
 
+void RCServo::setEnable(bool enable)
+{
+
+}
+
 void RCServo::run()
 {
     _servo.write(_theta);

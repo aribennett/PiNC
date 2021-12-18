@@ -14,6 +14,11 @@ void PWMMotor::coldStart()
     _timer_count = 0;
 }
 
+void PWMMotor::setEnable(bool enable)
+{
+
+}
+
 void PWMMotor::run()
 {
     ++_timer_count;

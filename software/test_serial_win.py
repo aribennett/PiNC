@@ -46,6 +46,7 @@ def embedded_service():
     KP = 200
     KD = 10
     KI = 0
+    first = True
     while True:
         hid_msg = read()
         header = pkt.unpack_HeaderPacket(hid_msg[:pkt.size_HeaderPacket])
@@ -60,6 +61,15 @@ def embedded_service():
                 hid_msg[unpack_index:unpack_index+pkt.size_SensorPacket])
             embedded_sensors[sensor_packet.sensorId] = sensor_packet
             unpack_index += pkt.size_SensorPacket
+        
+        if first:
+            control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=2)
+            control_packet += pkt.pack_MotorCommandPacket(embedded_motors[0].motorId, pkt.MotorCommand.ENABLE)
+            control_packet += pkt.pack_MotorCommandPacket(embedded_motors[1].motorId, pkt.MotorCommand.ENABLE)
+            write(control_packet)
+
+            first = False
+            print("send enable")
 
         if abs(x_nominal/ROTATION_SPEED) > DEADBAND:
             errorx = x_nominal - embedded_motors[0].omega
@@ -93,7 +103,7 @@ if __name__ == "__main__":
             if event.code == "ABS_X":
                 y_nominal = ROTATION_SPEED*event.state/32768
             if event.code == "ABS_Y":
-                x_nominal = -ROTATION_SPEED*event.state/32768
+                x_nominal = ROTATION_SPEED*event.state/32768
             if event.code == "BTN_TL":
                 z_nominal = 45*event.state
             if event.code == "BTN_TR":
@@ -101,4 +111,6 @@ if __name__ == "__main__":
                     theta_nominal = 90-90*event.state
                 else:
                     theta_nominal = 90
+        # print(embedded_motors)
+
 
