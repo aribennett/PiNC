@@ -9,7 +9,7 @@ last_time = time()
 
 while True:
     main.run()
-    main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_ALPHA, control=1))
+    main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_JERK, control=-1))
     main.send_command()
     if time() - last_time > .1:
         last_time = time()

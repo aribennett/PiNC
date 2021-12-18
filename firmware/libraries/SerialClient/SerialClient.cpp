@@ -75,6 +75,10 @@ void SerialClient::handleInputPacket()
                 motorList.getMotor(motorPackets[i].motorId)->setAlpha(motorPackets[i].control);
                 break;
             
+            case SET_JERK:
+                motorList.getMotor(motorPackets[i].motorId)->setJerk(motorPackets[i].control);
+                break;
+            
             case ENABLE:
                 motorList.getMotor(motorPackets[i].motorId)->setEnable(true);
                 break;
