@@ -41,6 +41,7 @@ void StepperHFC::run()
     // Manage control loop
     if(_controlAccumulator > CONTROL_INTERVAL)
     {
+        _alpha += _jerk * CONTROL_INTERVAL / 1000000.0;
         _omega += _alpha * CONTROL_INTERVAL / 1000000.0;
         _theta = (TWO_PI * (float)_stepCount) / (STEPS_PER_REV * MICROSTEPS);
 

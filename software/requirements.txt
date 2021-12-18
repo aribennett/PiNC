@@ -1,0 +1,3 @@
+# for mac install homebrew and hidapi, and install the binary in /usr/local/lib
+robotpy-cppheaderparser
+hid
