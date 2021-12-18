@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "pinc-printer",
+			"path": "pinc-printer"
+		},
+		{
+			"name": "pinc-turret",
+			"path": "pinc-turret"
+		}
+	],
+	"settings": {}
+}

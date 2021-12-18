@@ -35,8 +35,10 @@ MotorStatePacket Motor::getMotorState()
 {
     MotorStatePacket toSend;
     toSend.theta = _theta;
-    toSend.omega = _omega;
-    toSend.alpha = _alpha;
+    // since these values cannot grow monotonically, downsample them
+    // to fit in the message bounds.
+    toSend.omega = (int16_t)(_omega/100);
+    toSend.alpha = (int16_t)(_alpha/100);
     toSend.motorId = _id;
     return(toSend);
 }
