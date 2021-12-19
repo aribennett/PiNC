@@ -1,5 +1,6 @@
 from . import cold_start, read, write, close_device
 from . import packet_definitions as pkt
+from time import time
 
 
 class RobotInterface(object):
@@ -8,11 +9,14 @@ class RobotInterface(object):
         self.sensors = {}
         self.motor_command_queue = b''
         self.motor_command_count = 0
+        self.packet_count = 0
+        self.packet_time = time()
+
+        # Mac doesn't always open the teensy cleanly...
         while True:
             cold_start()
             opening_data = read()
             if opening_data:
-                print(opening_data)
                 break
             else:
                 close_device()
@@ -31,6 +35,11 @@ class RobotInterface(object):
                 hid_msg[unpack_index:unpack_index+pkt.size_SensorPacket])
             self.sendors[sensor_packet.sensorId] = sensor_packet
             unpack_index += pkt.size_SensorPacket
+        self.packet_count += 1
+        if self.packet_count >= 1000:
+            print(f"1000 packets in {time()-self.packet_time} seconds")
+            self.packet_time = time()
+            self.packet_count = 0
 
     def add_motor_command(self, command):
         self.motor_command_queue += command
