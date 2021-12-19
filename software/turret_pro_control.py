@@ -1,10 +1,9 @@
 from serial_host.robot_interface import RobotInterface
 from serial_host import packet_definitions as pkt
-import hid
 import threading
-from time import time, sleep
-import inputs
+import hid
 
+DEADBAND = 5
 
 x_vel = 0
 y_vel = 0
@@ -29,16 +28,13 @@ if __name__ == "__main__":
     main = RobotInterface()
     robot = threading.Thread(target=robot_thread, daemon=True)
     robot.start()
-
     gamepad = hid.Device(0x057e, 0x2009)
     while True:
         read_byte = gamepad.read(64, 1000)
         dpad = read_byte[5]
         button_pad = read_byte[3]
-        up = dpad & 2
-        down = dpad & 1
-        left = dpad & 8
-        right = dpad & 4
+        up_down = (read_byte[8] & 0xFC)/4 - 32
+        left_right = (read_byte[7] & 0x0f) * 4 - 32
         a = button_pad & 8
         zr = button_pad & 128
 
@@ -47,18 +43,12 @@ if __name__ == "__main__":
         pwm = 0
         angle = 0
 
-        if left:
-            x_vel -= 5
-        if right:
-            x_vel += 5
-        if up:
-            y_vel += 5
-        if down:
-            y_vel -= 5
-
+        if abs(left_right) > DEADBAND:
+            x_vel = left_right/4
+        if abs(up_down) > DEADBAND:
+            y_vel = up_down/4
         if a:
             pwm = 45
-
         if a and zr:
             angle = 0
         else:
