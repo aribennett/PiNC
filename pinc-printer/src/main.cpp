@@ -19,7 +19,7 @@ StepperHFC b_driver(8, 9, 38);
 void setup()
 {
     SPI.begin();
-    serialClient.coldStart();
+    serialClient.coldStart(0);
     coldStart5160(&a_spi, 24);
     coldStart5160(&b_spi, 24);
     coldStart2130(&z_spi, 16);

@@ -62,14 +62,15 @@ with open('serial_host/packet_definitions.py', 'w') as f:
 from collections import namedtuple
 from struct import unpack, pack
 
+
 """)
 
     for enum in header.enums:
         print(enum['name'])
         f.write(f"class {enum['name']}():\n")
         for value in enum['values']:
-            f.write(f"  {value['name']} = {value['value']}\n")
-        f.write('\n')
+            f.write(f"    {value['name']} = {value['value']}\n")
+        f.write('\n\n')
 
     for tup, name in zip(tuple_list, name_list):
         f.write(f'{name} = {tup}\n')
@@ -77,8 +78,10 @@ from struct import unpack, pack
         f.write(f'size_{name} = {calcsize(format)}\n')
     for format, name, args, defaults in zip(format_list, name_list, arg_list, default_list):
         f.write(f"""
+
 def unpack_{name}(bytes):
-    return {name}._make(unpack('{format}',bytes))
+    return {name}._make(unpack('{format}', bytes))
+
 
 def pack_{name}({defaults}):
     return pack('{format}', {args})

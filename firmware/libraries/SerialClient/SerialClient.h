@@ -26,11 +26,12 @@ enum MotorCommand : uint8_t
 
 struct HeaderPacket
 {
+    uint8_t boardid;
     uint8_t command;
     uint8_t motorCount;
     uint8_t sensorCount;
 } __attribute__ ((packed));
-static_assert(sizeof(HeaderPacket) == 3, "Header packet packing issue");
+static_assert(sizeof(HeaderPacket) == 4, "Header packet packing issue");
 
 struct MotorStatePacket
 {
@@ -59,10 +60,11 @@ static_assert(sizeof(SensorPacket) == 3, "Sensor packet packing issue");
 class SerialClient
 {
 public:
-    void coldStart();
+    void coldStart(uint8_t id);
     void run();
 
 private:
+    uint8_t _boardid;
     uint8_t _inputBuffer[64];
     uint8_t _hidMsg[128];
     uint8_t _msgLength = 0;

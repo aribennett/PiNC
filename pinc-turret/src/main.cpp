@@ -18,7 +18,7 @@ RCServo feeder(39);
 void setup()
 {
     SPI.begin();
-    serialClient.coldStart();
+    serialClient.coldStart(0);
     coldStart2130(&y_spi, 8);
     coldStart2130(&x_spi, 8);
     x_driver.coldStart();

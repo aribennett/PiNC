@@ -5,7 +5,7 @@ from time import sleep, time
 from gcode_solver import GcodeSolver
 # open gcode file and store contents as variable
 with open('box_gcode.gcode', 'r') as f:
-  gcode = f.read()
+    gcode = f.read()
 
 path_planner = GcodeSolver(gcode)
 

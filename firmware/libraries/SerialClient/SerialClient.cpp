@@ -5,9 +5,9 @@
 
 SerialClient serialClient;
 
-void SerialClient::coldStart()
+void SerialClient::coldStart(uint8_t id)
 {
-
+    _boardid = id;
 }
 
 void SerialClient::sendStatusReport()
@@ -15,6 +15,7 @@ void SerialClient::sendStatusReport()
     // Buffer the header into the serial bus
     HeaderPacket header;
     _msgLength = 0;
+    header.boardid = _boardid;
     header.command = REPORT_STATUS;
     header.motorCount = motorList.getMotorCount();
     header.sensorCount = 0;
