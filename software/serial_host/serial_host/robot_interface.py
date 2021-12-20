@@ -3,7 +3,7 @@ from . import packet_definitions as pkt
 
 
 class RobotInterface(object):
-    def __init__(self):
+    def __init__(self, vid, pid):
         self.motors = {}
         self.sensors = {}
         self.motor_command_queue = b''
@@ -11,7 +11,7 @@ class RobotInterface(object):
 
         # Mac doesn't always open the teensy cleanly...
         while True:
-            cold_start()
+            cold_start(vid=vid, pid=pid)
             opening_data = read()
             if opening_data:
                 break

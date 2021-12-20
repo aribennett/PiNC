@@ -25,7 +25,7 @@ def robot_thread():
 
 
 if __name__ == "__main__":
-    main = RobotInterface()
+    main = RobotInterface(0x16c0, 0x0486)
     robot = threading.Thread(target=robot_thread, daemon=True)
     robot.start()
     gamepad = hid.Device(0x057e, 0x2009)
@@ -53,3 +53,4 @@ if __name__ == "__main__":
             angle = 0
         else:
             angle = 90
+        print(up_down, left_right)

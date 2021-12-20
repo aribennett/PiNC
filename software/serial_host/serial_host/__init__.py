@@ -8,8 +8,6 @@ is_linux = platform == "linux" or platform == "linux2"
 if not is_linux:
     import hid
 
-pid = 0x0486
-vid = 0x16c0
 device = None
 
 error_count = 0
@@ -17,7 +15,7 @@ MAX_SEND_ERRORS = 10
 HID_ENDPOINT_SIZE = 64
 
 
-def cold_start(device_name=None):
+def cold_start(device_name=None, vid=0x0000, pid=0x0000):
     global device
     if platform == "linux" or platform == "linux2":
         flags = os.O_RDWR
