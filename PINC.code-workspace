@@ -16,5 +16,42 @@
 			"path": "pinc-singleaxis"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"python.defaultInterpreterPath": "software/venv/bin/python3",
+		"terminal.integrated.profiles.osx": {
+			"bash": {
+				"path": "bash",
+				"args": [
+					"-l"
+				],
+				"icon": "terminal-bash"
+			},
+			"zsh": {
+				"path": "zsh",
+				"args": [
+					"-l"
+				]
+			},
+			"fish": {
+				"path": "fish",
+				"args": [
+					"-l"
+				]
+			},
+			"tmux": {
+				"path": "tmux",
+				"icon": "terminal-tmux"
+			},
+			"pwsh": {
+				"path": "pwsh",
+				"icon": "terminal-powershell"
+			},
+			"rosetta": {
+				"path": "arch",
+				"args": ["-x86_64", "zsh", "-l"],
+				"overrideName": true
+			}
+		},
+		"terminal.integrated.defaultProfile.osx": "zsh"
+	}
 }
