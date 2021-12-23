@@ -1,18 +1,16 @@
-import tkinter
 from serial_host import packet_definitions as pkt
 from serial_host import cold_start, read, write
 from kinematics import corexy_inverse, corexy_transform, z0, z1, z2, center_home
-import kinematics
 from marker_tracking import get_laser_displacement, run_tracking_loop, get_error, end_tracking_loop, enable_fiducial_sensing, enable_laser_sensing
 from threading import Thread
 import numpy as np
-import math
 from time import time, sleep
 from queue import Queue
 import os
 from xbox360controller import Xbox360Controller
 from gcode_solver import GcodeSolver
 from pinc_state import State
+import sys
 import logging
 
 CONTROLLER_DEAD_ZONE = 0.2
@@ -32,12 +30,13 @@ embedded_sensors = {}
 jog_controller = None
 
 with open('box_gcode.gcode', 'r') as f:
-  gcode = f.read()
+    gcode = f.read()
 
 path_planner = GcodeSolver(gcode)
 
 state = None
 event_queue = Queue()
+
 
 def post_event(event):
     event_queue.put(event)
@@ -57,9 +56,9 @@ class InitState(State):
         # self.event_map['init'] = HomeState
         self.event_map['init'] = ManualState
 
-
     def run(self):
         post_event('init')
+
 
 class JogState(State):
     def __init__(self):
@@ -69,7 +68,7 @@ class JogState(State):
         self.start_time = time()
         self.x_target, self.y_target = 0, 0
         self.xw_nominal, self.yw_nominal = 0, 0
-    
+
     def set_jog_target(self, x, y, time):
         self.jog_time = time
         self.x_target, self.y_target = x, y
@@ -129,6 +128,7 @@ class HomeState(State):
 class FineHomeState(State):
     home_3 = 0
     home_4 = 0
+
     def __init__(self):
         super().__init__()
         self.event_map['fine home complete'] = JogHomeCenterState
@@ -158,6 +158,7 @@ class FineHomeState(State):
             FineHomeState.home_3 = embedded_motors[3].theta
             post_event('fine home complete')
 
+
 class JogHomeState(JogState):
     def __init__(self):
         super().__init__()
@@ -182,6 +183,7 @@ class JogHomeState(JogState):
         write(control_packet)
         if np.sqrt(errorx**2 + errory**2) < .005:
             post_event(self.home_event)
+
 
 class HomeZState(State):
     def __init__(self):
@@ -226,7 +228,6 @@ class HomeZState(State):
 
         if z_nominal == 0:
             post_event('z home')
-            home_z = embedded_motors[0].theta
 
 
 class JogHomeCenterState(JogState):
@@ -282,17 +283,19 @@ class HomeZ2State(HomeZState):
         self.event_map['z home'] = Jog00State
         self.motor_index = 2
 
+
 class Jog00State(JogState):
     def __init__(self):
         super().__init__()
         self.event_map['jog done'] = ManualState
         self.set_jog_target(0, 0, 5)
 
+
 class PrintState(JogState):
     def __init__(self):
         super().__init__()
         self.start_time = time()
-    
+
     def run(self):
         super().run()
         global errorx, errory
@@ -342,6 +345,7 @@ class PrintState(JogState):
 class ManualState(State):
     Z_JOG = 30
     XY_JOG = 20
+
     def __init__(self):
         super().__init__()
         control_packet = pkt.pack_HeaderPacket(pkt.SerialCommand.RUN_MOTOR, motorCount=5)
@@ -357,20 +361,20 @@ class ManualState(State):
             z_nominal = (controller.trigger_l.value - controller.trigger_r.value)
             if abs(z_nominal) < .2:
                 z_nominal = 0
-            z_nominal*= ManualState.Z_JOG
+            z_nominal *= ManualState.Z_JOG
             x_nominal = controller.axis_l.x
             if abs(x_nominal) < .2:
                 x_nominal = 0
-            x_nominal*= ManualState.XY_JOG
+            x_nominal *= ManualState.XY_JOG
             y_nominal = controller.axis_l.y
             if abs(y_nominal) < .2:
                 y_nominal = 0
-            y_nominal*= ManualState.XY_JOG
+            y_nominal *= ManualState.XY_JOG
         else:
             z_nominal = 0
             y_nominal = 0
             x_nominal = 0
-        
+
         motor_3_control, motor_4_control = corexy_transform(x_nominal, y_nominal)
         control_packet = pkt.pack_HeaderPacket(
             pkt.SerialCommand.RUN_MOTOR, motorCount=5)
@@ -384,14 +388,13 @@ class ManualState(State):
             embedded_motors[3].motorId, pkt.MotorCommand.SET_OMEGA, control=motor_3_control)
         control_packet += pkt.pack_MotorCommandPacket(
             embedded_motors[4].motorId, pkt.MotorCommand.SET_OMEGA, control=motor_4_control)
-        
+
         write(control_packet)
 
 
 def embedded_service():
     global state
     state = InitState()
-    
     while True:
         hid_msg = read()
         header = pkt.unpack_HeaderPacket(hid_msg[:pkt.size_HeaderPacket])
@@ -409,15 +412,16 @@ def embedded_service():
         handle_events()
         state.run()
 
+
 if __name__ == "__main__":
     os.system(f"taskset -p -c 3 {os.getpid()}")
-    cold_start('/dev/hidraw0')
+    cold_start(sys.argv[1])
     with Xbox360Controller(0, axis_threshold=0.2) as controller:
         start_time = time()
         jog_controller = controller
-        tracking_thread = Thread(target=run_tracking_loop, daemon=True)
-        tracking_thread.start()
-        print("Started tracking")
+        # tracking_thread = Thread(target=run_tracking_loop, daemon=True)
+        # tracking_thread.start()
+        # print("Started tracking")
         sleep(2)
         embedded_thread = Thread(target=embedded_service, daemon=True)
         embedded_thread.start()
