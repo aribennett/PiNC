@@ -1,4 +1,6 @@
 # for mac install homebrew and hidapi, and install the binary in /usr/local/lib
 robotpy-cppheaderparser
 hid
-imputs
+opencv-python
+xbox360controller
+numpy

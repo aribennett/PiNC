@@ -1,6 +1,4 @@
 import tkinter
-from numpy import core
-from numpy.lib.function_base import vectorize
 from serial_host import packet_definitions as pkt
 from serial_host import cold_start, read, write
 from kinematics import corexy_inverse, corexy_transform, z0, z1, z2, center_home

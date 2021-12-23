@@ -17,7 +17,7 @@ HID_ENDPOINT_SIZE = 64
 
 def cold_start(device_name=None, vid=0x0000, pid=0x0000):
     global device
-    if platform == "linux" or platform == "linux2":
+    if is_linux:
         flags = os.O_RDWR
         device = os.open(device_name, flags)
     else:
