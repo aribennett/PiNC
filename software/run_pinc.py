@@ -438,6 +438,6 @@ if __name__ == "__main__":
             # print(str(pos_error))
             # pos, vel = path_planner.get_solution(time()-start_time)
             # print(pos[0], vel)
-            print(embedded_motors)
+            print(embedded_motors, state)
             # print(get_laser_displacement(), get_error(), state, controller.trigger_l.value)
             # print(corexy_inverse(embedded_motors[3].theta - FineHomeState.home_3, embedded_motors[4].theta- FineHomeState.home_4))

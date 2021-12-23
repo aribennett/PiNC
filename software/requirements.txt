@@ -4,3 +4,4 @@ hid
 opencv-python
 xbox360controller
 numpy
+gcodeparser
