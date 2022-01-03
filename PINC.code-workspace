@@ -17,7 +17,6 @@
 		}
 	],
 	"settings": {
-		"python.defaultInterpreterPath": "software/venv/bin/python3",
 		"terminal.integrated.profiles.osx": {
 			"bash": {
 				"path": "bash",
