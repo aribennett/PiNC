@@ -8,7 +8,6 @@ from time import time, sleep
 from queue import Queue
 import os
 from xbox360controller import Xbox360Controller
-from gcode_solver import GcodeSolver
 from pinc_state import State
 import sys
 import logging
