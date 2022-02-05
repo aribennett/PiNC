@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 from path_planning.gcode_solver import GcodeSolver
 from path_planning import get_corners
 
+
 # open gcode file and store contents as variable
 with open('box_gcode.gcode', 'r') as f:
     gcode = f.read()
