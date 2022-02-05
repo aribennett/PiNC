@@ -1,3 +1,4 @@
+from time import sleep
 from serial_host.robot_interface import RobotInterface
 from serial_host import packet_definitions as pkt
 import threading
@@ -26,6 +27,7 @@ if __name__ == "__main__":
     robot.start()
     gamepad = hid.Device(0x057e, 0x2009)
     while True:
+        sleep(1)
         read_byte = gamepad.read(64, 1000)
         up_down = (read_byte[8] & 0xFC)/4 - 32
         y_vel = 0

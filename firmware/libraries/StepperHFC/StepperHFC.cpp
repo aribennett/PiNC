@@ -3,9 +3,9 @@
 #include <arduino.h>
 #include <SerialClient.h>
 #include <Motor.h>
+#include <Encoder.h>
 
 #define MICROSTEPS 16
-#define STALL_VALUE -10 // [-64..63]
 #define STEPS_PER_REV 200
 #define CONTROL_INTERVAL 200 //microseconds
 #define CONTROL_BASE 1000000
@@ -18,6 +18,15 @@ StepperHFC::StepperHFC(uint16_t step, uint16_t dir, uint16_t en)
     _en_pin = en;
 }
 
+StepperHFC::StepperHFC(uint16_t step, uint16_t dir, uint16_t en, Encoder* commEncoder, uint32_t ppr)
+{
+    _stepPin = step;
+    _dirPin = dir;
+    _en_pin = en;
+    _commEncoder = commEncoder;
+    _ppr = ppr;
+}
+
 void StepperHFC::coldStart()
 {
     pinMode(_en_pin, OUTPUT);
@@ -25,6 +34,13 @@ void StepperHFC::coldStart()
     pinMode(_dirPin, OUTPUT);
     digitalWrite(_dirPin, _dir);
     setEnable(true);
+
+    // zero out servo offset. Needs a delay to settle:
+    if(_ppr != -1)
+    {
+        delay(100);
+        _commEncoder->write(0);
+    }
 }
 
 void StepperHFC::setEnable(bool enable)
@@ -32,6 +48,28 @@ void StepperHFC::setEnable(bool enable)
     _enable = enable;
     digitalWrite(_en_pin, !enable); // Enable driver in hardware
 }
+
+int32_t StepperHFC::getStep()
+{
+    return(_step);
+}
+
+int32_t StepperHFC::getEncoderStep()
+{
+    int32_t encPos = _commEncoder->read();
+    int32_t encStep = (MICROSTEPS * STEPS_PER_REV * encPos)/_ppr;
+    return(encStep);
+}
+
+int32_t StepperHFC::getPhaseOffset()
+{
+    int32_t targetStep = _stepCount; 
+    if(_ppr != -1)
+    {
+        targetStep = constrain(targetStep, getEncoderStep() - MICROSTEPS, getEncoderStep() + MICROSTEPS);
+    }
+    return(targetStep);
+} 
 
 void StepperHFC::run()
 {
@@ -59,16 +97,9 @@ void StepperHFC::run()
     }
 
     // commutate motor
-    if (_stepAccumulator > abs(_timePeriod) && !_motorStopped)
+    if (_stepAccumulator > abs(_timePeriod) && !_motorStopped && _enable)
     {
-        if (((_timePeriod < 0) != _dir))
-        {
-            _dir = !_dir;
-            digitalWriteFast(_dirPin, _dir);
-        }
-        digitalWriteFast(_stepPin, _edgeState);
-        _edgeState = !_edgeState;
-        if (!_dir)
+        if ((_timePeriod > 0))
         {
             ++_stepCount;
         }
@@ -77,5 +108,38 @@ void StepperHFC::run()
             --_stepCount;
         }
         _stepAccumulator = 0;
+    }
+
+    // Limit the step by the encoder position in this block. Limit the nominal
+    // Set targetStep to the highest possible number, that is within commutation distance of the
+    // stepper motor. For 16th step, that is +- 32 steps from rotor actual
+    int32_t targetStep = getPhaseOffset();
+    if(targetStep != _step)
+    {
+        bool target_dir = false;
+        if(targetStep < _step)
+        {
+            target_dir = true;
+        }
+
+        // can only switch 1 pin per cycle
+        if(target_dir != _dir)
+        {
+            _dir = target_dir;
+            digitalWriteFast(_dirPin, _dir);
+        }
+        else
+        {
+            if(targetStep > _step)
+            {
+                ++_step;
+            }
+            else
+            {
+                --_step;
+            }
+            digitalWriteFast(_stepPin, _edgeState);
+            _edgeState = !_edgeState;
+        }
     }
 }

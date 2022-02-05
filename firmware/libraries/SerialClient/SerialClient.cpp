@@ -107,11 +107,12 @@ void SerialClient::checkTimeout()
 {
     if(millis()-_lastRxTime > WATCHDOG_TIMEOUT)
     {
-        // If we have no serial messages for a second, kill the system
+        // // If we have no serial messages for a second, kill the system
         for(uint8_t i = 0; i < motorList.getMotorCount(); ++i)
         {
             motorList.getMotor(i)->setAlpha(0);
             motorList.getMotor(i)->setOmega(0);
+            motorList.getMotor(i)->setJerk(0);
             motorList.getMotor(i)->setEnable(false);
         }
         _lastRxTime = millis();
