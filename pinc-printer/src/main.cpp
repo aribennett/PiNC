@@ -13,8 +13,14 @@ TMC5160Stepper z_spi(35, R_SENSE);
 StepperHFC z_driver(6, 7, 39);
 TMC5160Stepper a_spi(37, R_SENSE);
 StepperHFC a_driver(26, 27, 41);
+#define A_ENCA 23
+#define A_ENCB 19
+
 TMC5160Stepper b_spi(36, R_SENSE);
 StepperHFC b_driver(8, 9, 38);
+#define B_ENCA 28
+#define B_ENCB 30
+
 
 void setup()
 {
