@@ -31,7 +31,7 @@ jog_controller = None
 with open('box_gcode.gcode', 'r') as f:
     gcode = f.read()
 
-path_planner = GcodeSolver(gcode)
+# path_planner = GcodeSolver(gcode)
 
 state = None
 event_queue = Queue()
