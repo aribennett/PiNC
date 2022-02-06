@@ -11,23 +11,26 @@ TMC5160Stepper y_spi(33, R_SENSE);
 StepperHFC y_driver(4, 5, 40);
 TMC5160Stepper z_spi(35, R_SENSE);
 StepperHFC z_driver(6, 7, 39);
-TMC5160Stepper a_spi(37, R_SENSE);
-StepperHFC a_driver(26, 27, 41);
+
 #define A_ENCA 23
 #define A_ENCB 19
+Encoder a_enc(A_ENCB, A_ENCA);
+TMC5160Stepper a_spi(37, R_SENSE);
+StepperHFC a_driver(26, 27, 41, &a_enc, 8192);
 
-TMC5160Stepper b_spi(36, R_SENSE);
-StepperHFC b_driver(8, 9, 38);
 #define B_ENCA 28
 #define B_ENCB 30
+Encoder b_enc(B_ENCB, B_ENCA);
+TMC5160Stepper b_spi(36, R_SENSE);
+StepperHFC b_driver(8, 9, 38, &b_enc, 8192);
+
 
 
 void setup()
 {
     SPI.begin();
-    serialClient.coldStart(0);
-    coldStart5160(&a_spi, 24);
-    coldStart5160(&b_spi, 24);
+    coldStart5160(&a_spi, 12);
+    coldStart5160(&b_spi, 12);
     coldStart2130(&z_spi, 16);
     coldStart2130(&y_spi, 16);
     coldStart2130(&x_spi, 16);
@@ -41,6 +44,7 @@ void setup()
     motorList.addMotor(&z_driver);
     motorList.addMotor(&a_driver);
     motorList.addMotor(&b_driver);
+    serialClient.coldStart(0);
     startMotorTimer();
 }
 

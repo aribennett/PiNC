@@ -8,35 +8,27 @@
 #define A_ENCA 23
 #define A_ENCB 19
 
-Encoder a_enc(A_ENCB, A_ENCA);
-TMC5160Stepper a_spi(37, R_SENSE);
-StepperHFC a_driver(26, 27, 41, &a_enc, 8192);
+#define B_ENCA 28
+#define B_ENCB 30
+Encoder a_enc(B_ENCB, B_ENCA);
+TMC5160Stepper a_spi(36, R_SENSE);
+StepperHFC a_driver(8, 9, 38, &a_enc, 8192);
 
 
 void setup()
 {
     SPI.begin();
-    coldStart5160(&a_spi, 4);
+    coldStart5160(&a_spi, 8);
     a_driver.coldStart();
     motorList.addMotor(&a_driver);
     a_driver.setEnable(true);
-    serialClient.coldStart(0);
+    serialClient.coldStart(0, false);
     startMotorTimer();
 }
 
 void loop()
 {
-    static long ts = millis();
     serialClient.run();
-    if(millis() - ts > 100)
-    {
-        float time =  (float)millis()/1000.0;
-        a_driver.setOmega(3*sin(time));
-        ts = millis();
-        Serial.print(a_driver.getEncoderStep());
-        Serial.print("   ");
-        Serial.print(a_driver.getStep());
-        Serial.print("   ");
-        Serial.println(a_driver.getPhaseOffset());
-    }
+    float time =  (float)millis()/1000.0;
+    a_driver.setOmega(3*sin(time));
 }

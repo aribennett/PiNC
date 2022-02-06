@@ -5,9 +5,10 @@
 
 SerialClient serialClient;
 
-void SerialClient::coldStart(uint8_t id)
+void SerialClient::coldStart(uint8_t id, bool timeout)
 {
     _boardid = id;
+    _timeout = timeout;
 }
 
 void SerialClient::sendStatusReport()
@@ -105,7 +106,7 @@ void SerialClient::handleInputPacket()
 
 void SerialClient::checkTimeout()
 {
-    if(millis()-_lastRxTime > WATCHDOG_TIMEOUT)
+    if(millis()-_lastRxTime > WATCHDOG_TIMEOUT && _timeout)
     {
         // // If we have no serial messages for a second, kill the system
         for(uint8_t i = 0; i < motorList.getMotorCount(); ++i)

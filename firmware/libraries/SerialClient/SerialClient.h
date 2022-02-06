@@ -60,7 +60,7 @@ static_assert(sizeof(SensorPacket) == 3, "Sensor packet packing issue");
 class SerialClient
 {
 public:
-    void coldStart(uint8_t id);
+    void coldStart(uint8_t id, bool timeout=true);
     void run();
 
 private:
@@ -71,6 +71,7 @@ private:
     HeaderPacket* _headerPointer = (HeaderPacket *)_inputBuffer; 
     uint32_t _lastRxTime = 0;
     uint32_t _lastTxTime = 0;
+    bool _timeout = true;
     void sendStatusReport();
     void checkTimeout();
     void handleInputPacket();
