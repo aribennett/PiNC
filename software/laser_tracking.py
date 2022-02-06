@@ -27,6 +27,7 @@ def find_markers(frame):
         error_x = None
         error_y = None
 
+
 def run_tracking_loop(debug=False):
     global kill_loop
     kill_loop = False
@@ -56,8 +57,8 @@ def run_tracking_loop(debug=False):
             # cv2.putText(raw.array, "centroid", (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
             # cv2.imshow('mask', mask)
             # cv2.imshow('mask', red_mask)
-            cv2.imshow('result', raw.array)
-            cv2.waitKey(10)
+            # cv2.imshow('result', raw.array)
+            # cv2.waitKey(10)
             raw_capture.truncate(0)
 
 def end_tracking_loop():
