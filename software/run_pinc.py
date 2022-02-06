@@ -355,15 +355,15 @@ class ManualState(State):
     def run(self):
         if jog_controller.button_a.is_pressed:
             z_nominal = (controller.trigger_l.value - controller.trigger_r.value)
-            if abs(z_nominal) < .2:
+            if abs(z_nominal) < .1:
                 z_nominal = 0
             z_nominal *= ManualState.Z_JOG
             x_nominal = controller.axis_l.x
-            if abs(x_nominal) < .2:
+            if abs(x_nominal) < .1:
                 x_nominal = 0
             x_nominal *= ManualState.XY_JOG
             y_nominal = controller.axis_l.y
-            if abs(y_nominal) < .2:
+            if abs(y_nominal) < .1:
                 y_nominal = 0
             y_nominal *= ManualState.XY_JOG
         else:
