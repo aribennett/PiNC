@@ -12,9 +12,6 @@ from pinc_state import State
 import sys
 import logging
 
-CONTROLLER_DEAD_ZONE = 0.2
-CONTROLLER_JOG_RATE = 200
-MAX_ACCELERATION = 1000
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.795774715
 HOMING_SPEED = 10
@@ -343,7 +340,7 @@ class PrintState(JogState):
 
 class ManualState(State):
     Z_JOG = 30
-    XY_JOG = 20
+    XY_JOG = 60
 
     def __init__(self):
         super().__init__()
