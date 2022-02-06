@@ -48,7 +48,7 @@ def run_tracking_loop(debug=False):
             M = cv2.moments(mask)
             # calculate x,y coordinate of center
             if M["m00"] != 0:
-                laser_x = int(M["m10"] / M["m00"])
+                laser_x = int(M["m01"] / M["m00"])
             else:
                 laser_x = 400
             print(laser_x)
