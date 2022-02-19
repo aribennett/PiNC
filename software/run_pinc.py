@@ -1,4 +1,5 @@
 from serial_host import packet_definitions as pkt
+from serial_host.robot_interface import RobotInterface
 from serial_host import cold_start, read, write
 from kinematics import corexy_inverse, corexy_transform, z0, z1, z2, center_home
 from marker_tracking import get_laser_displacement, run_tracking_loop, get_error, end_tracking_loop, enable_fiducial_sensing, enable_laser_sensing
@@ -21,8 +22,6 @@ errorx = 0
 errory = 0
 # -------------------------------
 
-embedded_motors = {}
-embedded_sensors = {}
 jog_controller = None
 
 with open('box_gcode.gcode', 'r') as f:
@@ -59,7 +58,7 @@ class InitState(State):
 class JogState(State):
     def __init__(self):
         super().__init__()
-        self.xstart, self.ystart = corexy_inverse(embedded_motors[3].theta - FineHomeState.home_3, embedded_motors[4].theta- FineHomeState.home_4)
+        self.xstart, self.ystart = corexy_inverse(embedded_motors[3].theta - FineHomeState.home_3, embedded_motors[4].theta - FineHomeState.home_4)
         self.jog_time = 10
         self.start_time = time()
         self.x_target, self.y_target = 0, 0
@@ -72,7 +71,7 @@ class JogState(State):
         self.yw_nominal = (self.y_target - self.ystart)/self.jog_time
 
     def run(self):
-        self.xpos, self.ypos = corexy_inverse(embedded_motors[3].theta - FineHomeState.home_3, embedded_motors[4].theta- FineHomeState.home_4)
+        self.xpos, self.ypos = corexy_inverse(embedded_motors[3].theta - FineHomeState.home_3, embedded_motors[4].theta - FineHomeState.home_4)
         self.xvel, self.yvel = corexy_inverse(embedded_motors[3].omega, embedded_motors[4].omega)
 
         interp = (time()-self.start_time)/self.jog_time
@@ -341,16 +340,16 @@ class PrintState(JogState):
 class ManualState(State):
     Z_JOG = 30
     XY_JOG = 60
+    XY_P_ACCEL = 120
 
     def __init__(self):
         super().__init__()
-        control_packet = pkt.pack_HeaderPacket(command=pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
-        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
-        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[2].motorId, pkt.MotorCommand.ENABLE)
-        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[1].motorId, pkt.MotorCommand.ENABLE)
-        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[0].motorId, pkt.MotorCommand.ENABLE)
-        write(control_packet)
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.ENABLE))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.ENABLE))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.ENABLE))
+        main.send_command()
 
     def run(self):
         if jog_controller.button_a.is_pressed:
@@ -384,45 +383,27 @@ class ManualState(State):
             x_nominal = 0
 
         motor_3_control, motor_4_control = corexy_transform(x_nominal, y_nominal)
-        control_packet = pkt.pack_HeaderPacket(command=pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[2].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[1].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[0].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[3].motorId, pkt.MotorCommand.SET_OMEGA, control=motor_3_control)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[4].motorId, pkt.MotorCommand.SET_OMEGA, control=motor_4_control)
 
-        write(control_packet)
+        main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=motor_3_control))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=motor_4_control))
+        main.send_command()
 
 
 def embedded_service():
     global state
     state = InitState()
     while True:
-        hid_msg = read()
-        header = pkt.unpack_HeaderPacket(hid_msg[:pkt.size_HeaderPacket])
-        unpack_index = pkt.size_HeaderPacket
-        for i in range(header.motorCount):
-            motor_packet = pkt.unpack_MotorStatePacket(
-                hid_msg[unpack_index:unpack_index+pkt.size_MotorStatePacket])
-            embedded_motors[motor_packet.motorId] = motor_packet
-            unpack_index += pkt.size_MotorStatePacket
-        for i in range(header.sensorCount):
-            sensor_packet = pkt.unpack_SensorPacket(
-                hid_msg[unpack_index:unpack_index+pkt.size_SensorPacket])
-            embedded_sensors[sensor_packet.sensorId] = sensor_packet
-            unpack_index += pkt.size_SensorPacket
+        main.run()
         handle_events()
         state.run()
 
 
 if __name__ == "__main__":
     os.system(f"taskset -p -c 3 {os.getpid()}")
-    cold_start(sys.argv[1])
+    main = RobotInterface()
     with Xbox360Controller(0, axis_threshold=0.2) as controller:
         start_time = time()
         jog_controller = controller
@@ -435,4 +416,4 @@ if __name__ == "__main__":
         print("Started controls")
         while True:
             sleep(1)
-            print(embedded_motors, state, jog_controller.button_a.is_pressed)
+            print(main.get_motor_state(4), main.get_motor_state(5), state, jog_controller.button_a.is_pressed)
