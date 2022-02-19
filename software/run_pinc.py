@@ -361,10 +361,22 @@ class ManualState(State):
             x_nominal = controller.axis_l.x
             if abs(x_nominal) < .1:
                 x_nominal = 0
+            else:
+                if x_nominal > 0:
+                    x_nominal -= .1
+                else:
+                    x_nominal += .1
+
             x_nominal *= ManualState.XY_JOG
             y_nominal = controller.axis_l.y
             if abs(y_nominal) < .1:
                 y_nominal = 0
+            else:
+                if y_nominal > 0:
+                    y_nominal -= .1
+                else:
+                    y_nominal += .1
+
             y_nominal *= ManualState.XY_JOG
         else:
             z_nominal = 0
@@ -423,16 +435,4 @@ if __name__ == "__main__":
         print("Started controls")
         while True:
             sleep(1)
-            # print(embedded_motors[4].theta, embedded_motors[3].theta, errorx, errory)
-            # print(-100/XY_MM_PER_RAD, embedded_motors[3].theta, home_y)
-            # print((-100/XY_MM_PER_RAD + home_y) - embedded_motors[3].theta)
-            # print(state)
-            # pos_error = math.sqrt(errorx**2 + errory**2)*XY_MM_PER_RAD
-            # vel_error = math.sqrt(v_errorx**2 + v_errory**2)*XY_MM_PER_RAD
-            # print(str(pos_error).ljust(30, ' '))
-            # print(str(pos_error))
-            # pos, vel = path_planner.get_solution(time()-start_time)
-            # print(pos[0], vel)
             print(embedded_motors, state, jog_controller.button_a.is_pressed)
-            # print(get_laser_displacement(), get_error(), state, controller.trigger_l.value)
-            # print(corexy_inverse(embedded_motors[3].theta - FineHomeState.home_3, embedded_motors[4].theta- FineHomeState.home_4))
