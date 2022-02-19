@@ -6,7 +6,7 @@ SUBSYSTEMS=="usb", GOTO="pinc_end"
 
 LABEL="pinc"
 #if it is the first interface and our MCU, symlink it for easy use
-KERNEL=="hidraw*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04*", MODE:="0666", SYMLINK+="pinc%p"
+KERNEL=="hidraw*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04*", MODE:="0666", SYMLINK+="pinc%n"
 
 LABEL="pinc_end"
 
