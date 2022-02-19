@@ -390,7 +390,7 @@ class ManualState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
 
-        if jog_controller.button_a.is_pressed or main.get_motor_state(3)[0] != 0 or main.get_motor_state(4)[0] != 0:
+        if jog_controller.button_a.is_pressed or main.get_motor_state(3)[1] != 0 or main.get_motor_state(4)[1] != 0:
             main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_ALPHA, control=motor_3_error))
             main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_ALPHA, control=motor_4_error))
         else:
