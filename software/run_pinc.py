@@ -340,7 +340,7 @@ class PrintState(JogState):
 class ManualState(State):
     Z_JOG = 30
     XY_JOG = 60
-    XY_P_ACCEL = 120
+    XY_P_ACCEL = 10
 
     def __init__(self):
         super().__init__()
@@ -383,8 +383,8 @@ class ManualState(State):
             x_nominal = 0
 
         motor_3_control, motor_4_control = corexy_transform(x_nominal, y_nominal)
-        motor_3_error = motor_3_control - main.get_motor_state(3)[1]
-        motor_4_error = motor_4_control - main.get_motor_state(4)[1]
+        motor_3_error = (motor_3_control - main.get_motor_state(3)[1]) * ManualState.XY_P_ACCEL
+        motor_4_error = (motor_4_control - main.get_motor_state(4)[1]) * ManualState.XY_P_ACCEL
 
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
