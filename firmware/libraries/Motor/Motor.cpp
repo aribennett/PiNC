@@ -34,9 +34,9 @@ void Motor::setTheta(float theta)
 MotorStatePacket Motor::getMotorState()
 {
     MotorStatePacket toSend;
-    toSend.theta = _theta;
     // since these values cannot grow monotonically, downsample them
     // to fit in the message bounds.
+    toSend.theta = (int16_t)(_theta*250);
     toSend.omega = (int16_t)(_omega*100);
     toSend.alpha = (int16_t)(_alpha*100);
     toSend.motorId = _id;

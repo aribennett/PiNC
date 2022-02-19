@@ -17,6 +17,7 @@ kill_loop = False
 enable_fiducial = False
 enable_laser = False
 
+
 def enable_laser_sensing():
     global enable_laser
     enable_laser = True
@@ -30,8 +31,9 @@ def enable_fiducial_sensing():
 def get_laser_displacement():
     return laser_x-RESOLUTION[0]/2
 
+
 def find_markers(frame):
-    global error_x,error_y
+    global error_x, error_y
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, DICTIONARY, parameters=PARAMETERS)
     if ids is not None and 0 in ids:
@@ -47,15 +49,16 @@ def find_markers(frame):
 def find_laser(image):
     global laser_x
     image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    lower = np.array([120,0,100])
-    upper = np.array([200,255,255])
+    lower = np.array([120, 0, 100])
+    upper = np.array([200, 255, 255])
     mask = cv2.inRange(image, lower, upper)
     M = cv2.moments(mask)
     # calculate x coordinate of center
     if M["m00"] != 0:
-        laser_x = int(M["m10"] / M["m00"])
+        laser_x = int(M["m01"] / M["m00"])
     else:
         laser_x = RESOLUTION[0]
+
 
 def run_tracking_loop(debug=False):
     global kill_loop, enable_fiducial, enable_laser
@@ -82,12 +85,15 @@ def run_tracking_loop(debug=False):
             if kill_loop:
                 break
 
+
 def end_tracking_loop():
     global kill_loop
     kill_loop = True
 
+
 def get_error():
     return error_x, error_y
 
-if __name__ == '__main__':    
+
+if __name__ == '__main__':
     run_tracking_loop(debug=True)

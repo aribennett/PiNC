@@ -15,7 +15,7 @@ error_y = None
 kill_loop = False
 
 def find_markers(frame):
-    global error_x,error_y
+    global error_x, error_y
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, DICTIONARY, parameters=PARAMETERS)
     if ids is not None and 0 in ids:
@@ -39,10 +39,10 @@ def run_tracking_loop(debug=False):
         for raw in camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
             image = raw.array.copy()
             image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-            lower_red = np.array([155,90,100])
-            lower_red = np.array([179,255,255])
-            lower = np.array([120,0,100])
-            upper = np.array([200,255,255])
+            lower_red = np.array([155, 90, 100])
+            lower_red = np.array([179, 255, 255])
+            lower = np.array([120, 0, 100])
+            upper = np.array([200, 255, 255])
             mask = cv2.inRange(image, lower, upper)
             red_mask = cv2.inRange(image, lower_red, upper)
             M = cv2.moments(mask)
