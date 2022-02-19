@@ -25,7 +25,7 @@ MotorStatePacket = namedtuple('MotorStatePacket', 'motorId theta omega alpha ')
 MotorCommandPacket = namedtuple('MotorCommandPacket', 'motorId motorCommand control ')
 SensorPacket = namedtuple('SensorPacket', 'sensorID sensorValue ')
 size_HeaderPacket = 4
-size_MotorStatePacket = 9
+size_MotorStatePacket = 7
 size_MotorCommandPacket = 6
 size_SensorPacket = 3
 
@@ -39,11 +39,11 @@ def pack_HeaderPacket(boardid=0, command=0, motorCount=0, sensorCount=0):
 
 
 def unpack_MotorStatePacket(bytes):
-    return MotorStatePacket._make(unpack('=Bfhh', bytes))
+    return MotorStatePacket._make(unpack('=Bhhh', bytes))
 
 
 def pack_MotorStatePacket(motorId=0, theta=0, omega=0, alpha=0):
-    return pack('=Bfhh', motorId, theta, omega, alpha)
+    return pack('=Bhhh', motorId, theta, omega, alpha)
 
 
 def unpack_MotorCommandPacket(bytes):
