@@ -416,7 +416,5 @@ if __name__ == "__main__":
         print("Started controls")
         while True:
             sleep(1)
-            try:
-                print(main.get_motor_state(4), main.get_motor_state(5), state, jog_controller.button_a.is_pressed)
-            except:
-                pass
+            print(main.motors, state, jog_controller.button_a.is_pressed)
+
