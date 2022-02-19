@@ -4,7 +4,8 @@ KERNEL=="hidraw*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04*", GOTO="pinc"
 SUBSYSTEMS=="usb", GOTO="pinc_end"
 
 LABEL="pinc"
-SUBSYSTEM=="hidraw", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04*", MODE:="0666", SYMLINK+="pinc"
+#if it is the first interface, symlink it for easy use
+SUBSYSTEM=="hidraw", ATTRS{bInterfaceNumber}=="00", MODE:="0666", SYMLINK+="pinc"
 
 LABEL="pinc_end"
 
