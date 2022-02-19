@@ -383,12 +383,14 @@ class ManualState(State):
             x_nominal = 0
 
         motor_3_control, motor_4_control = corexy_transform(x_nominal, y_nominal)
+        motor_3_error = motor_3_control - main.get_motor_state[3][1]
+        motor_4_error = motor_4_control - main.get_motor_state[4][1]
 
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=motor_3_control))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=motor_4_control))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_ALPHA, control=motor_3_error))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_ALPHA, control=motor_4_error))
         main.send_command()
 
 
