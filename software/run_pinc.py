@@ -100,7 +100,7 @@ class JogState(State):
 
 
 class HomeState(State):
-    HOMING_SPEED = 0
+    HOMING_SPEED = 1
 
     def __init__(self):
         super().__init__()
