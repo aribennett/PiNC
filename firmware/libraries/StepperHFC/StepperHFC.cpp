@@ -49,7 +49,7 @@ void StepperHFC::coldStart()
 void StepperHFC::setEnable(bool enable)
 {
     _enable = enable;
-    if(enable)
+    if(_ppr != -1 && enable)
     {
         _step = getEncoderStep() - getEncoderStep() % MICROSTEPS;
     }

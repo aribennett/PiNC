@@ -17,7 +17,7 @@ public:
     void setEnable(bool enable);
 
 private:
-    int32_t _step = 0;
+    volatile int32_t _step = 0;
     int32_t _encOffset = 0;
     bool _dir = false;
     uint16_t _en_pin;
