@@ -30,6 +30,7 @@ private:
     bool _motorStopped = true;
     int32_t _timePeriod = 0;
     Encoder*  _commEncoder;
+    int32_t _encoderOffset = 0;
     int32_t _ppr = -1;
     int32_t getPhaseOffset();
     int32_t getEncoderStep();
