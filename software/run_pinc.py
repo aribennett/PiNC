@@ -427,6 +427,7 @@ def embedded_service():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     os.system(f"taskset -p -c 3 {os.getpid()}")
     main = RobotInterface()
     with Xbox360Controller(0, axis_threshold=0.2) as controller:
