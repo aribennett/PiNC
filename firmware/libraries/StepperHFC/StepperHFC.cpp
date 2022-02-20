@@ -10,6 +10,7 @@
 #define CONTROL_INTERVAL 200 //microseconds
 #define CONTROL_BASE 1000000
 #define MIN_DIVISOR 2
+#define ALIGN_WAIT 100000
 
 StepperHFC::StepperHFC(uint16_t step, uint16_t dir, uint16_t en)
 {
@@ -34,26 +35,18 @@ void StepperHFC::coldStart()
     pinMode(_dirPin, OUTPUT);
     digitalWrite(_dirPin, _dir);
     digitalWrite(_en_pin, false);
-    _enable = true;
-
-    // setEnable(true);
-
-    // zero out servo offset. Needs a delay to settle:
-    if(_ppr != -1)
-    {
-        delay(100);
-        _encoderOffset = _commEncoder->read();
-    }
+    setEnable(true);
 }
 
 void StepperHFC::setEnable(bool enable)
 {
-    _enable = enable;
-    if(_ppr != -1 && enable)
+    // if we are turning on the servo, align it
+    if(_ppr != -1 && enable && !_enable)
     {
-        _step = getEncoderStep() - getEncoderStep() % MICROSTEPS;
-        _stepCount = _step;
+        _aligning = true;
+        _alignTime = 0;
     }
+    _enable = enable;
     digitalWrite(_en_pin, !enable); // Enable driver in hardware
 }
 
@@ -64,7 +57,7 @@ int32_t StepperHFC::getStep()
 
 int32_t StepperHFC::getEncoderStep()
 {
-    int32_t encPos = _commEncoder->read() - _encoderOffset;
+    int32_t encPos = _commEncoder->read() - _encOffset;
     int32_t encStep = (MICROSTEPS * STEPS_PER_REV * encPos)/_ppr;
     return(encStep);
 }
@@ -83,78 +76,92 @@ void StepperHFC::run()
 {
     _controlAccumulator += COMMUTATION_INTERVAL;
     _stepAccumulator += COMMUTATION_INTERVAL;
+    _alignTime += COMMUTATION_INTERVAL;
 
-    // Manage control loop
-    if(_controlAccumulator > CONTROL_INTERVAL)
+    if(!_aligning)
     {
-        _alpha += _jerk * CONTROL_INTERVAL / 1000000.0;
-        _omega += _alpha * CONTROL_INTERVAL / 1000000.0;
-        if(_ppr == -1)
+        // Manage control loop
+        if(_controlAccumulator > CONTROL_INTERVAL)
         {
-            _theta = (TWO_PI * (float)_stepCount) / (STEPS_PER_REV * MICROSTEPS);
-        }
-        else
-        {
-            _theta = (TWO_PI * (float)_commEncoder->read())/(float)_ppr;
-        }
-
-        float divisor = _omega * MICROSTEPS * STEPS_PER_REV;
-        if (abs(divisor) < MIN_DIVISOR)
-        {
-            _motorStopped = true;
-        }
-        else
-        {
-            _motorStopped = false;
-            _timePeriod = TWO_PI * (float)CONTROL_BASE / divisor;
-        }
-        _controlAccumulator = 0;
-    }
-
-    // commutate motor
-    if (_stepAccumulator > abs(_timePeriod) && !_motorStopped && _enable)
-    {
-        if ((_timePeriod > 0))
-        {
-            ++_stepCount;
-        }
-        else
-        {
-            --_stepCount;
-        }
-        _stepAccumulator = 0;
-    }
-
-    // Limit the step by the encoder position in this block. Limit the nominal
-    // Set targetStep to the highest possible number, that is within commutation distance of the
-    // stepper motor. For 16th step, that is +- 32 steps from rotor actual
-    int32_t targetStep = getPhaseOffset();
-    if(targetStep != _step)
-    {
-        bool target_dir = false;
-        if(targetStep < _step)
-        {
-            target_dir = true;
-        }
-
-        // can only switch 1 pin per cycle
-        if(target_dir != _dir)
-        {
-            _dir = target_dir;
-            digitalWriteFast(_dirPin, _dir);
-        }
-        else
-        {
-            if(targetStep > _step)
+            _alpha += _jerk * CONTROL_INTERVAL / 1000000.0;
+            _omega += _alpha * CONTROL_INTERVAL / 1000000.0;
+            if(_ppr == -1)
             {
-                ++_step;
+                _theta = (TWO_PI * (float)_stepCount) / (STEPS_PER_REV * MICROSTEPS);
             }
             else
             {
-                --_step;
+                _theta = (TWO_PI * (float)_commEncoder->read())/(float)_ppr;
             }
-            digitalWriteFast(_stepPin, _edgeState);
-            _edgeState = !_edgeState;
+
+            float divisor = _omega * MICROSTEPS * STEPS_PER_REV;
+            if (abs(divisor) < MIN_DIVISOR)
+            {
+                _motorStopped = true;
+            }
+            else
+            {
+                _motorStopped = false;
+                _timePeriod = TWO_PI * (float)CONTROL_BASE / divisor;
+            }
+            _controlAccumulator = 0;
+        }
+
+        // commutate motor
+        if (_stepAccumulator > abs(_timePeriod) && !_motorStopped && _enable)
+        {
+            if ((_timePeriod > 0))
+            {
+                ++_stepCount;
+            }
+            else
+            {
+                --_stepCount;
+            }
+            _stepAccumulator = 0;
+        }
+
+        // Limit the step by the encoder position in this block. Limit the nominal
+        // Set targetStep to the highest possible number, that is within commutation distance of the
+        // stepper motor. For 16th step, that is +- 32 steps from rotor actual
+        int32_t targetStep = getPhaseOffset();
+        if(targetStep != _step)
+        {
+            bool target_dir = false;
+            if(targetStep < _step)
+            {
+                target_dir = true;
+            }
+
+            // can only switch 1 pin per cycle
+            if(target_dir != _dir)
+            {
+                _dir = target_dir;
+                digitalWriteFast(_dirPin, _dir);
+            }
+            else
+            {
+                if(targetStep > _step)
+                {
+                    ++_step;
+                }
+                else
+                {
+                    --_step;
+                }
+                digitalWriteFast(_stepPin, _edgeState);
+                _edgeState = !_edgeState;
+            }
+        }
+    }
+    else
+    {
+        if(_alignTime > ALIGN_WAIT)
+        {
+            _aligning = false;
+            _encOffset = _commEncoder->read();
+            _step = 0;
+            _stepCount = 0;
         }
     }
 }
