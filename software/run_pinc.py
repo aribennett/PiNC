@@ -113,6 +113,7 @@ class HomeState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.DISABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.send_command()
+        sleep(.2)
         self.last_home = main.get_motor_state(3)[0]
         self.last_timeout = -1
 
@@ -131,10 +132,6 @@ class HomeState(State):
             HomeState.home_3 = main.get_motor_state(3)[0]
             HomeState.home_4 = main.get_motor_state(4)[0]
             post_event('found home')
-
-        # e_x, e_y = get_error()
-        # if e_x is not None or e_y is not None:
-        #     post_event('found home')
 
 
 class FineHomeState(State):
