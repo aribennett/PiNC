@@ -101,7 +101,7 @@ class JogState(State):
 
 class HomeState(State):
     HOMING_SPEED = 1
-    HOME_TIMEOUT = .3
+    HOME_TIMEOUT = .1
     HOME_THRESHHOLD = .05
 
     def __init__(self):
@@ -122,11 +122,9 @@ class HomeState(State):
         main.send_command()
 
         if main.get_motor_state(3)[0] - self.last_home > HomeState.HOME_THRESHHOLD:
-            print(main.get_motor_state(3)[0], self.last_home)
-            print(time() - self.last_timeout)
             self.last_timeout = time()
             self.last_home = main.get_motor_state(3)[0]
-        elif time() - self.last_timeout > HomeState.HOME_THRESHHOLD:
+        elif time() - self.last_timeout > HomeState.HOME_TIMEOUT:
             post_event('found home')
 
 
