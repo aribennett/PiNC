@@ -101,7 +101,7 @@ class JogState(State):
 
 class HomeState(State):
     HOMING_SPEED = 1
-    HOME_TIMEOUT = .1
+    HOME_TIMEOUT = .3
     HOME_THRESHHOLD = .05
 
     def __init__(self):
