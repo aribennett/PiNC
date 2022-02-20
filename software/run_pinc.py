@@ -123,6 +123,7 @@ class HomeState(State):
 
         if main.get_motor_state(3)[0] - self.last_home > HomeState.HOME_THRESHHOLD:
             print(main.get_motor_state(3)[0], self.last_home)
+            time() - self.last_timeout
             self.last_timeout = time()
             self.last_home = main.get_motor_state(3)[0]
         elif time() - self.last_timeout > HomeState.HOME_THRESHHOLD:
