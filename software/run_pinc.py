@@ -101,17 +101,28 @@ class JogState(State):
 
 class HomeState(State):
     HOMING_SPEED = 1
+    HOME_TIMEOUT = .1
+    HOME_THRESHHOLD = .05
 
     def __init__(self):
         super().__init__()
-        self.event_map['found home'] = FineHomeState
+        self.event_map['found home'] = ManualState
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.DISABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.send_command()
+        self.last_home = 1000000
+        self.last_timeout = time()
 
     def run(self):
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=HomeState.HOMING_SPEED))
         main.send_command()
+
+        if main.get_motor_state(3)[0] - self.last_home > HomeState.HOME_THRESHHOLD:
+            self.last_timeout = time()
+            self.last_home = main.get_motor_state(3)[0]
+        elif time() - self.last_timeout > HomeState.HOME_THRESHHOLD:
+            post_event('found home')
+
 
         # e_x, e_y = get_error()
         # if e_x is not None or e_y is not None:
@@ -342,8 +353,8 @@ class ManualState(State):
 
     def __init__(self):
         super().__init__()
-        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
+        # main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
+        # main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.ENABLE))
