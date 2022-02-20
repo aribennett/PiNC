@@ -33,7 +33,10 @@ void StepperHFC::coldStart()
     pinMode(_stepPin, OUTPUT);
     pinMode(_dirPin, OUTPUT);
     digitalWrite(_dirPin, _dir);
-    setEnable(true);
+    digitalWrite(_en_pin, false);
+    _enable = true;
+
+    // setEnable(true);
 
     // zero out servo offset. Needs a delay to settle:
     if(_ppr != -1)
