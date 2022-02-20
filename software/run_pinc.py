@@ -111,9 +111,13 @@ class HomeState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.send_command()
         self.last_home = main.get_motor_state(3)[0]
-        self.last_timeout = time()
+        self.last_timeout = -1
 
     def run(self):
+        # init time on first run
+        if self.last_timeout == -1:
+            self.last_timeout = time()
+
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=HomeState.HOMING_SPEED))
         main.send_command()
 
