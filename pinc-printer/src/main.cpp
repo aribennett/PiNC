@@ -18,11 +18,13 @@ Encoder a_enc(A_ENCB, A_ENCA);
 TMC5160Stepper a_spi(37, R_SENSE);
 StepperHFC a_driver(26, 27, 41, &a_enc, 8192);
 
+
 #define B_ENCA 28
 #define B_ENCB 30
 Encoder b_enc(B_ENCB, B_ENCA);
 TMC5160Stepper b_spi(36, R_SENSE);
 StepperHFC b_driver(8, 9, 38, &b_enc, 8192);
+
 
 
 

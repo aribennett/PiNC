@@ -47,8 +47,8 @@ def handle_events():
 class InitState(State):
     def __init__(self):
         super().__init__()
-        # self.event_map['init'] = HomeState
-        self.event_map['init'] = ManualState
+        self.event_map['init'] = HomeState
+        # self.event_map['init'] = ManualState
 
     def run(self):
         post_event('init')
@@ -104,6 +104,9 @@ class HomeState(State):
     HOME_TIMEOUT = .1
     HOME_THRESHHOLD = .05
 
+    home_3 = 0
+    home_4 = 0
+
     def __init__(self):
         super().__init__()
         self.event_map['found home'] = ManualState
@@ -125,8 +128,9 @@ class HomeState(State):
             self.last_timeout = time()
             self.last_home = main.get_motor_state(3)[0]
         elif time() - self.last_timeout > HomeState.HOME_TIMEOUT:
+            HomeState.home_3 = main.get_motor_state(3)[0]
+            HomeState.home_4 = main.get_motor_state(4)[0]
             post_event('found home')
-
 
         # e_x, e_y = get_error()
         # if e_x is not None or e_y is not None:
@@ -134,8 +138,7 @@ class HomeState(State):
 
 
 class FineHomeState(State):
-    home_3 = 0
-    home_4 = 0
+
 
     def __init__(self):
         super().__init__()
