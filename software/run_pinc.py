@@ -101,7 +101,7 @@ class JogState(State):
 
 class HomeState(State):
     HOMING_SPEED = 1
-    HOME_TIMEOUT = .1
+    HOME_TIMEOUT = .5
     HOME_THRESHHOLD = .05
 
     home_3 = 0
@@ -113,7 +113,6 @@ class HomeState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.DISABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.send_command()
-        sleep(.2)
         self.last_home = main.get_motor_state(3)[0]
         self.last_timeout = -1
 
