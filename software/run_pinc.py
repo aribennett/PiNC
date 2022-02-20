@@ -101,7 +101,7 @@ class JogState(State):
 
 class HomeState(State):
     HOMING_SPEED = 3
-    HOME_TIMEOUT = .1
+    HOME_TIMEOUT = .05
     HOME_THRESHHOLD = .05
 
     home_3 = 0
