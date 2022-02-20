@@ -33,22 +33,28 @@ void StepperHFC::coldStart()
     pinMode(_stepPin, OUTPUT);
     pinMode(_dirPin, OUTPUT);
     digitalWrite(_dirPin, _dir);
-    setEnable(true);    
-}
+    digitalWrite(_en_pin, false);
+    _enable = true;
 
-void StepperHFC::setEnable(bool enable)
-{
-    // Enable driver in hardware
-    digitalWrite(_en_pin, !enable); 
-    // if a servo, reset the commutation after enable
+    // setEnable(true);
+
+    // zero out servo offset. Needs a delay to settle:
     if(_ppr != -1)
     {
         delay(100);
         _encoderOffset = _commEncoder->read();
-        _step = 0;
-        _stepCount = 0;
     }
+}
+
+void StepperHFC::setEnable(bool enable)
+{
     _enable = enable;
+    if(_ppr != -1 && enable)
+    {
+        _step = getEncoderStep() - getEncoderStep() % MICROSTEPS;
+        _stepCount = _step;
+    }
+    digitalWrite(_en_pin, !enable); // Enable driver in hardware
 }
 
 int32_t StepperHFC::getStep()
@@ -77,80 +83,78 @@ void StepperHFC::run()
 {
     _controlAccumulator += COMMUTATION_INTERVAL;
     _stepAccumulator += COMMUTATION_INTERVAL;
-    if(_enable)
+
+    // Manage control loop
+    if(_controlAccumulator > CONTROL_INTERVAL)
     {
-        // Manage control loop
-        if(_controlAccumulator > CONTROL_INTERVAL)
+        _alpha += _jerk * CONTROL_INTERVAL / 1000000.0;
+        _omega += _alpha * CONTROL_INTERVAL / 1000000.0;
+        if(_ppr == -1)
         {
-            _alpha += _jerk * CONTROL_INTERVAL / 1000000.0;
-            _omega += _alpha * CONTROL_INTERVAL / 1000000.0;
-            if(_ppr == -1)
-            {
-                _theta = (TWO_PI * (float)_stepCount) / (STEPS_PER_REV * MICROSTEPS);
-            }
-            else
-            {
-                _theta = (TWO_PI * (float)_commEncoder->read())/(float)_ppr;
-            }
-
-            float divisor = _omega * MICROSTEPS * STEPS_PER_REV;
-            if (abs(divisor) < MIN_DIVISOR)
-            {
-                _motorStopped = true;
-            }
-            else
-            {
-                _motorStopped = false;
-                _timePeriod = TWO_PI * (float)CONTROL_BASE / divisor;
-            }
-            _controlAccumulator = 0;
+            _theta = (TWO_PI * (float)_stepCount) / (STEPS_PER_REV * MICROSTEPS);
+        }
+        else
+        {
+            _theta = (TWO_PI * (float)_commEncoder->read())/(float)_ppr;
         }
 
-        // commutate motor
-        if (_stepAccumulator > abs(_timePeriod) && !_motorStopped && _enable)
+        float divisor = _omega * MICROSTEPS * STEPS_PER_REV;
+        if (abs(divisor) < MIN_DIVISOR)
         {
-            if ((_timePeriod > 0))
-            {
-                ++_stepCount;
-            }
-            else
-            {
-                --_stepCount;
-            }
-            _stepAccumulator = 0;
+            _motorStopped = true;
+        }
+        else
+        {
+            _motorStopped = false;
+            _timePeriod = TWO_PI * (float)CONTROL_BASE / divisor;
+        }
+        _controlAccumulator = 0;
+    }
+
+    // commutate motor
+    if (_stepAccumulator > abs(_timePeriod) && !_motorStopped && _enable)
+    {
+        if ((_timePeriod > 0))
+        {
+            ++_stepCount;
+        }
+        else
+        {
+            --_stepCount;
+        }
+        _stepAccumulator = 0;
+    }
+
+    // Limit the step by the encoder position in this block. Limit the nominal
+    // Set targetStep to the highest possible number, that is within commutation distance of the
+    // stepper motor. For 16th step, that is +- 32 steps from rotor actual
+    int32_t targetStep = getPhaseOffset();
+    if(targetStep != _step)
+    {
+        bool target_dir = false;
+        if(targetStep < _step)
+        {
+            target_dir = true;
         }
 
-        // Limit the step by the encoder position in this block. Limit the nominal
-        // Set targetStep to the highest possible number, that is within commutation distance of the
-        // stepper motor. For 16th step, that is +- 32 steps from rotor actual
-        int32_t targetStep = getPhaseOffset();
-        if(targetStep != _step)
+        // can only switch 1 pin per cycle
+        if(target_dir != _dir)
         {
-            bool target_dir = false;
-            if(targetStep < _step)
+            _dir = target_dir;
+            digitalWriteFast(_dirPin, _dir);
+        }
+        else
+        {
+            if(targetStep > _step)
             {
-                target_dir = true;
-            }
-
-            // can only switch 1 pin per cycle
-            if(target_dir != _dir)
-            {
-                _dir = target_dir;
-                digitalWriteFast(_dirPin, _dir);
+                ++_step;
             }
             else
             {
-                if(targetStep > _step)
-                {
-                    ++_step;
-                }
-                else
-                {
-                    --_step;
-                }
-                digitalWriteFast(_stepPin, _edgeState);
-                _edgeState = !_edgeState;
+                --_step;
             }
+            digitalWriteFast(_stepPin, _edgeState);
+            _edgeState = !_edgeState;
         }
     }
 }
