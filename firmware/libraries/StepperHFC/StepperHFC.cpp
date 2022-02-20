@@ -81,7 +81,14 @@ void StepperHFC::run()
     {
         _alpha += _jerk * CONTROL_INTERVAL / 1000000.0;
         _omega += _alpha * CONTROL_INTERVAL / 1000000.0;
-        _theta = (TWO_PI * (float)_stepCount) / (STEPS_PER_REV * MICROSTEPS);
+        if(_ppr == -1)
+        {
+            _theta = (TWO_PI * (float)_stepCount) / (STEPS_PER_REV * MICROSTEPS);
+        }
+        else
+        {
+            _theta = (TWO_PI * (float)_commEncoder->read())/(float)_ppr;
+        }
 
         float divisor = _omega * MICROSTEPS * STEPS_PER_REV;
         if (abs(divisor) < MIN_DIVISOR)
