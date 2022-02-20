@@ -110,7 +110,7 @@ class HomeState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.DISABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.send_command()
-        self.last_home = 1000000
+        self.last_home = main.get_motor_state(3)[0]
         self.last_timeout = time()
 
     def run(self):
