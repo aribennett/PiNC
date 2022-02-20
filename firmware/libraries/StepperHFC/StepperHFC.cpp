@@ -49,6 +49,10 @@ void StepperHFC::coldStart()
 void StepperHFC::setEnable(bool enable)
 {
     _enable = enable;
+    if(enable)
+    {
+        _step = getEncoderStep() - getEncoderStep() % MICROSTEPS;
+    }
     digitalWrite(_en_pin, !enable); // Enable driver in hardware
 }
 
