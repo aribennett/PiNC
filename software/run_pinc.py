@@ -169,20 +169,13 @@ class HomeZState(State):
 
     def run(self):
         z_nominal = np.clip(-get_laser_displacement()/10, -10, 10)
-        if self.motor_index == 'all':
-            main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-            main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-            main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-            main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
-            main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
-            main.send_command()
-        else:
-            for i in range(5):
-                if i != self.motor_index:
-                    main.add_motor_command(pkt.pack_MotorCommandPacket(i, pkt.MotorCommand.SET_OMEGA, control=0))
-                else:
-                    main.add_motor_command(pkt.pack_MotorCommandPacket(i, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-            main.send_command()
+        # if self.motor_index == 'all':
+        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
+        main.send_command()
 
         if z_nominal == 0:
             post_event('z home')
@@ -204,8 +197,8 @@ class HomeCenterState(HomeZState):
 class JogHome0State(JogState):
     def __init__(self):
         super().__init__()
-        self.event_map['jog done'] = ManualState
-        self.set_jog_target(z0[0], z0[1], -20, 5)
+        self.event_map['jog done'] = HomeZ0State
+        self.set_jog_target(z0[0], z0[1], -10, 5)
 
 
 class HomeZ0State(HomeZState):
@@ -219,12 +212,13 @@ class JogHome1State(JogState):
     def __init__(self):
         super().__init__()
         self.event_map['jog done'] = HomeZ1State
-        self.set_jog_target(z1[0], z1[1], 5)
+        self.set_jog_target(z1[0], z1[1], -10, 5)
+
 
 class HomeZ1State(HomeZState):
     def __init__(self):
         super().__init__()
-        self.event_map['z home'] = JogHome2State
+        self.event_map['z home'] = ManualState
         self.motor_index = 1
 
 
