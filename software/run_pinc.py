@@ -80,9 +80,9 @@ class JogState(State):
     def run(self):
         self.xpos, self.ypos = corexy_inverse(main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4)
         self.xvel, self.yvel = corexy_inverse(main.get_motor_state(3)[1], main.get_motor_state(4)[1])
-        self.z0pos = main.get_motor_state(0)[1] - HomeState.home_0
-        self.z1pos = main.get_motor_state(1)[1] - HomeState.home_1
-        self.z2pos = main.get_motor_state(2)[1] - HomeState.home_2
+        self.z0pos = main.get_motor_state(0)[0] - HomeState.home_0
+        self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
+        self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
     
         interp = (time()-self.start_time)/self.jog_time
         if interp >= 1:
@@ -109,9 +109,9 @@ class JogState(State):
 
             control_3, control_4 = corexy_transform(control_x, control_y)
 
-            control_0 = self.zw_nominal #+ z0_error
-            control_1 = self.zw_nominal #+ z1_error
-            control_2 = self.zw_nominal #+ z2_error
+            control_0 = self.zw_nominal + z0_error
+            control_1 = self.zw_nominal + z1_error
+            control_2 = self.zw_nominal + z2_error
 
             main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=control_0))
             main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=control_1))
