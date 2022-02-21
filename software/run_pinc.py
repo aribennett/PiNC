@@ -205,7 +205,7 @@ class JogHome0State(JogState):
     def __init__(self):
         super().__init__()
         self.event_map['jog done'] = ManualState
-        self.set_jog_target(z0[0], z0[1], -1, 5)
+        self.set_jog_target(z0[0], z0[1], -20, 5)
 
 
 class HomeZ0State(HomeZState):
