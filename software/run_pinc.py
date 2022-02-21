@@ -2,7 +2,7 @@ from serial_host import packet_definitions as pkt
 from serial_host.robot_interface import RobotInterface
 from serial_host import cold_start, read, write
 from kinematics import corexy_inverse, corexy_transform, z0, z1, z2, center_home
-from marker_tracking import get_laser_displacement, run_tracking_loop, get_error, end_tracking_loop, enable_fiducial_sensing, enable_laser_sensing
+from laser_tracking import get_laser_displacement, run_tracking_loop, end_tracking_loop
 from threading import Thread
 import numpy as np
 from time import time, sleep
@@ -165,43 +165,24 @@ class HomeState(State):
 class HomeZState(State):
     def __init__(self):
         super().__init__()
-        enable_laser_sensing()
         self.motor_index = 'all'
-        control_packet = pkt.pack_HeaderPacket(command=pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[4].motorId, pkt.MotorCommand.ENABLE)
-        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[3].motorId, pkt.MotorCommand.ENABLE)
-        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[2].motorId, pkt.MotorCommand.ENABLE)
-        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[1].motorId, pkt.MotorCommand.ENABLE)
-        control_packet += pkt.pack_MotorCommandPacket(embedded_motors[0].motorId, pkt.MotorCommand.ENABLE)
-        write(control_packet)
 
     def run(self):
-        z_nominal = np.clip(get_laser_displacement()/10, -10, 10)
+        z_nominal = np.clip(-get_laser_displacement()/10, -10, 10)
         if self.motor_index == 'all':
-            control_packet = pkt.pack_HeaderPacket(
-                command=pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-            control_packet += pkt.pack_MotorCommandPacket(
-                embedded_motors[4].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-            control_packet += pkt.pack_MotorCommandPacket(
-                embedded_motors[3].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-            control_packet += pkt.pack_MotorCommandPacket(
-                embedded_motors[2].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-            control_packet += pkt.pack_MotorCommandPacket(
-                embedded_motors[1].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-            control_packet += pkt.pack_MotorCommandPacket(
-                embedded_motors[0].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-            write(control_packet)
+            main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=0))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=0))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+            main.send_command()
         else:
-            control_packet = pkt.pack_HeaderPacket(
-                command=pkt.SerialCommand.RUN_MOTOR, motorCount=5)
-            for motor in embedded_motors:
-                if embedded_motors[motor].motorId != self.motor_index:
-                    control_packet += pkt.pack_MotorCommandPacket(
-                        embedded_motors[motor].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+            for i in range(5):
+                if i != self.motor_index:
+                    main.add_motor_command(pkt.pack_MotorCommandPacket(i, pkt.MotorCommand.SET_OMEGA, control=0))
                 else:
-                    control_packet += pkt.pack_MotorCommandPacket(
-                        embedded_motors[self.motor_index].motorId, pkt.MotorCommand.SET_OMEGA, control=z_nominal)
-            write(control_packet)
+                    main.add_motor_command(pkt.pack_MotorCommandPacket(i, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+            main.send_command()
 
         if z_nominal == 0:
             post_event('z home')
@@ -217,7 +198,7 @@ class JogHomeCenterState(JogState):
 class HomeCenterState(HomeZState):
     def __init__(self):
         super().__init__()
-        self.event_map['z home'] = JogHome0State
+        self.event_map['z home'] = ManualState
 
 
 class JogHome0State(JogState):
@@ -326,6 +307,7 @@ class ManualState(State):
 
     def __init__(self):
         super().__init__()
+        end_tracking_loop()
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.ENABLE))
@@ -399,9 +381,9 @@ if __name__ == "__main__":
     with Xbox360Controller(0, axis_threshold=0.2) as controller:
         start_time = time()
         jog_controller = controller
-        # tracking_thread = Thread(target=run_tracking_loop, daemon=True)
-        # tracking_thread.start()
-        # print("Started tracking")
+        tracking_thread = Thread(target=run_tracking_loop, daemon=True)
+        tracking_thread.start()
+        print("Started tracking")
         sleep(2)
         embedded_thread = Thread(target=embedded_service, daemon=True)
         embedded_thread.start()
