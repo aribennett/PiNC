@@ -218,7 +218,7 @@ class JogHome1State(JogState):
 class HomeZ1State(HomeZState):
     def __init__(self):
         super().__init__()
-        self.event_map['z home'] = ManualState
+        self.event_map['z home'] = JogHome2State
         self.motor_index = 1
 
 
@@ -226,7 +226,7 @@ class JogHome2State(JogState):
     def __init__(self):
         super().__init__()
         self.event_map['jog done'] = HomeZ2State
-        self.set_jog_target(z2[0], z2[1], 5)
+        self.set_jog_target(z2[0], z2[1], -10, 5)
 
 
 class HomeZ2State(HomeZState):
@@ -240,7 +240,7 @@ class Jog00State(JogState):
     def __init__(self):
         super().__init__()
         self.event_map['jog done'] = ManualState
-        self.set_jog_target(0, 0, 5)
+        self.set_jog_target(30, 30, -30, 5)
 
 
 class PrintState(JogState):
