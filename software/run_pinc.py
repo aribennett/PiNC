@@ -57,7 +57,7 @@ class JogState(State):
     def __init__(self):
         super().__init__()
         self.xstart, self.ystart = corexy_inverse(main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4)
-        self.zstart = main.get_motor_state(0)[1] - HomeState.home_0
+        self.zstart = main.get_motor_state(0)[0] - HomeState.home_0
         self.jog_time = 10
         self.start_time = time()
         self.x_target, self.y_target, self.z_target = 0, 0, 0
