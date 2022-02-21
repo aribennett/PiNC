@@ -395,4 +395,4 @@ if __name__ == "__main__":
         print("Started controls")
         while True:
             sleep(1)
-            print(main.get_motor_state(0)[0], HomeState.home_0)
+            print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
