@@ -34,7 +34,8 @@ def run_tracking_loop(debug=False):
                 laser_x = int(M["m01"] / M["m00"])
             else:
                 laser_x = 400
-            print(laser_x)
+            if debug:
+                print(laser_x)
             raw_capture.truncate(0)
 
 
