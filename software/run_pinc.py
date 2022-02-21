@@ -109,13 +109,13 @@ class JogState(State):
 
             control_3, control_4 = corexy_transform(control_x, control_y)
 
-            control_0 = z0_error + self.zw_nominal
-            control_1 = z1_error + self.zw_nominal
-            control_2 = z2_error + self.zw_nominal
+            control_0 = self.zw_nominal #+ z0_error
+            control_1 = self.zw_nominal #+ z1_error
+            control_2 = self.zw_nominal #+ z2_error
 
-            # main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=control_0))
-            # main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=control_1))
-            # main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=control_2))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=control_0))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=control_1))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=control_2))
             main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control_3))
             main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control_4))
             main.send_command()
