@@ -185,6 +185,10 @@ class HomeZState(State):
                 HomeState.home_1 = main.get_motor_state(1)[0]
             elif self.motor_index == 2:
                 HomeState.home_2 = main.get_motor_state(2)[0]
+            else:
+                HomeState.home_0 = main.get_motor_state(0)[0]
+                HomeState.home_1 = main.get_motor_state(1)[0]
+                HomeState.home_2 = main.get_motor_state(2)[0]
             post_event('z home')
 
 
