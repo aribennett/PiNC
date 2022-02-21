@@ -47,8 +47,8 @@ def handle_events():
 class InitState(State):
     def __init__(self):
         super().__init__()
-        # self.event_map['init'] = HomeState
-        self.event_map['init'] = ManualState
+        self.event_map['init'] = HomeState
+        # self.event_map['init'] = ManualState
 
     def run(self):
         post_event('init')
@@ -351,9 +351,9 @@ class ManualState(State):
         motor_3_error = (motor_3_control - main.get_motor_state(3)[1]) * ManualState.XY_P_ACCEL
         motor_4_error = (motor_4_control - main.get_motor_state(4)[1]) * ManualState.XY_P_ACCEL
 
-        # main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-        # main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
 
         if jog_controller.button_a.is_pressed or main.get_motor_state(3)[1] != 0 or main.get_motor_state(4)[1] != 0:
             main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_ALPHA, control=motor_3_error))
