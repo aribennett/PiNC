@@ -179,6 +179,12 @@ class HomeZState(State):
         main.send_command()
 
         if z_nominal == 0:
+            if self.motor_index == 0:
+                HomeState.home_0 = main.get_motor_state(0)[0]
+            elif self.motor_index == 1:
+                HomeState.home_1 = main.get_motor_state(1)[0]
+            elif self.motor_index == 2:
+                HomeState.home_2 = main.get_motor_state(2)[0]
             post_event('z home')
 
 
@@ -346,8 +352,8 @@ class ManualState(State):
         motor_4_error = (motor_4_control - main.get_motor_state(4)[1]) * ManualState.XY_P_ACCEL
 
         # main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-        # main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        # main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
 
         if jog_controller.button_a.is_pressed or main.get_motor_state(3)[1] != 0 or main.get_motor_state(4)[1] != 0:
             main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_ALPHA, control=motor_3_error))
