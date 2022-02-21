@@ -57,26 +57,37 @@ class JogState(State):
     def __init__(self):
         super().__init__()
         self.xstart, self.ystart = corexy_inverse(main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4)
+        self.zstart = main.get_motor_state(0)[1] - HomeState.home_0
         self.jog_time = 10
         self.start_time = time()
-        self.x_target, self.y_target = 0, 0
+        self.x_target, self.y_target, self.z_target = 0, 0, 0
         self.xw_nominal, self.yw_nominal = 0, 0
+        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.ENABLE))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.ENABLE))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
         main.send_command()
 
-    def set_jog_target(self, x, y, time):
+    def set_jog_target(self, x, y, z, time):
         self.jog_time = time
-        self.x_target, self.y_target = x, y
+        self.x_target, self.y_target, self.z_target = x, y, z
         self.xw_nominal = (self.x_target - self.xstart)/self.jog_time
         self.yw_nominal = (self.y_target - self.ystart)/self.jog_time
+        self.zw_nominal = (self.z_target - self.zstart)/self.jog_time
 
     def run(self):
         self.xpos, self.ypos = corexy_inverse(main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4)
         self.xvel, self.yvel = corexy_inverse(main.get_motor_state(3)[1], main.get_motor_state(4)[1])
-
+        self.z0pos = main.get_motor_state(0)[1] - HomeState.home_0
+        self.z1pos = main.get_motor_state(1)[1] - HomeState.home_1
+        self.z2pos = main.get_motor_state(2)[1] - HomeState.home_2
+    
         interp = (time()-self.start_time)/self.jog_time
         if interp >= 1:
+            main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=0))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=0))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=0))
             main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
             main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
             main.send_command()
@@ -84,11 +95,26 @@ class JogState(State):
         else:
             x_nominal = interp*(self.x_target - self.xstart) + self.xstart
             y_nominal = interp*(self.y_target - self.ystart) + self.ystart
+            z_nominal = interp*(self.z_target - self.zstart) + self.zstart
+
             x_error = x_nominal - self.xpos
             y_error = y_nominal - self.ypos
+            z0_error = z_nominal - self.z0pos
+            z1_error = z_nominal - self.z1pos
+            z2_error = z_nominal - self.z2pos
+
             control_x = x_error + self.xw_nominal
             control_y = y_error + self.yw_nominal
+
             control_3, control_4 = corexy_transform(control_x, control_y)
+
+            control_0 = z0_error + self.zw_nominal
+            control_1 = z1_error + self.zw_nominal
+            control_2 = z2_error + self.zw_nominal
+
+            main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=control_0))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=control_1))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=control_2))
             main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control_3))
             main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control_4))
             main.send_command()
@@ -99,6 +125,9 @@ class HomeState(State):
     HOME_TIMEOUT = .05
     HOME_THRESHHOLD = .05
 
+    home_0 = 0
+    home_1 = 0
+    home_2 = 0
     home_3 = 0
     home_4 = 0
 
@@ -122,6 +151,9 @@ class HomeState(State):
             self.last_timeout = time()
             self.last_home = main.get_motor_state(3)[0]
         elif time() - self.last_timeout > HomeState.HOME_TIMEOUT:
+            HomeState.home_0 = main.get_motor_state(0)[0]
+            HomeState.home_1 = main.get_motor_state(1)[0]
+            HomeState.home_2 = main.get_motor_state(2)[0]
             HomeState.home_3 = main.get_motor_state(3)[0]
             HomeState.home_4 = main.get_motor_state(4)[0]
             main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
@@ -178,7 +210,7 @@ class JogHomeCenterState(JogState):
     def __init__(self):
         super().__init__()
         self.event_map['jog done'] = ManualState
-        self.set_jog_target(30, 30, 5)
+        self.set_jog_target(30, 30, -1, 5)
 
 
 class HomeCenterState(HomeZState):
