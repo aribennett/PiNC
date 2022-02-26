@@ -50,6 +50,13 @@ struct MotorCommandPacket
 } __attribute__ ((packed));
 static_assert(sizeof(MotorCommandPacket) == 6, "Axis packet packing issue");
 
+struct OutputCommandPacket
+{
+    uint8_t outputId;
+    uint16_t output;
+} __attribute__ ((packed));
+static_assert(sizeof(OutputCommandPacket) ==3, "Output command packing issue");
+
 struct SensorPacket
 {
     uint8_t sensorID;
