@@ -41,6 +41,7 @@ TMC5160Stepper b_spi(36, R_SENSE);
 StepperHFC b_driver(8, 9, 38, &b_enc, 8192);
 
 GPIOOutput laser(LASER_ON, LOW);
+GPIOOutput fan1(FAN1_ON, LOW);
 ADCData hotendThermistor(HOTEND_THERMISTOR);
 
 void setup()
@@ -68,7 +69,9 @@ void setup()
 
     // Outputs
     laser.coldStart();
+    fan1.coldStart();
     outputList.addOutput(&laser);
+    outputList.addOutput(&fan1);
 
     // Inputs
     hotendThermistor.coldStart();
@@ -79,7 +82,6 @@ void setup()
 
 void loop()
 {
-    static long timestamp;
     serialClient.run();
     dataList.runData();
 }
