@@ -8,6 +8,8 @@ class RobotInterface(object):
         self.sensors = {}
         self.motor_command_queue = b''
         self.motor_command_count = 0
+        self.output_command_queue = b''
+        self.output_command_count = 0
         cold_start()
 
     def run(self):
@@ -29,10 +31,21 @@ class RobotInterface(object):
     def add_motor_command(self, command):
         self.motor_command_queue += command
         self.motor_command_count += 1
+    
+    def add_output_command(self, command):
+        self.output_command_queue += command
+        self.output_command_count += 1
 
     def send_command(self):
-        control_packet = pkt.pack_HeaderPacket(command=pkt.SerialCommand.RUN, motorCount=self.motor_command_count)
+        control_packet = pkt.pack_HeaderPacket(
+            command=pkt.SerialCommand.RUN,
+            motorCount=self.motor_command_count,
+            componentCount=self.output_command_count
+        )
         control_packet += self.motor_command_queue
+        control_packet += self.output_command_queue
         write(control_packet)
         self.motor_command_queue = b''
         self.motor_command_count = 0
+        self.output_command_queue = b''
+        self.output_command_count = 0

@@ -318,6 +318,7 @@ class ManualState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.ENABLE))
+        main.add_output_command(pkt.pack_ComponentPacket(0, 1))
         main.send_command()
 
     def run(self):
