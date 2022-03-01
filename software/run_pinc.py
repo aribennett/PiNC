@@ -47,8 +47,8 @@ def handle_events():
 class InitState(State):
     def __init__(self):
         super().__init__()
-        self.event_map['init'] = HomeState
-        # self.event_map['init'] = ManualState
+        # self.event_map['init'] = HomeState
+        self.event_map['init'] = ManualState
 
     def run(self):
         post_event('init')
