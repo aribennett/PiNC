@@ -47,8 +47,8 @@ def handle_events():
 class InitState(State):
     def __init__(self):
         super().__init__()
-        # self.event_map['init'] = HomeState
-        self.event_map['init'] = ManualState
+        self.event_map['init'] = HomeState
+        # self.event_map['init'] = ManualState
 
     def run(self):
         post_event('init')
@@ -137,6 +137,7 @@ class HomeState(State):
         super().__init__()
         self.event_map['found home'] = JogHomeCenterState
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
+        main.add_output_command(pkt.pack_ComponentPacket(0, 1))
         main.send_command()
         self.last_home = main.get_motor_state(3)[0]
         self.last_timeout = -1
@@ -170,7 +171,6 @@ class HomeZState(State):
 
     def run(self):
         z_nominal = np.clip(-get_laser_displacement()/10, -10, 10)
-        # if self.motor_index == 'all':
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
@@ -318,7 +318,7 @@ class ManualState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.ENABLE))
-        main.add_output_command(pkt.pack_ComponentPacket(0, 1))
+        main.add_output_command(pkt.pack_ComponentPacket(0, 0))
         main.send_command()
 
     def run(self):
