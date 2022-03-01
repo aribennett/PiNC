@@ -138,7 +138,7 @@ class HomeState(State):
         self.event_map['found home'] = JogHomeCenterState
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
-        main.add_output_command(pkt.pack_ComponentPacket(2, 1))
+        main.add_output_command(pkt.pack_ComponentPacket(3, 1))
         main.send_command()
         self.last_home = main.get_motor_state(3)[0]
         self.last_timeout = -1
@@ -320,7 +320,7 @@ class ManualState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_ComponentPacket(0, 0))
-        main.add_output_command(pkt.pack_ComponentPacket(2, 0))
+        main.add_output_command(pkt.pack_ComponentPacket(3, 0))
         main.send_command()
 
     def run(self):

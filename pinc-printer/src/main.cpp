@@ -42,7 +42,8 @@ StepperHFC b_driver(8, 9, 38, &b_enc, 8192);
 
 GPIOOutput laser(LASER_ON, LOW);
 GPIOOutput fan1(FAN1_ON, LOW);
-GPIOOutput fan2(FAN2_ON, LOW);
+GPIOOutput fan3(FAN3_ON, LOW);
+GPIOOutput hotend(HOTEND_ON, LOW);
 ADCData hotendThermistor(HOTEND_THERMISTOR);
 
 void setup()
@@ -71,10 +72,12 @@ void setup()
     // Outputs
     laser.coldStart();
     fan1.coldStart();
-    fan2.coldStart();
+    fan3.coldStart();
+    hotend.coldStart();
     outputList.addOutput(&laser);
     outputList.addOutput(&fan1);
-    outputList.addOutput(&fan2);
+    outputList.addOutput(&fan3);
+    outputList.addOutput(&hotend);
     
 
     // Inputs
