@@ -1,6 +1,7 @@
 #include <SerialClient.h>
 #include <Motor.h>
 #include <Data.h>
+#include <Output.h>
 #include <arduino.h>
 
 SerialClient serialClient;
@@ -101,6 +102,10 @@ void SerialClient::handleInputPacket()
                 break;
             }
         }
+        for(uint8_t i = 0; i < outputCount; ++i)
+        {
+            outputList.getOutput(outputPackets[i].componentId)->setOutput(outputPackets[i].value);
+        }
         break;
     
     case RESET:
@@ -123,6 +128,10 @@ void SerialClient::checkTimeout()
             motorList.getMotor(i)->setOmega(0);
             motorList.getMotor(i)->setJerk(0);
             motorList.getMotor(i)->setEnable(false);
+        }
+        for(uint8_t i = 0; i < outputList.getOutputCount(); ++i)
+        {
+            outputList.getOutput(i)->setOutput(0);
         }
         _lastRxTime = millis();
     }
