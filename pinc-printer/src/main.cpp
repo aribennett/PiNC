@@ -40,7 +40,7 @@ Encoder b_enc(B_ENCB, B_ENCA);
 TMC5160Stepper b_spi(36, R_SENSE);
 StepperHFC b_driver(8, 9, 38, &b_enc, 8192);
 
-GPIOOutput laser(LASER_ON, HIGH);
+GPIOOutput laser(LASER_ON, LOW);
 ADCData hotendThermistor(HOTEND_THERMISTOR);
 
 void setup()
