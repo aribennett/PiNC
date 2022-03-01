@@ -291,7 +291,7 @@ class PrintState(JogState):
         # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
 
         control_packet = pkt.pack_HeaderPacket(
-            command=pkt.SerialCommand.RUN_MOTOR, motorCount=5)
+            command=pkt.SerialCommand.RUN, motorCount=5)
         control_packet += pkt.pack_MotorCommandPacket(
             embedded_motors[4].motorId, pkt.MotorCommand.SET_ALPHA, control=control4)
         control_packet += pkt.pack_MotorCommandPacket(

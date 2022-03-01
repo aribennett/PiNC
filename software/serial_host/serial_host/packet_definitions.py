@@ -6,7 +6,7 @@ from struct import unpack, pack
 class SerialCommand():
     REPORT_STATUS = 1
     GET_STATUS = 2
-    RUN_MOTOR = 3
+    RUN = 3
     RESET = 4
 
 
@@ -20,22 +20,24 @@ class MotorCommand():
     DISABLE = 7
 
 
-HeaderPacket = namedtuple('HeaderPacket', 'boardid command motorCount sensorCount ')
+HeaderPacket = namedtuple('HeaderPacket', 'boardid command motorCount componentCount ')
 MotorStatePacket = namedtuple('MotorStatePacket', 'motorId theta omega alpha ')
 MotorCommandPacket = namedtuple('MotorCommandPacket', 'motorId motorCommand control ')
-SensorPacket = namedtuple('SensorPacket', 'sensorID sensorValue ')
+ComponentOutputPacket = namedtuple('ComponentOutputPacket', 'outputId output ')
+ComponentDataPacket = namedtuple('ComponentDataPacket', 'dataID dataValue ')
 size_HeaderPacket = 4
 size_MotorStatePacket = 7
 size_MotorCommandPacket = 6
-size_SensorPacket = 3
+size_ComponentOutputPacket = 3
+size_ComponentDataPacket = 3
 
 
 def unpack_HeaderPacket(bytes):
     return HeaderPacket._make(unpack('=BBBB', bytes))
 
 
-def pack_HeaderPacket(boardid=0, command=0, motorCount=0, sensorCount=0):
-    return pack('=BBBB', boardid, command, motorCount, sensorCount)
+def pack_HeaderPacket(boardid=0, command=0, motorCount=0, componentCount=0):
+    return pack('=BBBB', boardid, command, motorCount, componentCount)
 
 
 def unpack_MotorStatePacket(bytes):
@@ -54,9 +56,17 @@ def pack_MotorCommandPacket(motorId=0, motorCommand=0, control=0):
     return pack('=BBf', motorId, motorCommand, control)
 
 
-def unpack_SensorPacket(bytes):
-    return SensorPacket._make(unpack('=Bh', bytes))
+def unpack_ComponentOutputPacket(bytes):
+    return ComponentOutputPacket._make(unpack('=BH', bytes))
 
 
-def pack_SensorPacket(sensorID=0, sensorValue=0):
-    return pack('=Bh', sensorID, sensorValue)
+def pack_ComponentOutputPacket(outputId=0, output=0):
+    return pack('=BH', outputId, output)
+
+
+def unpack_ComponentDataPacket(bytes):
+    return ComponentDataPacket._make(unpack('=Bh', bytes))
+
+
+def pack_ComponentDataPacket(dataID=0, dataValue=0):
+    return pack('=Bh', dataID, dataValue)

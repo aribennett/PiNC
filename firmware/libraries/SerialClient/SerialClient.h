@@ -9,7 +9,7 @@ enum SerialCommand : uint8_t
 {
     REPORT_STATUS = 1,
     GET_STATUS = 2,
-    RUN_MOTOR = 3,
+    RUN = 3,
     RESET = 4,
 };
 
@@ -29,7 +29,7 @@ struct HeaderPacket
     uint8_t boardid;
     uint8_t command;
     uint8_t motorCount;
-    uint8_t sensorCount;
+    uint8_t componentCount;
 } __attribute__ ((packed));
 static_assert(sizeof(HeaderPacket) == 4, "Header packet packing issue");
 
@@ -50,19 +50,12 @@ struct MotorCommandPacket
 } __attribute__ ((packed));
 static_assert(sizeof(MotorCommandPacket) == 6, "Axis packet packing issue");
 
-struct OutputCommandPacket
+struct ComponentPacket
 {
-    uint8_t outputId;
-    uint16_t output;
+    uint8_t componentId;
+    uint16_t value;
 } __attribute__ ((packed));
-static_assert(sizeof(OutputCommandPacket) ==3, "Output command packing issue");
-
-struct SensorPacket
-{
-    uint8_t sensorID;
-    int16_t sensorValue;
-} __attribute__ ((packed));
-static_assert(sizeof(SensorPacket) == 3, "Sensor packet packing issue");
+static_assert(sizeof(ComponentPacket) ==3, "Output command packing issue");
 
 class SerialClient
 {

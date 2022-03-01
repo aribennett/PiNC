@@ -4,6 +4,7 @@
 #include <Motor.h>
 #include <Output.h>
 #include <GPIOOutput.h>
+#include <ADCData.h>
 
 #define R_SENSE 0.11f // SilentStepStick series use 0.11
 
@@ -40,7 +41,7 @@ TMC5160Stepper b_spi(36, R_SENSE);
 StepperHFC b_driver(8, 9, 38, &b_enc, 8192);
 
 GPIOOutput laser(LASER_ON, HIGH);
-
+ADCData hotendThermistor(HOTEND_THERMISTOR);
 
 void setup()
 {
@@ -64,13 +65,21 @@ void setup()
     motorList.addMotor(&b_driver);
     motorList.addMotor(&e_driver);
     serialClient.coldStart(0);
+
+    // Outputs
     laser.coldStart();
     outputList.addOutput(&laser);
+
+    // Inputs
+    hotendThermistor.coldStart();
+    dataList.addData(&hotendThermistor);
 
     startMotorTimer();
 }
 
 void loop()
 {
+    static long timestamp;
     serialClient.run();
+    dataList.runData();
 }

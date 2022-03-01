@@ -19,7 +19,7 @@ class RobotInterface(object):
                 hid_msg[unpack_index:unpack_index+pkt.size_MotorStatePacket])
             self.motors[motor_packet.motorId] = motor_packet
             unpack_index += pkt.size_MotorStatePacket
-        for i in range(header.sensorCount):
+        for i in range(header.componentCount):
             sensor_packet = pkt.unpack_SensorPacket(
                 hid_msg[unpack_index:unpack_index+pkt.size_SensorPacket])
             self.sendors[sensor_packet.sensorId] = sensor_packet
@@ -33,7 +33,7 @@ class RobotInterface(object):
         self.motor_command_count += 1
 
     def send_command(self):
-        control_packet = pkt.pack_HeaderPacket(command=pkt.SerialCommand.RUN_MOTOR, motorCount=self.motor_command_count)
+        control_packet = pkt.pack_HeaderPacket(command=pkt.SerialCommand.RUN, motorCount=self.motor_command_count)
         control_packet += self.motor_command_queue
         write(control_packet)
         self.motor_command_queue = b''

@@ -1,6 +1,6 @@
 #include <SerialClient.h>
 #include <Motor.h>
-#include <Sensor.h>
+#include <Data.h>
 #include <arduino.h>
 
 SerialClient serialClient;
@@ -19,7 +19,7 @@ void SerialClient::sendStatusReport()
     header.boardid = _boardid;
     header.command = REPORT_STATUS;
     header.motorCount = motorList.getMotorCount();
-    header.sensorCount = 0;
+    header.componentCount = dataList.getDataCount();
     
     addToMessage((uint8_t*) &header, sizeof(header));
     // Print out motor states in order
@@ -27,6 +27,12 @@ void SerialClient::sendStatusReport()
     {
         MotorStatePacket mp = motorList.getMotor(i)->getMotorState();
         addToMessage((uint8_t*) &mp, sizeof(mp));
+    }
+    // Print out inputs in order
+    for(uint8_t i = 0; i < header.componentCount; ++i)
+    {
+        ComponentPacket cp = dataList.getData(i)->getData();
+        addToMessage((uint8_t*) &cp, sizeof(cp));
     }
 
     usb_rawhid_send(_hidMsg, 0);
@@ -42,9 +48,11 @@ void SerialClient::handleInputPacket()
 {   
     // create a base pointer to the motor commands
     uint8_t motorCount = _headerPointer->motorCount;
+    uint8_t outputCount = _headerPointer->componentCount;
     _lastRxTime = millis();
 
     MotorCommandPacket* motorPackets = (MotorCommandPacket*)(_inputBuffer+sizeof(HeaderPacket));
+    ComponentPacket* outputPackets = (ComponentPacket*)(_inputBuffer+sizeof(HeaderPacket)+sizeof(MotorCommandPacket)*motorCount);
     switch (_headerPointer->command)
     {
     case REPORT_STATUS:
@@ -55,7 +63,7 @@ void SerialClient::handleInputPacket()
         sendStatusReport();
         break;
 
-    case RUN_MOTOR:
+    case RUN:
         for(uint8_t i = 0; i < motorCount; ++i)
         {
             MotorCommand cmd = (MotorCommand)motorPackets[i].motorCommand;
