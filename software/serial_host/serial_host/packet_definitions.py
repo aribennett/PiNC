@@ -23,13 +23,11 @@ class MotorCommand():
 HeaderPacket = namedtuple('HeaderPacket', 'boardid command motorCount componentCount ')
 MotorStatePacket = namedtuple('MotorStatePacket', 'motorId theta omega alpha ')
 MotorCommandPacket = namedtuple('MotorCommandPacket', 'motorId motorCommand control ')
-ComponentOutputPacket = namedtuple('ComponentOutputPacket', 'outputId output ')
-ComponentDataPacket = namedtuple('ComponentDataPacket', 'dataID dataValue ')
+ComponentPacket = namedtuple('ComponentPacket', 'componentId value ')
 size_HeaderPacket = 4
 size_MotorStatePacket = 7
 size_MotorCommandPacket = 6
-size_ComponentOutputPacket = 3
-size_ComponentDataPacket = 3
+size_ComponentPacket = 3
 
 
 def unpack_HeaderPacket(bytes):
@@ -56,17 +54,9 @@ def pack_MotorCommandPacket(motorId=0, motorCommand=0, control=0):
     return pack('=BBf', motorId, motorCommand, control)
 
 
-def unpack_ComponentOutputPacket(bytes):
-    return ComponentOutputPacket._make(unpack('=BH', bytes))
+def unpack_ComponentPacket(bytes):
+    return ComponentPacket._make(unpack('=BH', bytes))
 
 
-def pack_ComponentOutputPacket(outputId=0, output=0):
-    return pack('=BH', outputId, output)
-
-
-def unpack_ComponentDataPacket(bytes):
-    return ComponentDataPacket._make(unpack('=Bh', bytes))
-
-
-def pack_ComponentDataPacket(dataID=0, dataValue=0):
-    return pack('=Bh', dataID, dataValue)
+def pack_ComponentPacket(componentId=0, value=0):
+    return pack('=BH', componentId, value)
