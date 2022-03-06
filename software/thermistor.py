@@ -28,4 +28,5 @@ def get_thermistor_temp(adc):
     v_therm = 3.3*(adc/1024)
     v = 3.3 - v_therm
     r_therm = v_therm/(v/resistance)
-    return r_therm
+    temp = np.interp(r_therm, thermistor_curve[1], thermistor_curve[0])
+    return temp, r_therm
