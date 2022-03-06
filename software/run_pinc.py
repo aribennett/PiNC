@@ -1,3 +1,4 @@
+import imp
 from serial_host import packet_definitions as pkt
 from serial_host.robot_interface import RobotInterface
 from serial_host import cold_start, read, write
@@ -12,6 +13,7 @@ from xbox360controller import Xbox360Controller
 from pinc_state import State
 import sys
 import logging
+from thermistor import get_thermistor_temp
 
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.795774715
@@ -140,7 +142,6 @@ class HomeState(State):
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
         main.add_output_command(pkt.pack_ComponentPacket(1, 1))
         main.add_output_command(pkt.pack_ComponentPacket(2, 1))
-        # main.add_output_command(pkt.pack_ComponentPacket(1, 1))
         main.add_output_command(pkt.pack_ComponentPacket(4, 2048))
         main.send_command()
         self.last_home = main.get_motor_state(3)[0]
@@ -403,5 +404,5 @@ if __name__ == "__main__":
         print("Started controls")
         while True:
             sleep(1)
-            print(main.sensors)
+            print(get_thermistor_temp(main.sensors[0].value))
             # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
