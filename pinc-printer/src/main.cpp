@@ -45,7 +45,6 @@ GPIOOutput laser(LASER_ON, LOW);
 GPIOOutput fan1(FAN1_ON, LOW);
 GPIOOutput fan2(FAN2_ON, LOW);
 GPIOOutput fan3(FAN3_ON, LOW);
-// GPIOOutput hotend(HOTEND_ON, LOW);
 PWMOutput hotend(HOTEND_ON, LOW);
 
 ADCData hotendThermistor(HOTEND_THERMISTOR);
