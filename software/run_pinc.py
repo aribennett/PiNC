@@ -1,4 +1,3 @@
-import imp
 from serial_host import packet_definitions as pkt
 from serial_host.robot_interface import RobotInterface
 from serial_host import cold_start, read, write
