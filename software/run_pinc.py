@@ -324,9 +324,6 @@ class ManualState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_ComponentPacket(0, 0))
-        main.add_output_command(pkt.pack_ComponentPacket(1, 0))
-        main.add_output_command(pkt.pack_ComponentPacket(2, 0))
-        main.add_output_command(pkt.pack_ComponentPacket(4, 0))
         main.send_command()
 
     def run(self):
@@ -380,6 +377,13 @@ class ManualState(State):
             # handle the int floor case for velocity
             main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
             main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
+
+        if jog_controller.button_x.is_pressed:
+            main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=10))
+        elif jog_controller.button_y.is_pressed:
+            main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=-10))
+        else:
+            main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=0))
 
         main.send_command()
 
