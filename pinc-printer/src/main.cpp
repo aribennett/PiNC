@@ -4,6 +4,7 @@
 #include <Motor.h>
 #include <Output.h>
 #include <GPIOOutput.h>
+#include <PWMOutput.h>
 #include <ADCData.h>
 
 #define R_SENSE 0.11f // SilentStepStick series use 0.11
@@ -44,7 +45,7 @@ GPIOOutput laser(LASER_ON, LOW);
 GPIOOutput fan1(FAN1_ON, LOW);
 GPIOOutput fan2(FAN2_ON, LOW);
 GPIOOutput fan3(FAN3_ON, LOW);
-GPIOOutput hotend(HOTEND_ON, LOW);
+PWMOutput hotend(HOTEND_ON, LOW, 5000);
 ADCData hotendThermistor(HOTEND_THERMISTOR);
 
 void setup()
