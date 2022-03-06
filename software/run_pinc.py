@@ -361,7 +361,7 @@ class ManualState(State):
             x_nominal = 0
 
         temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
-        control = np.clip(temp_error*10, 0, 1024)
+        control = int(np.clip(temp_error*10, 0, 1024))
 
         main.add_output_command(pkt.pack_ComponentPacket(4, control))
 
