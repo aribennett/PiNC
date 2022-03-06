@@ -26,6 +26,6 @@ thermistor_curve = np.array([[-50, 8887],
 
 def get_thermistor_temp(adc):
     v_therm = 3.3*(adc/1024)
-    v = 3.3 - v
+    v = 3.3 - v_therm
     r_therm = v_therm/(v/resistance)
     return r_therm
