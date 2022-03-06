@@ -313,6 +313,7 @@ class ManualState(State):
     Z_JOG = 30
     XY_JOG = 30
     XY_P_ACCEL = 40
+    NOMINAL_TEMP = 215
 
     def __init__(self):
         super().__init__()
@@ -358,6 +359,11 @@ class ManualState(State):
             z_nominal = 0
             y_nominal = 0
             x_nominal = 0
+
+        temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)
+        control = np.clip(temp_error*10, 0, 1024)
+
+        main.add_output_command(4, control)
 
         motor_3_control, motor_4_control = corexy_transform(x_nominal, y_nominal)
         motor_3_error = (motor_3_control - main.get_motor_state(3)[1]) * ManualState.XY_P_ACCEL
