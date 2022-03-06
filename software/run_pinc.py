@@ -363,7 +363,7 @@ class ManualState(State):
         temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
         control = np.clip(temp_error*10, 0, 1024)
 
-        main.add_output_command(4, control)
+        main.add_output_command(pkt.pack_ComponentPacket(4, control))
 
         motor_3_control, motor_4_control = corexy_transform(x_nominal, y_nominal)
         motor_3_error = (motor_3_control - main.get_motor_state(3)[1]) * ManualState.XY_P_ACCEL
