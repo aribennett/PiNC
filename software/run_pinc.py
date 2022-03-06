@@ -311,7 +311,7 @@ class PrintState(JogState):
 
 class ManualState(State):
     Z_JOG = 30
-    XY_JOG = 60
+    XY_JOG = 30
     XY_P_ACCEL = 40
 
     def __init__(self):
