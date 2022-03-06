@@ -360,7 +360,7 @@ class ManualState(State):
             y_nominal = 0
             x_nominal = 0
 
-        temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)
+        temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
         control = np.clip(temp_error*10, 0, 1024)
 
         main.add_output_command(4, control)
