@@ -1,22 +1,40 @@
 #include <Arduino.h>
 #include <PWMOutput.h>
 
-PWMOutput::PWMOutput(uint16_t pin, uint16_t initialState, uint16_t freq)
+PWMOutput::PWMOutput(uint16_t pin, uint16_t initialState)
 {
     _pin = pin;
     _state = initialState;
-    analogWriteFrequency(_pin, freq);
 }
 
 void PWMOutput::coldStart()
 {
-    analogWriteResolution(12);
     pinMode(_pin, OUTPUT);
-    analogWrite(_pin, _state);
+    _pinState = LOW;
+    digitalWriteFast(_pin, _pinState);
 }
 
 void PWMOutput::setOutput(uint16_t output)
 {
     _state = output;
-    analogWrite(_pin, _state);
+}
+
+void PWMOutput::run()
+{
+    ++_timerCount;
+    if(_timerCount >= _state && _pinState == HIGH)
+    {
+        _pinState = LOW;
+        digitalWriteFast(_pin, LOW);
+    }
+    else if(_timerCount < _state && _pinState == LOW)
+    {
+        _pinState = HIGH;
+        digitalWriteFast(_pin, HIGH);
+    }
+
+    if(_timerCount >= 100)
+    {
+        _timerCount = 0;
+    }
 }

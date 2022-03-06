@@ -46,7 +46,7 @@ GPIOOutput fan1(FAN1_ON, LOW);
 GPIOOutput fan2(FAN2_ON, LOW);
 GPIOOutput fan3(FAN3_ON, LOW);
 // GPIOOutput hotend(HOTEND_ON, LOW);
-PWMOutput hotend(HOTEND_ON, LOW, 5000);
+PWMOutput hotend(HOTEND_ON, LOW);
 
 ADCData hotendThermistor(HOTEND_THERMISTOR);
 
@@ -79,10 +79,11 @@ void setup()
     fan2.coldStart();
     fan3.coldStart();
     hotend.coldStart();
-    // outputList.addOutput(&laser);
-    // outputList.addOutput(&fan1);
-    // outputList.addOutput(&fan2);
-    // outputList.addOutput(&fan3);
+    hotend.setOutput(50);
+    outputList.addOutput(&laser);
+    outputList.addOutput(&fan1);
+    outputList.addOutput(&fan2);
+    outputList.addOutput(&fan3);
     outputList.addOutput(&hotend);
     
 
@@ -91,6 +92,7 @@ void setup()
     dataList.addData(&hotendThermistor);
 
     startMotorTimer();
+    startOutputTimer();
 }
 
 void loop()

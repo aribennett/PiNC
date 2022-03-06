@@ -3,12 +3,14 @@
 
 #include <Arduino.h>
 
+#define PMW_INTERVAL 4
 
 // Output superclass. Only to be inherited from, never to be used directly!
 class Output
 {
 public:
     virtual void coldStart(){};
+    virtual void run(){};
     virtual void setOutput(uint16_t output);
     void setId(uint8_t id){ _id=id; };
     uint8_t getId(){ return(_id); };
@@ -20,12 +22,15 @@ class OutputList
 {
     public:
         void addOutput(Output* output);
+        void runOutputs();
         uint8_t getOutputCount(){ return(_outputCount); };
         Output* getOutput(uint8_t index){return(_outputList[index]); };
     private:
         Output* _outputList[64];
         uint8_t _outputCount;
 };
+
+void startOutputTimer();
 
 extern OutputList outputList;
 

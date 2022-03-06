@@ -9,12 +9,15 @@
 class PWMOutput : public Output
 {
 public:
-    PWMOutput(uint16_t pin, uint16_t initialState, uint16_t freq);
+    PWMOutput(uint16_t pin, uint16_t initialState);
+    void run();
     void coldStart();
     void setOutput(uint16_t output);
 private:
     uint16_t _pin;
     uint16_t _state;
+    uint16_t _pinState;
+    uint16_t _timerCount = 0;
 };
 
 #endif

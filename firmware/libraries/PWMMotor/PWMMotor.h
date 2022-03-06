@@ -14,7 +14,6 @@ public:
     void setEnable(bool enable);
 
 private:
-    // define a dummy drive to replace later. prevents need to extend stepper library
     uint16_t _en_pin;
     uint8_t _timer_count;
 };

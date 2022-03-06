@@ -11,6 +11,7 @@ class GPIOOutput : public Output
 public:
     GPIOOutput(uint16_t pin, uint16_t initialState);
     void coldStart();
+    void run(){};
     void setOutput(uint16_t output);
 private:
     uint16_t _pin;
