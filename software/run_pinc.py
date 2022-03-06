@@ -137,7 +137,7 @@ class HomeState(State):
         super().__init__()
         self.event_map['found home'] = JogHomeCenterState
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
-        main.add_output_command(pkt.pack_ComponentPacket(0, 1))
+        main.add_output_command(pkt.pack_ComponentPacket(0, 512))
         # main.add_output_command(pkt.pack_ComponentPacket(1, 1))
         # main.add_output_command(pkt.pack_ComponentPacket(4, 512))
         main.send_command()
