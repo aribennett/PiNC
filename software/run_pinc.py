@@ -85,7 +85,7 @@ class JogState(State):
         self.z0pos = main.get_motor_state(0)[0] - HomeState.home_0
         self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
-    
+
         interp = (time()-self.start_time)/self.jog_time
         if interp >= 1:
             main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=0))
@@ -413,6 +413,6 @@ if __name__ == "__main__":
         print("Started controls")
         while True:
             sleep(1)
-            # print(get_thermistor_temp(main.sensors[0].value))
-            print(get_laser_displacement())
+            print(get_thermistor_temp(main.sensors[0].value))
+            # print(get_laser_displacement())
             # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
