@@ -48,8 +48,8 @@ def handle_events():
 class InitState(State):
     def __init__(self):
         super().__init__()
-        self.event_map['init'] = HomeState
-        # self.event_map['init'] = ManualState
+        # self.event_map['init'] = HomeState
+        self.event_map['init'] = ManualState
 
     def run(self):
         post_event('init')
@@ -141,7 +141,6 @@ class HomeState(State):
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
         main.add_output_command(pkt.pack_ComponentPacket(1, 1))
         main.add_output_command(pkt.pack_ComponentPacket(2, 1))
-        main.add_output_command(pkt.pack_ComponentPacket(4, 2048))
         main.send_command()
         self.last_home = main.get_motor_state(3)[0]
         self.last_timeout = -1
@@ -317,14 +316,14 @@ class ManualState(State):
 
     def __init__(self):
         super().__init__()
-        end_tracking_loop()
+        # end_tracking_loop()
         main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.ENABLE))
-        main.add_output_command(pkt.pack_ComponentPacket(0, 0))
+        main.add_output_command(pkt.pack_ComponentPacket(0, 1))
         main.send_command()
 
     def run(self):
@@ -414,5 +413,6 @@ if __name__ == "__main__":
         print("Started controls")
         while True:
             sleep(1)
-            print(get_thermistor_temp(main.sensors[0].value))
+            # print(get_thermistor_temp(main.sensors[0].value))
+            print(get_laser_displacement())
             # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
