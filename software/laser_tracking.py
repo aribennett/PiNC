@@ -35,7 +35,9 @@ def run_tracking_loop(debug=False):
             else:
                 laser_x = 0
             if debug:
-                print(laser_x)
+                cv2.imshow("laser", image)
+                cv2.waitKey(5)
+                # print(laser_x)
             raw_capture.truncate(0)
 
 
