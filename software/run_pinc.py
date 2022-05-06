@@ -16,7 +16,7 @@ from thermistor import get_thermistor_temp
 
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.795774715
-E_MM_PER_RAD = 5
+E_MM_PER_RAD = 1
 
 # ------ Debug Variables --------
 errorx = 0
@@ -264,7 +264,7 @@ class PrintState(State):
     def __init__(self):
         super().__init__()
         self.start_time = time()
-        NOMINAL_TEMP = 215
+        NOMINAL_TEMP = 240
         self.home_e = main.get_motor_state(5)[0]
         main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
