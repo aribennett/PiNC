@@ -35,7 +35,7 @@ class GcodeSolver(object):
                 if 'E' in line.params:
                     e = -line.params['E'] + e_cache
                 if 'F' in line.params:
-                    f = line.params['F']/60  #  Convert to
+                    f = .5*line.params['F']/60  #  Convert to
 
                 output = True
 
