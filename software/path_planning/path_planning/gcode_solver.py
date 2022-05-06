@@ -29,7 +29,7 @@ class GcodeSolver(object):
                 if 'Z' in line.params:
                     z = line.params['Z']
                 if 'E' in line.params:
-                    e = line.params['E']
+                    e = -line.params['E']
                 if 'F' in line.params:
                     f = line.params['F']/60  #  Convert to
 
