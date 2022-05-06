@@ -143,7 +143,7 @@ class HomeState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
         main.add_output_command(pkt.pack_ComponentPacket(1, 1))
-        main.add_output_command(pkt.pack_ComponentPacket(2, 1))
+        main.add_output_command(pkt.pack_ComponentPacket(2, 0))
         main.send_command()
         self.last_home = main.get_motor_state(3)[0]
         self.last_timeout = -1
