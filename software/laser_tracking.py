@@ -37,6 +37,8 @@ def run_tracking_loop(debug=False):
             if debug:
                 print(laser_x)
             raw_capture.truncate(0)
+            if kill_loop:
+                break
 
 
 def end_tracking_loop():
