@@ -270,8 +270,8 @@ class PrintState(State):
         self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
         global errorx, errory
-        KP = 100
-        KP_VELOCITY = 10
+        KP = 1000
+        KP_VELOCITY = 0
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
