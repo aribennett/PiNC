@@ -263,6 +263,10 @@ class PrintState(State):
     def __init__(self):
         super().__init__()
         self.start_time = time()
+        main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.ENABLE))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
+        main.send_command()
 
     def run(self):
         super().run()
@@ -273,7 +277,7 @@ class PrintState(State):
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
         global errorx, errory
         KP = 50
-        KP_VELOCITY = 1
+        KP_VELOCITY = 0
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
