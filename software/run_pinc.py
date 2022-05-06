@@ -324,16 +324,19 @@ class PrintState(State):
 
         control3, control4 = corexy_transform(control_inputx, control_inputy)
 
-        # errorz2 = z_nominal - embedded_motors[2].theta
-        # control_inputz2 = KP*errorz2 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[2].omega)
-        # errorz1 = z_nominal - embedded_motors[1].theta
-        # control_inputz1 = KP*errorz1 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[1].omega)
-        # errorz0 = z_nominal - embedded_motors[0].theta
-        # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
+        errorz2 = z_nominal - self.z2pos
+        control_inputz2 = KP*errorz2
+        errorz1 = z_nominal - self.z1pos
+        control_inputz1 = KP*errorz1
+        errorz0 = z_nominal - self.z0pos
+        control_inputz0 = KP*errorz0
         temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
         control = int(np.clip(temp_error*1000, 0, 4096))
 
         main.add_output_command(pkt.pack_ComponentPacket(4, control))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=control_inputz0))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=control_inputz1))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=control_inputz2))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control4))
         main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=control_inpute))
