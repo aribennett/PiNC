@@ -16,7 +16,7 @@ from thermistor import get_thermistor_temp
 
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.795774715
-E_MM_PER_RAD = .5
+E_MM_PER_RAD = 1
 FINE_Z = 15.7
 
 # ------ Debug Variables --------
