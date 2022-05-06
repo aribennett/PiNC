@@ -269,7 +269,7 @@ class PrintState(State):
         self.z0pos = main.get_motor_state(0)[0] - HomeState.home_0
         self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
-        # global errorx, errory
+        global errorx, errory
         KP = 5000
         KP_VELOCITY = 1000
         positions, velocities = path_planner.get_solution(time()-self.start_time)
@@ -298,9 +298,9 @@ class PrintState(State):
         # errorz0 = z_nominal - embedded_motors[0].theta
         # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
 
-        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control4))
-        main.send_command()
+        # main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
+        # main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control4))
+        # main.send_command()
         # write(control_packet)
 
 
@@ -408,7 +408,8 @@ if __name__ == "__main__":
     embedded_thread.start()
     print("Started controls")
     while True:
-        sleep(1)
-        print(get_thermistor_temp(main.sensors[0].value))
+        sleep(.1)
+        print(errorx, errory)
+        # print(get_thermistor_temp(main.sensors[0].value))
             # print(get_laser_displacement())
             # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
