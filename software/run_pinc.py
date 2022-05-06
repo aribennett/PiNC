@@ -17,7 +17,7 @@ from thermistor import get_thermistor_temp
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.795774715
 E_MM_PER_RAD = .5
-FINE_Z = 15.5
+FINE_Z = 15.7
 
 # ------ Debug Variables --------
 errorx = 0
@@ -352,7 +352,7 @@ class ManualState(State):
     Z_JOG = 30
     XY_JOG = 30
     XY_P_ACCEL = 40
-    NOMINAL_TEMP = 215
+    NOMINAL_TEMP = 235
 
     def __init__(self):
         super().__init__()
