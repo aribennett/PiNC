@@ -136,7 +136,9 @@ class HomeState(State):
 
     def __init__(self):
         super().__init__()
-        self.event_map['found home'] = JogHomeCenterState
+        # self.event_map['found home'] = JogHomeCenterState
+        self.event_map['found home'] = PrintState
+
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
         main.add_output_command(pkt.pack_ComponentPacket(1, 1))
@@ -270,7 +272,7 @@ class PrintState(State):
         self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
         global errorx, errory
-        KP = 1000
+        KP = 100
         KP_VELOCITY = 0
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
