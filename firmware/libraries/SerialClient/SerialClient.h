@@ -36,11 +36,11 @@ static_assert(sizeof(HeaderPacket) == 4, "Header packet packing issue");
 struct MotorStatePacket
 {
     uint8_t motorId;
-    int16_t theta;
+    float theta;
     int16_t omega;
     int16_t alpha;
 } __attribute__ ((packed));
-static_assert(sizeof(MotorStatePacket) == 7, "Axis packet packing issue");
+static_assert(sizeof(MotorStatePacket) == 9, "Axis packet packing issue");
 
 struct MotorCommandPacket
 {

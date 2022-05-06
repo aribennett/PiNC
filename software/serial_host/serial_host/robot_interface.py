@@ -26,12 +26,12 @@ class RobotInterface(object):
             unpack_index += pkt.size_ComponentPacket
 
     def get_motor_state(self, index=0):
-        return self.motors[index].theta/250, self.motors[index].omega/100, self.motors[index].alpha/100
+        return self.motors[index].theta, self.motors[index].omega/100, self.motors[index].alpha/100
 
     def add_motor_command(self, command):
         self.motor_command_queue += command
         self.motor_command_count += 1
-    
+
     def add_output_command(self, command):
         self.output_command_queue += command
         self.output_command_count += 1
