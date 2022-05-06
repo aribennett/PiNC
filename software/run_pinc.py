@@ -257,10 +257,11 @@ class Jog00State(JogState):
     def __init__(self):
         super().__init__()
         self.event_map['jog done'] = HeatState
-        self.set_jog_target(0, 0, -30, 5)
+        self.set_jog_target(0, 0, 0, 5)
 
 
 class HeatState(State):
+    end_tracking_loop()
     def __init__(self):
         super().__init__()
         self.event_map['done heating'] = PrintState
@@ -304,7 +305,7 @@ class PrintState(State):
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
         y_nominal = position[1]/XY_MM_PER_RAD
-        z_nominal = position[2]/Z_MM_PER_RAD
+        z_nominal = -position[2]/Z_MM_PER_RAD
         e_nominal = position[3]/E_MM_PER_RAD
 
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
