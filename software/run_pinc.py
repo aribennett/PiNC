@@ -16,7 +16,7 @@ from thermistor import get_thermistor_temp
 
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.795774715
-E_MM_PER_RAD = 1
+E_MM_PER_RAD = .5
 
 # ------ Debug Variables --------
 errorx = 0
@@ -331,7 +331,7 @@ class PrintState(State):
         # errorz0 = z_nominal - embedded_motors[0].theta
         # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
         temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
-        control = int(np.clip(temp_error*100, 0, 4096))
+        control = int(np.clip(temp_error*1000, 0, 4096))
 
         main.add_output_command(pkt.pack_ComponentPacket(4, control))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
