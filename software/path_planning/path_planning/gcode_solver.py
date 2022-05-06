@@ -25,7 +25,7 @@ class GcodeSolver(object):
                 if 'X' in line.params:
                     x = line.params['X']
                 if 'Y' in line.params:
-                    y = line.params['Y']
+                    y = -line.params['Y']
                 if 'Z' in line.params:
                     z = line.params['Z']
                 if 'E' in line.params:

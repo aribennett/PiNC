@@ -5,7 +5,7 @@ from path_planning import get_corners
 
 
 # open gcode file and store contents as variable
-with open('box_gcode.gcode', 'r') as f:
+with open('111cube.gcode', 'r') as f:
     gcode = f.read()
 
 path_planner = GcodeSolver(gcode)
@@ -19,10 +19,10 @@ plt.plot(xy[:, 0], xy[:, 1])
 #     print(item)
 # plt.plot(position[:, 0], position[:, 1])
 # print(np.array(position[:, :2]))
-start, end, corners = get_corners(xy)
-for i, corner in enumerate(corners):
-    np_corner = corner.transpose()
-    plt.plot(np_corner[0], np_corner[1], c='r')
+# start, end, corners = get_corners(xy)
+# for i, corner in enumerate(corners):
+#     np_corner = corner.transpose()
+#     plt.plot(np_corner[0], np_corner[1], c='r')
 
-plt.gca().set_aspect("equal")
+# plt.gca().set_aspect("equal")
 plt.show()

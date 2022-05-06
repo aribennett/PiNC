@@ -1,6 +1,6 @@
 from serial_host import packet_definitions as pkt
 from serial_host.robot_interface import RobotInterface
-from serial_host import cold_start, read, write
+from path_planning.gcode_solver import GcodeSolver
 from kinematics import corexy_inverse, corexy_transform, z0, z1, z2, center_home
 from laser_tracking import get_laser_displacement, run_tracking_loop, end_tracking_loop
 from threading import Thread
@@ -24,10 +24,10 @@ errory = 0
 
 jog_controller = None
 
-with open('box_gcode.gcode', 'r') as f:
+with open('111cube.gcode', 'r') as f:
     gcode = f.read()
 
-# path_planner = GcodeSolver(gcode)
+path_planner = GcodeSolver(gcode)
 
 state = None
 event_queue = Queue()
@@ -257,54 +257,50 @@ class Jog00State(JogState):
         self.set_jog_target(0, 0, -30, 5)
 
 
-class PrintState(JogState):
+class PrintState(State):
     def __init__(self):
         super().__init__()
         self.start_time = time()
 
     def run(self):
         super().run()
+        self.xpos, self.ypos = corexy_inverse(main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4)
+        self.xvel, self.yvel = corexy_inverse(main.get_motor_state(3)[1], main.get_motor_state(4)[1])
+        self.z0pos = main.get_motor_state(0)[0] - HomeState.home_0
+        self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
+        self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
         # global errorx, errory
-        # KP = 5000
-        # KP_VELOCITY = 1000
-        # positions, velocities = path_planner.get_solution(time()-self.start_time)
-        # position = positions[0]
-        # x_nominal = position[0]/XY_MM_PER_RAD
-        # y_nominal = position[1]/XY_MM_PER_RAD
-        # z_nominal = position[2]/Z_MM_PER_RAD
-        # x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
-        # y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
-        # z_velocity_nominal = velocities[2]/Z_MM_PER_RAD
-        # v_errorx = x_velocity_nominal - self.xvel
-        # v_errory = y_velocity_nominal - self.yvel
+        KP = 5000
+        KP_VELOCITY = 1000
+        positions, velocities = path_planner.get_solution(time()-self.start_time)
+        position = positions[0]
+        x_nominal = position[0]/XY_MM_PER_RAD
+        y_nominal = position[1]/XY_MM_PER_RAD
+        z_nominal = position[2]/Z_MM_PER_RAD
+        x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
+        y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
+        z_velocity_nominal = velocities[2]/Z_MM_PER_RAD
+        v_errorx = x_velocity_nominal - self.xvel
+        v_errory = y_velocity_nominal - self.yvel
 
-        # errorx = x_nominal - self.xpos
-        # control_inputx = KP*errorx + KP_VELOCITY*v_errorx
-        
-        # errory = y_nominal - self.ypos
-        # control_inputy = KP*errory + KP_VELOCITY*v_errory
+        errorx = x_nominal - self.xpos
+        control_inputx = KP*errorx + KP_VELOCITY*v_errorx
 
-        # control3, control4 = corexy_transform(control_inputx, control_inputy)
+        errory = y_nominal - self.ypos
+        control_inputy = KP*errory + KP_VELOCITY*v_errory
 
-        # # errorz2 = z_nominal - embedded_motors[2].theta
-        # # control_inputz2 = KP*errorz2 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[2].omega)
-        # # errorz1 = z_nominal - embedded_motors[1].theta
-        # # control_inputz1 = KP*errorz1 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[1].omega)
-        # # errorz0 = z_nominal - embedded_motors[0].theta
-        # # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
+        control3, control4 = corexy_transform(control_inputx, control_inputy)
 
-        # control_packet = pkt.pack_HeaderPacket(
-        #     command=pkt.SerialCommand.RUN, motorCount=5)
-        # control_packet += pkt.pack_MotorCommandPacket(
-        #     embedded_motors[4].motorId, pkt.MotorCommand.SET_ALPHA, control=control4)
-        # control_packet += pkt.pack_MotorCommandPacket(
-        #     embedded_motors[3].motorId, pkt.MotorCommand.SET_ALPHA, control=control3)
-        # control_packet += pkt.pack_MotorCommandPacket(
-        #     embedded_motors[2].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-        # control_packet += pkt.pack_MotorCommandPacket(
-        #     embedded_motors[1].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-        # control_packet += pkt.pack_MotorCommandPacket(
-        #     embedded_motors[0].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+        # errorz2 = z_nominal - embedded_motors[2].theta
+        # control_inputz2 = KP*errorz2 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[2].omega)
+        # errorz1 = z_nominal - embedded_motors[1].theta
+        # control_inputz1 = KP*errorz1 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[1].omega)
+        # errorz0 = z_nominal - embedded_motors[0].theta
+        # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
+
+        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control4))
+        main.send_command()
         # write(control_packet)
 
 
