@@ -270,8 +270,8 @@ class PrintState(State):
         self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
         global errorx, errory
-        KP = 5000
-        KP_VELOCITY = 1000
+        KP = 10
+        KP_VELOCITY = 0
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
@@ -298,10 +298,9 @@ class PrintState(State):
         # errorz0 = z_nominal - embedded_motors[0].theta
         # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
 
-        # main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
-        # main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control4))
-        # main.send_command()
-        # write(control_packet)
+        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control4))
+        main.send_command()
 
 
 class ManualState(State):
