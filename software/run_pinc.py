@@ -261,9 +261,9 @@ class Jog00State(JogState):
 
 
 class HeatState(State):
-    end_tracking_loop()
     def __init__(self):
         super().__init__()
+        end_tracking_loop()
         self.event_map['done heating'] = PrintState
 
     def run(self):
