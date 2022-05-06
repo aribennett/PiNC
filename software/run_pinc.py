@@ -138,7 +138,7 @@ class HomeState(State):
     def __init__(self):
         super().__init__()
         # self.event_map['found home'] = JogHomeCenterState
-        self.event_map['found home'] = PrintState
+        self.event_map['found home'] = HeatState
 
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
@@ -258,6 +258,23 @@ class Jog00State(JogState):
         super().__init__()
         self.event_map['jog done'] = PrintState
         self.set_jog_target(0, 0, -30, 5)
+
+
+class HeatState(State):
+    def __init__(self):
+        super().__init__()
+        self.event_map['done heating'] = PrintState
+
+    def run(self):
+        super().run()
+        temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
+        control = int(np.clip(temp_error*100, 0, 4096))
+
+        main.add_output_command(pkt.pack_ComponentPacket(4, control))
+        main.send_command()
+
+        if abs(temp_error) < 15:
+            post_event('done heating')
 
 
 class PrintState(State):
