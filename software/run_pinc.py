@@ -17,6 +17,7 @@ from thermistor import get_thermistor_temp
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.795774715
 E_MM_PER_RAD = .5
+FINE_Z = 10
 
 # ------ Debug Variables --------
 errorx = 0
@@ -28,7 +29,7 @@ jog_controller = None
 with open('111cube.gcode', 'r') as f:
     gcode = f.read()
 
-path_planner = GcodeSolver(gcode)
+path_planner = GcodeSolver(gcode, start_position=[0, 0, FINE_Z])
 
 state = None
 event_queue = Queue()
@@ -305,7 +306,7 @@ class PrintState(State):
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
         y_nominal = position[1]/XY_MM_PER_RAD
-        z_nominal = -position[2]/Z_MM_PER_RAD
+        z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z
         e_nominal = position[3]/E_MM_PER_RAD
 
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
