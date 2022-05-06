@@ -273,7 +273,7 @@ class HeatState(State):
     def run(self):
         super().run()
         temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
-        control = int(np.clip(temp_error*100, 0, 4096))
+        control = int(np.clip(temp_error*1000, 0, 4096))
 
         main.add_output_command(pkt.pack_ComponentPacket(4, control))
         main.send_command()
