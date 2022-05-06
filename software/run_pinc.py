@@ -306,7 +306,7 @@ class PrintState(State):
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
         y_nominal = position[1]/XY_MM_PER_RAD
-        z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z
+        z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z/Z_MM_PER_RAD
         e_nominal = position[3]/E_MM_PER_RAD
 
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
