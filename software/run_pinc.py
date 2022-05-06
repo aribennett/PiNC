@@ -405,8 +405,8 @@ if __name__ == "__main__":
     # with Xbox360Controller(0, axis_threshold=0.2) as controller:
     start_time = time()
     # jog_controller = controller
-    tracking_thread = Thread(target=run_tracking_loop, daemon=True)
-    tracking_thread.start()
+    # tracking_thread = Thread(target=run_tracking_loop, daemon=True)
+    # tracking_thread.start()
     print("Started tracking")
     sleep(2)
     embedded_thread = Thread(target=embedded_service, daemon=True)
