@@ -253,8 +253,8 @@ class HomeZ2State(HomeZState):
 class Jog00State(JogState):
     def __init__(self):
         super().__init__()
-        self.event_map['jog done'] = ManualState
-        self.set_jog_target(30, 30, -30, 5)
+        self.event_map['jog done'] = PrintState
+        self.set_jog_target(0, 0, -30, 5)
 
 
 class PrintState(JogState):
@@ -264,48 +264,48 @@ class PrintState(JogState):
 
     def run(self):
         super().run()
-        global errorx, errory
-        KP = 5000
-        KP_VELOCITY = 1000
-        positions, velocities = path_planner.get_solution(time()-self.start_time)
-        position = positions[0]
-        x_nominal = position[0]/XY_MM_PER_RAD
-        y_nominal = position[1]/XY_MM_PER_RAD
-        z_nominal = position[2]/Z_MM_PER_RAD
-        x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
-        y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
-        z_velocity_nominal = velocities[2]/Z_MM_PER_RAD
-        v_errorx = x_velocity_nominal - self.xvel
-        v_errory = y_velocity_nominal - self.yvel
+        # global errorx, errory
+        # KP = 5000
+        # KP_VELOCITY = 1000
+        # positions, velocities = path_planner.get_solution(time()-self.start_time)
+        # position = positions[0]
+        # x_nominal = position[0]/XY_MM_PER_RAD
+        # y_nominal = position[1]/XY_MM_PER_RAD
+        # z_nominal = position[2]/Z_MM_PER_RAD
+        # x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
+        # y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
+        # z_velocity_nominal = velocities[2]/Z_MM_PER_RAD
+        # v_errorx = x_velocity_nominal - self.xvel
+        # v_errory = y_velocity_nominal - self.yvel
 
-        errorx = x_nominal - self.xpos
-        control_inputx = KP*errorx + KP_VELOCITY*v_errorx
+        # errorx = x_nominal - self.xpos
+        # control_inputx = KP*errorx + KP_VELOCITY*v_errorx
         
-        errory = y_nominal - self.ypos
-        control_inputy = KP*errory + KP_VELOCITY*v_errory
+        # errory = y_nominal - self.ypos
+        # control_inputy = KP*errory + KP_VELOCITY*v_errory
 
-        control3, control4 = corexy_transform(control_inputx, control_inputy)
+        # control3, control4 = corexy_transform(control_inputx, control_inputy)
 
-        # errorz2 = z_nominal - embedded_motors[2].theta
-        # control_inputz2 = KP*errorz2 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[2].omega)
-        # errorz1 = z_nominal - embedded_motors[1].theta
-        # control_inputz1 = KP*errorz1 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[1].omega)
-        # errorz0 = z_nominal - embedded_motors[0].theta
-        # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
+        # # errorz2 = z_nominal - embedded_motors[2].theta
+        # # control_inputz2 = KP*errorz2 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[2].omega)
+        # # errorz1 = z_nominal - embedded_motors[1].theta
+        # # control_inputz1 = KP*errorz1 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[1].omega)
+        # # errorz0 = z_nominal - embedded_motors[0].theta
+        # # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
 
-        control_packet = pkt.pack_HeaderPacket(
-            command=pkt.SerialCommand.RUN, motorCount=5)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[4].motorId, pkt.MotorCommand.SET_ALPHA, control=control4)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[3].motorId, pkt.MotorCommand.SET_ALPHA, control=control3)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[2].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[1].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-        control_packet += pkt.pack_MotorCommandPacket(
-            embedded_motors[0].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
-        write(control_packet)
+        # control_packet = pkt.pack_HeaderPacket(
+        #     command=pkt.SerialCommand.RUN, motorCount=5)
+        # control_packet += pkt.pack_MotorCommandPacket(
+        #     embedded_motors[4].motorId, pkt.MotorCommand.SET_ALPHA, control=control4)
+        # control_packet += pkt.pack_MotorCommandPacket(
+        #     embedded_motors[3].motorId, pkt.MotorCommand.SET_ALPHA, control=control3)
+        # control_packet += pkt.pack_MotorCommandPacket(
+        #     embedded_motors[2].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+        # control_packet += pkt.pack_MotorCommandPacket(
+        #     embedded_motors[1].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+        # control_packet += pkt.pack_MotorCommandPacket(
+        #     embedded_motors[0].motorId, pkt.MotorCommand.SET_OMEGA, control=0)
+        # write(control_packet)
 
 
 class ManualState(State):
@@ -401,18 +401,18 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     os.system(f"taskset -p -c 3 {os.getpid()}")
     main = RobotInterface()
-    with Xbox360Controller(0, axis_threshold=0.2) as controller:
-        start_time = time()
-        jog_controller = controller
-        tracking_thread = Thread(target=run_tracking_loop, daemon=True)
-        tracking_thread.start()
-        print("Started tracking")
-        sleep(2)
-        embedded_thread = Thread(target=embedded_service, daemon=True)
-        embedded_thread.start()
-        print("Started controls")
-        while True:
-            sleep(1)
-            print(get_thermistor_temp(main.sensors[0].value))
+    # with Xbox360Controller(0, axis_threshold=0.2) as controller:
+    start_time = time()
+    # jog_controller = controller
+    tracking_thread = Thread(target=run_tracking_loop, daemon=True)
+    tracking_thread.start()
+    print("Started tracking")
+    sleep(2)
+    embedded_thread = Thread(target=embedded_service, daemon=True)
+    embedded_thread.start()
+    print("Started controls")
+    while True:
+        sleep(1)
+        print(get_thermistor_temp(main.sensors[0].value))
             # print(get_laser_displacement())
             # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
