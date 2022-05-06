@@ -278,7 +278,7 @@ class HeatState(State):
         main.add_output_command(pkt.pack_ComponentPacket(4, control))
         main.send_command()
 
-        if abs(temp_error) < 15:
+        if abs(temp_error) < 5:
             post_event('done heating')
 
 
@@ -286,7 +286,6 @@ class PrintState(State):
     def __init__(self):
         super().__init__()
         self.start_time = time()
-        NOMINAL_TEMP = 240
         self.home_e = main.get_motor_state(5)[0]
         main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
@@ -352,7 +351,7 @@ class ManualState(State):
     Z_JOG = 30
     XY_JOG = 30
     XY_P_ACCEL = 40
-    NOMINAL_TEMP = 235
+    NOMINAL_TEMP = 220
 
     def __init__(self):
         super().__init__()
