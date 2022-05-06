@@ -16,6 +16,7 @@ from thermistor import get_thermistor_temp
 
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.795774715
+E_MM_PER_RAD = 1
 
 # ------ Debug Variables --------
 errorx = 0
@@ -263,6 +264,7 @@ class PrintState(State):
     def __init__(self):
         super().__init__()
         self.start_time = time()
+        self.home_e = main.get_motor_state(5)[0]
         main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
@@ -275,6 +277,7 @@ class PrintState(State):
         self.z0pos = main.get_motor_state(0)[0] - HomeState.home_0
         self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
+        self.epos = main.get_motor_state(5)[0] - self.home_e
         global errorx, errory
         KP = 50
         KP_VELOCITY = 0
@@ -283,6 +286,8 @@ class PrintState(State):
         x_nominal = position[0]/XY_MM_PER_RAD
         y_nominal = position[1]/XY_MM_PER_RAD
         z_nominal = position[2]/Z_MM_PER_RAD
+        e_nominal = position[3]/E_MM_PER_RAD
+
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
         y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
         z_velocity_nominal = velocities[2]/Z_MM_PER_RAD
@@ -295,6 +300,9 @@ class PrintState(State):
         errory = y_nominal - self.ypos
         control_inputy = KP*errory + KP_VELOCITY*v_errory
 
+        error_e = e_nominal-self.epos
+        control_inpute = error_e*10
+
         control3, control4 = corexy_transform(control_inputx, control_inputy)
 
         # errorz2 = z_nominal - embedded_motors[2].theta
@@ -306,6 +314,7 @@ class PrintState(State):
 
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control4))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=controle))
         main.send_command()
 
 
@@ -414,7 +423,7 @@ if __name__ == "__main__":
     print("Started controls")
     while True:
         sleep(.1)
-        print(errorx, errory)
+        print(errorx*XY_MM_PER_RAD, errory*XY_MM_PER_RAD)
         # print(get_thermistor_temp(main.sensors[0].value))
             # print(get_laser_displacement())
             # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
