@@ -17,9 +17,13 @@ class GcodeSolver(object):
         vz = 0
         ve = 0
 
+        e_cache = 0
+
         self.motion_list = [[x, y, z, e, f, t, vx, vy, vz, ve]]
 
         for line in lines:
+            if line.command == ('G', 92) and 'E' in line.params:
+                e_cache = e
             if line.command == ('G', 1):
                 prev = self.motion_list[-1]
                 if 'X' in line.params:
@@ -29,7 +33,7 @@ class GcodeSolver(object):
                 if 'Z' in line.params:
                     z = line.params['Z']
                 if 'E' in line.params:
-                    e = -line.params['E']
+                    e = -line.params['E'] + e_cache
                 if 'F' in line.params:
                     f = line.params['F']/60  #  Convert to
 
