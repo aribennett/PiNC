@@ -8,7 +8,7 @@ from path_planning import get_corners
 with open('111cube.gcode', 'r') as f:
     gcode = f.read()
 
-path_planner = GcodeSolver(gcode)
+path_planner = GcodeSolver(gcode, [0, 0, 10])
 
 TIME = 30
 current_time = np.linspace(0, TIME, num=TIME*10000)

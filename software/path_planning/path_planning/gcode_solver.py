@@ -7,8 +7,8 @@ class GcodeSolver(object):
     def __init__(self, gcode_str, start_position=[0, 0, 0]):
         lines = GcodeParser(gcode_str).lines    # get parsed gcode lines
         x = start_position[0]
-        y = start_position[0]
-        z = start_position[0]
+        y = start_position[1]
+        z = start_position[2]
         e = 0
         f = 0
         t = 0
