@@ -16,7 +16,7 @@ from thermistor import get_thermistor_temp
 
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.795774715
-E_MM_PER_RAD = 10
+E_MM_PER_RAD = 5
 
 # ------ Debug Variables --------
 errorx = 0
@@ -264,10 +264,12 @@ class PrintState(State):
     def __init__(self):
         super().__init__()
         self.start_time = time()
+        NOMINAL_TEMP = 215
         self.home_e = main.get_motor_state(5)[0]
         main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
+        main.add_output_command(pkt.pack_ComponentPacket(0, 0))
         main.send_command()
 
     def run(self):
@@ -311,7 +313,10 @@ class PrintState(State):
         # control_inputz1 = KP*errorz1 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[1].omega)
         # errorz0 = z_nominal - embedded_motors[0].theta
         # control_inputz0 = KP*errorz0 + KP_VELOCITY*(z_velocity_nominal - embedded_motors[0].omega)
+        temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
+        control = int(np.clip(temp_error*100, 0, 4096))
 
+        main.add_output_command(pkt.pack_ComponentPacket(4, control))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control4))
         main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=control_inpute))
@@ -423,7 +428,7 @@ if __name__ == "__main__":
     print("Started controls")
     while True:
         sleep(.1)
-        print(errorx*XY_MM_PER_RAD, errory*XY_MM_PER_RAD)
+        print(errorx*XY_MM_PER_RAD, errory*XY_MM_PER_RAD, get_thermistor_temp(main.sensors[0].value))
         # print(get_thermistor_temp(main.sensors[0].value))
             # print(get_laser_displacement())
             # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
