@@ -16,7 +16,7 @@ from thermistor import get_thermistor_temp
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = 1
-FINE_Z = 20
+FINE_Z = 29.5
 
 # ------ Debug Variables --------
 errorx = 0
@@ -209,7 +209,7 @@ class JogHomeCenterState(JogState):
         super().__init__()
         self.event_map['jog done'] = HomeCenterState
 
-        self.set_jog_target(center_home[0], center_home[1], -30, 2)
+        self.set_jog_target(center_home[0], center_home[1], -50, 2)
 
 
 class HomeCenterState(HomeZState):
