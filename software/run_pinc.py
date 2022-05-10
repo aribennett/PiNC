@@ -162,7 +162,7 @@ class HomeState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=-HomeState.HOMING_SPEED))
         main.send_command()
 
-        if main.get_motor_state(4)[0] - self.last_home > HomeState.HOME_THRESHHOLD:
+        if abs(main.get_motor_state(4)[0] - self.last_home) > HomeState.HOME_THRESHHOLD:
             self.last_timeout = time()
             self.last_home = main.get_motor_state(4)[0]
         elif time() - self.last_timeout > HomeState.HOME_TIMEOUT:
