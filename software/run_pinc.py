@@ -464,7 +464,7 @@ if __name__ == "__main__":
     while True:
         sleep(.1)
         xy = corexy_inverse(main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4)
-        print(xy, get_thermistor_temp(main.sensors[0].value[0]))
+        print(xy, get_thermistor_temp(main.sensors[0].value)[0])
 
         # print(errorx*XY_MM_PER_RAD, errory*XY_MM_PER_RAD, get_thermistor_temp(main.sensors[0].value))
         # # print(get_thermistor_temp(main.sensors[0].value))
