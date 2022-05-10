@@ -142,9 +142,9 @@ class HomeState(State):
 
     def __init__(self):
         super().__init__()
-        # self.event_map['found home'] = JogHomeCenterState
+        self.event_map['found home'] = JogHomeCenterState
         # self.event_map['found home'] = HeatState
-        self.event_map['found home'] = IdleState
+        # self.event_map['found home'] = IdleState
 
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
@@ -207,7 +207,9 @@ class HomeZState(State):
 class JogHomeCenterState(JogState):
     def __init__(self):
         super().__init__()
-        self.event_map['jog done'] = HomeCenterState
+        # self.event_map['jog done'] = HomeCenterState
+        self.event_map['jog done'] = IdleState
+
         self.set_jog_target(30, 30, -20, 5)
 
 

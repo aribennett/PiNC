@@ -1,7 +1,7 @@
-z0 = (30, 4)
-z1 = (8, 45)
-z2 = (54, 45)
-center_home = (25, 25)
+z0 = (-21, 1)
+z1 = (-54, 45)
+z2 = (-1, 45)
+center_home = (-25, 25)
 
 
 def corexy_transform(x_nominal, y_nominal):
