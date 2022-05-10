@@ -207,10 +207,9 @@ class HomeZState(State):
 class JogHomeCenterState(JogState):
     def __init__(self):
         super().__init__()
-        # self.event_map['jog done'] = HomeCenterState
-        self.event_map['jog done'] = IdleState
+        self.event_map['jog done'] = HomeCenterState
 
-        self.set_jog_target(center_home[0], center_home[1], -20, 5)
+        self.set_jog_target(center_home[0], center_home[1], -30, 5)
 
 
 class HomeCenterState(HomeZState):
@@ -222,7 +221,8 @@ class HomeCenterState(HomeZState):
 class JogHome0State(JogState):
     def __init__(self):
         super().__init__()
-        self.event_map['jog done'] = HomeZ0State
+        # self.event_map['jog done'] = HomeZ0State
+        self.event_map['jog done'] = IdleState
         self.set_jog_target(z0[0], z0[1], -10, 5)
 
 
