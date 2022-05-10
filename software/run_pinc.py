@@ -159,7 +159,7 @@ class HomeState(State):
         if self.last_timeout == -1:
             self.last_timeout = time() + 0.1
 
-        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=HomeState.HOMING_SPEED))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=-HomeState.HOMING_SPEED))
         main.send_command()
 
         if main.get_motor_state(4)[0] - self.last_home > HomeState.HOME_THRESHHOLD:
@@ -171,7 +171,7 @@ class HomeState(State):
             HomeState.home_2 = main.get_motor_state(2)[0]
             HomeState.home_3 = main.get_motor_state(3)[0]
             HomeState.home_4 = main.get_motor_state(4)[0]
-            main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
+            main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
             main.send_command()
             post_event('found home')
 
