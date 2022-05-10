@@ -263,9 +263,6 @@ class HomeZ2State(HomeZState):
 class Jog00State(JogState):
     def __init__(self):
         super().__init__()
-        # HomeState.home_0 += FINE_Z/Z_MM_PER_RAD
-        # HomeState.home_1 += FINE_Z/Z_MM_PER_RAD
-        # HomeState.home_2 += FINE_Z/Z_MM_PER_RAD
         self.event_map['jog done'] = JogOffsetState
         # self.event_map['jog done'] = HeatState
         self.set_jog_target(0, 0, 0, 5)
@@ -274,9 +271,6 @@ class Jog00State(JogState):
 class JogOffsetState(JogState):
     def __init__(self):
         super().__init__()
-        # HomeState.home_0 += FINE_Z/Z_MM_PER_RAD
-        # HomeState.home_1 += FINE_Z/Z_MM_PER_RAD
-        # HomeState.home_2 += FINE_Z/Z_MM_PER_RAD
         self.event_map['jog done'] = IdleState
         # self.event_map['jog done'] = HeatState
         self.set_jog_target(0, 0, FINE_Z/Z_MM_PER_RAD, 5)
@@ -326,7 +320,7 @@ class PrintState(State):
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
         y_nominal = position[1]/XY_MM_PER_RAD
-        z_nominal = -position[2]/Z_MM_PER_RAD
+        z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z/Z_MM_PER_RAD  # add in fine homeing 
         e_nominal = position[3]/E_MM_PER_RAD
 
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
