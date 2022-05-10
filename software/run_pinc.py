@@ -165,6 +165,7 @@ class HomeState(State):
         if abs(main.get_motor_state(4)[0] - self.last_home) > HomeState.HOME_THRESHHOLD:
             self.last_timeout = time()
             self.last_home = main.get_motor_state(4)[0]
+            print('Reset')
         # elif time() - self.last_timeout > HomeState.HOME_TIMEOUT:
         #     HomeState.home_0 = main.get_motor_state(0)[0]
         #     HomeState.home_1 = main.get_motor_state(1)[0]
