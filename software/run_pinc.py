@@ -165,16 +165,16 @@ class HomeState(State):
         if abs(main.get_motor_state(4)[0] - self.last_home) > HomeState.HOME_THRESHHOLD:
             self.last_timeout = time()
             self.last_home = main.get_motor_state(4)[0]
-            print('Reset')
-        # elif time() - self.last_timeout > HomeState.HOME_TIMEOUT:
-        #     HomeState.home_0 = main.get_motor_state(0)[0]
-        #     HomeState.home_1 = main.get_motor_state(1)[0]
-        #     HomeState.home_2 = main.get_motor_state(2)[0]
-        #     HomeState.home_3 = main.get_motor_state(3)[0]
-        #     HomeState.home_4 = main.get_motor_state(4)[0]
-        #     main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
-        #     main.send_command()
-        #     post_event('found home')
+            # print('Reset')
+        elif time() - self.last_timeout > HomeState.HOME_TIMEOUT:
+            HomeState.home_0 = main.get_motor_state(0)[0]
+            HomeState.home_1 = main.get_motor_state(1)[0]
+            HomeState.home_2 = main.get_motor_state(2)[0]
+            HomeState.home_3 = main.get_motor_state(3)[0]
+            HomeState.home_4 = main.get_motor_state(4)[0]
+            main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
+            main.send_command()
+            post_event('found home')
 
 
 class HomeZState(State):
