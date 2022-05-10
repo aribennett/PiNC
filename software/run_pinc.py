@@ -28,7 +28,7 @@ jog_controller = None
 with open('111cube.gcode', 'r') as f:
     gcode = f.read()
 
-path_planner = GcodeSolver(gcode, start_position=[0, 0, 0])
+path_planner = GcodeSolver(gcode, start_position=[-XY_MM_PER_RAD, -XY_MM_PER_RAD, 0])
 
 state = None
 event_queue = Queue()
@@ -272,7 +272,7 @@ class JogOffsetState(JogState):
         super().__init__()
         # self.event_map['jog done'] = IdleState
         self.event_map['jog done'] = HeatState
-        self.set_jog_target(0, 0, FINE_Z/Z_MM_PER_RAD, 5)
+        self.set_jog_target(-1, -1, FINE_Z/Z_MM_PER_RAD, 5)
 
 
 class HeatState(State):
