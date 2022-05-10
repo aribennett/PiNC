@@ -46,8 +46,10 @@ GPIOOutput fan1(FAN1_ON, LOW);
 GPIOOutput fan2(FAN2_ON, LOW);
 GPIOOutput fan3(FAN3_ON, LOW);
 PWMOutput hotend(SPINDLE_ON, LOW);
+GPIOOutput heatbed(HEATBED_ON, LOW);
 
 ADCData hotendThermistor(HOTEND_THERMISTOR);
+ADCData heatbedThermistor(HEATBED_THERMISTOR);
 
 void setup()
 {
@@ -78,16 +80,19 @@ void setup()
     fan2.coldStart();
     fan3.coldStart();
     hotend.coldStart();
+    heatbed.coldStart();
     outputList.addOutput(&laser);
     outputList.addOutput(&fan1);
     outputList.addOutput(&fan2);
     outputList.addOutput(&fan3);
     outputList.addOutput(&hotend);
-    
+    outputList.addOutput(&heatbed);    
 
     // Inputs
     hotendThermistor.coldStart();
+    heatbedThermistor.coldStart();
     dataList.addData(&hotendThermistor);
+    dataList.addData(&heatbedThermistor);
 
     startMotorTimer();
 }

@@ -150,6 +150,7 @@ class HomeState(State):
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
         main.add_output_command(pkt.pack_ComponentPacket(1, 1))
         main.add_output_command(pkt.pack_ComponentPacket(2, 0))
+        main.add_output_command(pkt.pack_ComponentPacket(5, 1))
         main.send_command()
         self.last_home = main.get_motor_state(4)[0]
         self.last_timeout = -1
@@ -183,6 +184,7 @@ class HomeZState(State):
 
     def run(self):
         z_nominal = np.clip(-get_laser_displacement()/10, -10, 10)
+        main.add_output_command(pkt.pack_ComponentPacket(5, 0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
