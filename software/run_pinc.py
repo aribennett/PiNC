@@ -8,7 +8,6 @@ import numpy as np
 from time import time, sleep
 from queue import Queue
 import os
-from xbox360controller import Xbox360Controller
 from pinc_state import State
 import sys
 import logging
@@ -55,6 +54,11 @@ class InitState(State):
 
     def run(self):
         post_event('init')
+
+
+class IdleState(State):
+    def __init__(self):
+        super().__init__()
 
 
 class JogState(State):
@@ -138,8 +142,9 @@ class HomeState(State):
 
     def __init__(self):
         super().__init__()
-        self.event_map['found home'] = JogHomeCenterState
+        # self.event_map['found home'] = JogHomeCenterState
         # self.event_map['found home'] = HeatState
+        self.event_map['found home'] = IdleState
 
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
