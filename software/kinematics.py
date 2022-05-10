@@ -5,15 +5,16 @@ center_home = (-25, -25)
 
 
 def corexy_transform(x_nominal, y_nominal):
-    return -y_nominal - x_nominal, -y_nominal + x_nominal
+    return - y_nominal + x_nominal, - y_nominal - x_nominal
 
 
 def corexy_inverse(m0, m1):
-    return (-m0 + m1)/2, (-m1 - m0)/2
+    return (m0 - m1)/2, (-m1 - m0)/2
 
 
 if __name__ == '__main__':
-    print(corexy_transform(*corexy_inverse(20, 45)))
-    print(corexy_transform(*corexy_inverse(-20, 45)))
-    print(corexy_transform(*corexy_inverse(20, -45)))
-    print(corexy_transform(*corexy_inverse(-20, -45)))
+    # Test all the quadrants
+    print(corexy_transform(*corexy_inverse(20, 50)))
+    print(corexy_transform(*corexy_inverse(-20, 50)))
+    print(corexy_transform(*corexy_inverse(20, -50)))
+    print(corexy_transform(*corexy_inverse(-20, -50)))
