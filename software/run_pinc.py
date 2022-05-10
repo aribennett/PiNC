@@ -146,7 +146,7 @@ class HomeState(State):
         # self.event_map['found home'] = HeatState
         self.event_map['found home'] = IdleState
 
-        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
         main.add_output_command(pkt.pack_ComponentPacket(1, 1))
         main.add_output_command(pkt.pack_ComponentPacket(2, 0))
@@ -159,12 +159,12 @@ class HomeState(State):
         if self.last_timeout == -1:
             self.last_timeout = time() + 0.1
 
-        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=HomeState.HOMING_SPEED))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=HomeState.HOMING_SPEED))
         main.send_command()
 
-        if main.get_motor_state(3)[0] - self.last_home > HomeState.HOME_THRESHHOLD:
+        if main.get_motor_state(4)[0] - self.last_home > HomeState.HOME_THRESHHOLD:
             self.last_timeout = time()
-            self.last_home = main.get_motor_state(3)[0]
+            self.last_home = main.get_motor_state(4)[0]
         elif time() - self.last_timeout > HomeState.HOME_TIMEOUT:
             HomeState.home_0 = main.get_motor_state(0)[0]
             HomeState.home_1 = main.get_motor_state(1)[0]
