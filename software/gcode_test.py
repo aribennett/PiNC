@@ -14,8 +14,9 @@ TIME = 30
 current_time = np.linspace(0, TIME, num=TIME*10000)
 xy = path_planner.output_array[:300, :2]
 e = path_planner.output_array[:, 2]
-# plt.plot(e)
-plt.plot(xy[:, 0], xy[:, 1])
+# print(e)
+plt.plot(e)
+# plt.plot(xy[:, 0], xy[:, 1])
 # position, velocity = path_planner.get_solution(current_time)
 # for item in path_planner.time_array:
 #     print(item)
