@@ -150,7 +150,6 @@ class HomeState(State):
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
         main.add_output_command(pkt.pack_ComponentPacket(1, 1))
         main.add_output_command(pkt.pack_ComponentPacket(2, 0))
-        main.add_output_command(pkt.pack_ComponentPacket(5, 1))
         main.send_command()
         self.last_home = main.get_motor_state(4)[0]
         self.last_timeout = -1
@@ -184,7 +183,6 @@ class HomeZState(State):
 
     def run(self):
         z_nominal = np.clip(-get_laser_displacement()/10, -10, 10)
-        main.add_output_command(pkt.pack_ComponentPacket(5, 0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
@@ -278,6 +276,9 @@ class JogOffsetState(JogState):
 
 
 class HeatState(State):
+    NOMINAL_TEMP = 215
+    NOMINAL_TEMP_BED = 60
+
     def __init__(self):
         super().__init__()
         end_tracking_loop()
@@ -285,10 +286,12 @@ class HeatState(State):
 
     def run(self):
         super().run()
-        temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
+        temp_error = HeatState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
         control = int(np.clip(temp_error*1000, 0, 4096))
+        bed_control = int(get_thermistor_temp(main.sensors[1].value)[0] < HeatState.NOMINAL_TEMP_BED)
 
         main.add_output_command(pkt.pack_ComponentPacket(4, control))
+        main.add_output_command(pkt.pack_ComponentPacket(5, bed_control))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=0))
@@ -352,10 +355,13 @@ class PrintState(State):
         control_inputz1 = KP*errorz1
         errorz0 = z_nominal - self.z0pos
         control_inputz0 = KP*errorz0
-        temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
+        
+        temp_error = HeatState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
         control = int(np.clip(temp_error*1000, 0, 4096))
+        bed_control = int(get_thermistor_temp(main.sensors[1].value)[0] < HeatState.NOMINAL_TEMP_BED)
 
         main.add_output_command(pkt.pack_ComponentPacket(4, control))
+        main.add_output_command(pkt.pack_ComponentPacket(5, bed_control))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=control_inputz0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=control_inputz1))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=control_inputz2))
@@ -414,7 +420,7 @@ class ManualState(State):
             y_nominal = 0
             x_nominal = 0
 
-        temp_error = ManualState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
+        temp_error = HeatState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
         control = int(np.clip(temp_error*100, 0, 4096))
 
         main.add_output_command(pkt.pack_ComponentPacket(4, control))
