@@ -2,23 +2,28 @@
 #include <TMCConfig.h>
 #include <PWMMotor.h>
 #include <RCServo.h>
-#include <SerialClient.h>
 #include <Motor.h>
+#include <NintendoExtensionCtrl.h>
 
 #define R_SENSE 0.11f // SilentStepStick series use 0.11
 
 TMC5160Stepper x_spi(34, R_SENSE);
 StepperHFC x_driver(2, 3, 10);
-TMC5160Stepper y_spi(33, R_SENSE);
-StepperHFC y_driver(4, 5, 40);
+TMC5160Stepper y_spi(35, R_SENSE);
+StepperHFC y_driver(7, 8, 6);
 
-PWMMotor flywheel(38);
-RCServo feeder(39);
+PWMMotor flywheel(23);
+RCServo feeder(22);
+ClassicController classic;
 
 void setup()
 {
     SPI.begin();
-    serialClient.coldStart(0);
+    classic.begin();
+	while (!classic.connect()) {
+		Serial.println("Classic Controller not detected!");
+		delay(1000);
+	}
     coldStart2130(&y_spi, 8);
     coldStart2130(&x_spi, 8);
     x_driver.coldStart();
@@ -34,5 +39,32 @@ void setup()
 
 void loop()
 {
-    serialClient.run();
+    static int prev_trigger = 0;
+    boolean success = classic.update();
+	if (success == true)
+    {
+        float upDown = classic.leftJoyY()-128;
+        float leftRight = classic.leftJoyX()-128;
+        bool rev = classic.buttonL();
+        bool fire = classic.buttonR();
+        if(rev && fire)
+        {
+            feeder.setTheta(0);
+        }
+        else
+        {
+            feeder.setTheta(90);
+        }
+        if (rev || fire)
+        {
+            flywheel.setOmega(25);
+        }
+        else
+        {
+            flywheel.setOmega(0);
+        }
+        x_driver.setOmega(leftRight/40);
+        y_driver.setOmega(-upDown/40);
+        delay(50);
+	}
 }
