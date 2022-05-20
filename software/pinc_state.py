@@ -12,6 +12,7 @@ class State(object):
         else:
             return self
 
+
 class AbortState(State):
     def __init__(self):
         super().__init__()
