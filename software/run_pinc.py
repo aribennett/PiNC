@@ -25,7 +25,7 @@ errory = 0
 
 jog_controller = None
 
-with open('111cube.gcode', 'r') as f:
+with open('vase_helix.gcode', 'r') as f:
     gcode = f.read()
 
 path_planner = GcodeSolver(gcode, start_position=[-XY_MM_PER_RAD, -XY_MM_PER_RAD, 0])
