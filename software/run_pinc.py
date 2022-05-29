@@ -9,7 +9,6 @@ from time import time, sleep
 from queue import Queue
 import os
 from pinc_state import State
-import sys
 import logging
 from thermistor import get_thermistor_temp, get_ntc100k_temp
 
@@ -82,7 +81,6 @@ class JogState(State):
         self.xw_nominal = (self.x_target - self.xstart)/self.jog_time
         self.yw_nominal = (self.y_target - self.ystart)/self.jog_time
         self.zw_nominal = (self.z_target - self.zstart)/self.jog_time
-        print("Znominal", self.zw_nominal)
 
     def run(self):
         self.xpos, self.ypos = corexy_inverse(main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4)
