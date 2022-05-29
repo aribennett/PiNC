@@ -50,7 +50,6 @@ class InitState(State):
     def __init__(self):
         super().__init__()
         self.event_map['init'] = HomeState
-        # self.event_map['init'] = ManualState
 
     def run(self):
         post_event('init')
@@ -143,8 +142,6 @@ class HomeState(State):
     def __init__(self):
         super().__init__()
         self.event_map['found home'] = JogHomeCenterState
-        # self.event_map['found home'] = HeatState
-        # self.event_map['found home'] = IdleState
 
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_ComponentPacket(0, 1))
@@ -355,7 +352,7 @@ class PrintState(State):
         control_inputz1 = KP*errorz1
         errorz0 = z_nominal - self.z0pos
         control_inputz0 = KP*errorz0
-        
+
         temp_error = HeatState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
         control = int(np.clip(temp_error*1000, 0, 4096))
         bed_control = int(get_thermistor_temp(main.sensors[1].value)[0] < HeatState.NOMINAL_TEMP_BED)
@@ -368,86 +365,6 @@ class PrintState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control4))
         main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=control_inpute))
-        main.send_command()
-
-
-class ManualState(State):
-    Z_JOG = 30
-    XY_JOG = 30
-    XY_P_ACCEL = 40
-    NOMINAL_TEMP = 220
-
-    def __init__(self):
-        super().__init__()
-        end_tracking_loop()
-        main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.ENABLE))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.ENABLE))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.ENABLE))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.ENABLE))
-        main.add_output_command(pkt.pack_ComponentPacket(0, 0))
-        main.send_command()
-
-    def run(self):
-        if jog_controller.button_a.is_pressed:
-            z_nominal = (controller.trigger_l.value - controller.trigger_r.value)
-            if abs(z_nominal) < .1:
-                z_nominal = 0
-            z_nominal *= ManualState.Z_JOG
-            x_nominal = controller.axis_l.x
-            if abs(x_nominal) < .1:
-                x_nominal = 0
-            else:
-                if x_nominal > 0:
-                    x_nominal -= .1
-                else:
-                    x_nominal += .1
-
-            x_nominal *= ManualState.XY_JOG
-            y_nominal = controller.axis_l.y
-            if abs(y_nominal) < .1:
-                y_nominal = 0
-            else:
-                if y_nominal > 0:
-                    y_nominal -= .1
-                else:
-                    y_nominal += .1
-
-            y_nominal *= ManualState.XY_JOG
-        else:
-            z_nominal = 0
-            y_nominal = 0
-            x_nominal = 0
-
-        temp_error = HeatState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
-        control = int(np.clip(temp_error*100, 0, 4096))
-
-        main.add_output_command(pkt.pack_ComponentPacket(4, control))
-
-        motor_3_control, motor_4_control = corexy_transform(x_nominal, y_nominal)
-        motor_3_error = (motor_3_control - main.get_motor_state(3)[1]) * ManualState.XY_P_ACCEL
-        motor_4_error = (motor_4_control - main.get_motor_state(4)[1]) * ManualState.XY_P_ACCEL
-
-        main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-
-        if jog_controller.button_a.is_pressed or main.get_motor_state(3)[1] != 0 or main.get_motor_state(4)[1] != 0:
-            main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_ALPHA, control=motor_3_error))
-            main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_ALPHA, control=motor_4_error))
-        else:
-            # handle the int floor case for velocity
-            main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
-            main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
-
-        if jog_controller.button_x.is_pressed:
-            main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=10))
-        elif jog_controller.button_y.is_pressed:
-            main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=-10))
-        else:
-            main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=0))
-
         main.send_command()
 
 
@@ -464,9 +381,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     os.system(f"taskset -p -c 3 {os.getpid()}")
     main = RobotInterface()
-    # with Xbox360Controller(0, axis_threshold=0.2) as controller:
     start_time = time()
-    # jog_controller = controller
     tracking_thread = Thread(target=run_tracking_loop, daemon=True)
     tracking_thread.start()
     print("Started tracking")
