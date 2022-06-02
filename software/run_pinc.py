@@ -328,14 +328,17 @@ class PrintState(State):
         x_nominal = position[0]/XY_MM_PER_RAD
         y_nominal = position[1]/XY_MM_PER_RAD
         a_nominal, b_nominal = corexy_transform(x_nominal, y_nominal)
+        
         z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z/Z_MM_PER_RAD  # add in fine homeing 
         e_nominal = position[3]/E_MM_PER_RAD
 
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
         y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
+        a_velocity_nominal, b_velocity_nominal = corexy_transform(x_velocity_nominal, y_velocity_nominal)
+
         z_velocity_nominal = velocities[2]/Z_MM_PER_RAD
-        # v_errorx = x_velocity_nominal - self.xvel
-        # v_errory = y_velocity_nominal - self.yvel
+        v_errorx = a_velocity_nominal - self.avel
+        v_errory = b_velocity_nominal - self.bvel
 
         errorx = a_nominal - self.apos
         control3 = KP * errorx #+ KP_VELOCITY*v_errorx
