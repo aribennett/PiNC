@@ -24,7 +24,7 @@ errory = 0
 
 jog_controller = None
 
-with open('gcode_examples/sw.gcode', 'r') as f:
+with open('gcode_examples/benchy.gcode', 'r') as f:
     gcode = f.read()
 
 path_planner = GcodeSolver(gcode, start_position=[-XY_MM_PER_RAD, -XY_MM_PER_RAD, 0])
@@ -319,7 +319,7 @@ class PrintState(State):
         self.epos = main.get_motor_state(5)[0] - self.home_e
         global errorx, errory
         KP = 50
-        KP_VELOCITY = 0.2
+        KP_VELOCITY = 5
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
@@ -340,7 +340,7 @@ class PrintState(State):
         control_inputy = KP*errory + KP_VELOCITY*v_errory
 
         error_e = e_nominal-self.epos
-        control_inpute = error_e*30
+        control_inpute = error_e*100
 
         control3, control4 = corexy_transform(control_inputx, control_inputy)
 
@@ -390,9 +390,9 @@ if __name__ == "__main__":
     while True:
         sleep(.1)
         xy = corexy_inverse(main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4)
-        print(xy, get_thermistor_temp(main.sensors[0].value)[0], get_ntc100k_temp(main.sensors[1].value)[0])
+        # print(xy, get_thermistor_temp(main.sensors[0].value)[0], get_ntc100k_temp(main.sensors[1].value)[0])
 
-        # print(errorx*XY_MM_PER_RAD, errory*XY_MM_PER_RAD, get_thermistor_temp(main.sensors[0].value))
+        print(errorx*XY_MM_PER_RAD, errory*XY_MM_PER_RAD, get_thermistor_temp(main.sensors[0].value))
         # # print(get_thermistor_temp(main.sensors[0].value))
         #     # print(get_laser_displacement())
         #     # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
