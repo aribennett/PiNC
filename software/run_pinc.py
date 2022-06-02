@@ -313,8 +313,8 @@ class PrintState(State):
 
     def run(self):
         super().run()
-        self.xpos, self.ypos = corexy_inverse(main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4)
-        self.xvel, self.yvel = corexy_inverse(main.get_motor_state(3)[1], main.get_motor_state(4)[1])
+        self.apos, self.bpos = main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4
+        self.avel, self.bvel = main.get_motor_state(3)[1], main.get_motor_state(4)[1]
         self.z0pos = main.get_motor_state(0)[0] - HomeState.home_0
         self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
@@ -327,25 +327,26 @@ class PrintState(State):
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
         y_nominal = position[1]/XY_MM_PER_RAD
+        a_nominal, b_nominal = corexy_transform(x_nominal, y_nominal)
         z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z/Z_MM_PER_RAD  # add in fine homeing 
         e_nominal = position[3]/E_MM_PER_RAD
 
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
         y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
         z_velocity_nominal = velocities[2]/Z_MM_PER_RAD
-        v_errorx = x_velocity_nominal - self.xvel
-        v_errory = y_velocity_nominal - self.yvel
+        # v_errorx = x_velocity_nominal - self.xvel
+        # v_errory = y_velocity_nominal - self.yvel
 
-        errorx = x_nominal - self.xpos
-        control_inputx = KP*errorx + KP_VELOCITY*v_errorx
+        errorx = a_nominal - self.apos
+        control3 = KP * errorx #+ KP_VELOCITY*v_errorx
 
-        errory = y_nominal - self.ypos
-        control_inputy = KP*errory + KP_VELOCITY*v_errory
+        errory = b_nominal - self.bpos
+        control4 = KP * errory #+ KP_VELOCITY*v_errory
 
         error_e = e_nominal-self.epos
         control_inpute = error_e*100
 
-        control3, control4 = corexy_transform(control_inputx, control_inputy)
+        # control3, control4 = corexy_transform(control_inputx, control_inputy)
 
         errorz2 = z_nominal - self.z2pos
         control_inputz2 = KPZ*errorz2
