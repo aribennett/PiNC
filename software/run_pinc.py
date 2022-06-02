@@ -322,7 +322,7 @@ class PrintState(State):
         global errorx, errory, v_errorx, v_errory
         KP = 10
         KPZ = 50
-        KP_VELOCITY = 0
+        KP_VELOCITY = .25
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
@@ -341,10 +341,10 @@ class PrintState(State):
         v_errory = b_velocity_nominal - self.bvel
 
         errorx = a_nominal - self.apos
-        control3 = KP * errorx #+ KP_VELOCITY*v_errorx
+        control3 = KP * errorx - KP_VELOCITY*v_errorx
 
         errory = b_nominal - self.bpos
-        control4 = KP * errory #+ KP_VELOCITY*v_errory
+        control4 = KP * errory - KP_VELOCITY*v_errory
 
         error_e = e_nominal-self.epos
         control_inpute = error_e*100
