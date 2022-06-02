@@ -322,7 +322,7 @@ class PrintState(State):
         global errorx, errory, v_errorx, v_errory
         KP = 10
         KPZ = 50
-        KP_VELOCITY = 1
+        KP_VELOCITY = 0
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
