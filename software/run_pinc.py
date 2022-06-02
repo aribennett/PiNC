@@ -321,6 +321,7 @@ class PrintState(State):
         self.epos = main.get_motor_state(5)[0] - self.home_e
         global errorx, errory, v_errorx, v_errory
         KP = 100
+        KPZ = 50
         KP_VELOCITY = 0
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
@@ -347,11 +348,11 @@ class PrintState(State):
         control3, control4 = corexy_transform(control_inputx, control_inputy)
 
         errorz2 = z_nominal - self.z2pos
-        control_inputz2 = KP*errorz2
+        control_inputz2 = KPZ*errorz2
         errorz1 = z_nominal - self.z1pos
-        control_inputz1 = KP*errorz1
+        control_inputz1 = KPZ*errorz1
         errorz0 = z_nominal - self.z0pos
-        control_inputz0 = KP*errorz0
+        control_inputz0 = KPZ*errorz0
 
         temp_error = HeatState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
         control = int(np.clip(temp_error*1000, 0, 4096))
