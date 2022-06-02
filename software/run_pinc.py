@@ -319,7 +319,7 @@ class PrintState(State):
         self.epos = main.get_motor_state(5)[0] - self.home_e
         global errorx, errory
         KP = 50
-        KP_VELOCITY = 0
+        KP_VELOCITY = 0.2
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
@@ -340,7 +340,7 @@ class PrintState(State):
         control_inputy = KP*errory + KP_VELOCITY*v_errory
 
         error_e = e_nominal-self.epos
-        control_inpute = error_e*10
+        control_inpute = error_e*30
 
         control3, control4 = corexy_transform(control_inputx, control_inputy)
 
