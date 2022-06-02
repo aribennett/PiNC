@@ -321,7 +321,7 @@ class PrintState(State):
         self.epos = main.get_motor_state(5)[0] - self.home_e
         global errorx, errory, v_errorx, v_errory
         KP = 50
-        KP_VELOCITY = 0
+        KP_VELOCITY = .5
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
@@ -391,10 +391,9 @@ if __name__ == "__main__":
     print("Started controls")
     while True:
         sleep(.1)
-        xy = corexy_inverse(main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4)
         # print(xy, get_thermistor_temp(main.sensors[0].value)[0], get_ntc100k_temp(main.sensors[1].value)[0])
 
-        print(errorx*XY_MM_PER_RAD, errory*XY_MM_PER_RAD, v_errorx*XY_MM_PER_RAD, v_errory*XY_MM_PER_RAD, get_thermistor_temp(main.sensors[0].value))
+        print(errorx*XY_MM_PER_RAD, errory*XY_MM_PER_RAD, v_errorx*XY_MM_PER_RAD, v_errory*XY_MM_PER_RAD, str(get_thermistor_temp(main.sensors[0].value)[0])[:5])
         # # print(get_thermistor_temp(main.sensors[0].value))
         #     # print(get_laser_displacement())
         #     # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
