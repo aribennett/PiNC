@@ -322,7 +322,7 @@ class PrintState(State):
         global errorx, errory, v_errorx, v_errory
         KP = 10
         KPZ = 50
-        KP_VELOCITY = 2
+        KP_VELOCITY = 1
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
@@ -398,7 +398,7 @@ if __name__ == "__main__":
         sleep(.1)
         # print(xy, get_thermistor_temp(main.sensors[0].value)[0], get_ntc100k_temp(main.sensors[1].value)[0])
 
-        print(f"{errorx*XY_MM_PER_RAD:.4f}, {errory*XY_MM_PER_RAD:9.4f}, {v_errorx*XY_MM_PER_RAD:9.4f}, {v_errory*XY_MM_PER_RAD:9.4f}, {get_thermistor_temp(main.sensors[0].value)[0]:9.4f}")
+        print(f"{errorx*XY_MM_PER_RAD:9.4f}, {errory*XY_MM_PER_RAD:9.4f}, {v_errorx*XY_MM_PER_RAD:9.4f}, {v_errory*XY_MM_PER_RAD:9.4f}, {get_thermistor_temp(main.sensors[0].value)[0]:9.4f}")
         # # print(get_thermistor_temp(main.sensors[0].value))
         #     # print(get_laser_displacement())
         #     # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
