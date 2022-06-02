@@ -26,7 +26,7 @@ v_errory = 0
 
 jog_controller = None
 
-with open('gcode_examples/vase_helix.gcode', 'r') as f:
+with open('gcode_examples/sw.gcode', 'r') as f:
     gcode = f.read()
 
 path_planner = GcodeSolver(gcode, start_position=[-XY_MM_PER_RAD, -XY_MM_PER_RAD, 0])
@@ -322,7 +322,7 @@ class PrintState(State):
         global errorx, errory, v_errorx, v_errory
         KP = 200
         KPZ = 50
-        KP_VELOCITY = .5
+        KP_VELOCITY = .75
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
