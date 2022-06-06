@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from numpy.core.defchararray import greater
 from picamera import PiCamera
 from picamera.array import PiRGBArray
 RESOLUTION = (400, 400)
@@ -40,6 +39,9 @@ def run_tracking_loop(debug=False):
             # upper = np.array([255, 255, 255])
             # mask = cv2.inRange(image, lower, upper)
             # image = cv2.
+            indicies = np.where(image > 50)
+            red = np.zeros_like(image, np.uint8)
+            red[indicies] = 255
             M = cv2.moments(image)
             # calculate x,y coordinate of center
             if M["m00"] != 0:
