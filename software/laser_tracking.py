@@ -30,12 +30,12 @@ def run_tracking_loop(debug=False):
             # upper = np.array([255, 255, 255])
             # mask = cv2.inRange(image, lower, upper)
             # image = cv2.
-            M = cv2.moments(image)
+            # M = cv2.moments(image)
             # calculate x,y coordinate of center
-            if M["m00"] != 0:
-                laser_x = int(M["m01"] / M["m00"])
-            else:
-                laser_x = 0
+            # if M["m00"] != 0:
+            #     laser_x = int(M["m01"] / M["m00"])
+            # else:
+            #     laser_x = 0
             if debug:
                 print(laser_x)
                 cv2.imwrite("laser.bmp", laplacian)
