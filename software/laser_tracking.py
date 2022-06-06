@@ -34,23 +34,13 @@ def run_tracking_loop(debug=False):
             red[imask_red1] = image[imask_red1]
             red[imask_red2] = image[imask_red2]
             image = cv2.cvtColor(red, cv2.COLOR_BGR2GRAY)
-            # laplacian = cv2.Laplacian(image, cv2.CV_64F)
-            # lower = np.array([0, 0, 40])
-            # upper = np.array([255, 255, 255])
-            # mask = cv2.inRange(image, lower, upper)
-            # image = cv2.
-            indicies = np.where(image > 75)
-            # red = np.zeros_like(image, np.uint8)
-            # red[indicies] = 255
             M = cv2.moments(image)
-            # calculate x,y coordinate of center
             if M["m00"] != 0:
                 laser_x = int(M["m01"] / M["m00"])
             else:
                 laser_x = 0
             if debug:
                 print(laser_x)
-                cv2.imwrite("laser.bmp", image)
             raw_capture.truncate(0)
             if kill_loop:
                 break

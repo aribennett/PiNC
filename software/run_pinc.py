@@ -260,7 +260,7 @@ class HomeZ2State(HomeZState):
 class Jog00State(JogState):
     def __init__(self):
         super().__init__()
-        self.event_map['jog done'] = JogOffsetState
+        self.event_map['jog done'] = HeatState
         self.set_jog_target(0, 0, 0, 5)
 
 
@@ -268,7 +268,7 @@ class JogOffsetState(JogState):
     def __init__(self):
         super().__init__()
         # self.event_map['jog done'] = IdleState
-        self.event_map['jog done'] = HeatState
+        self.event_map['jog done'] = PrintState
         self.set_jog_target(-1, -1, FINE_Z/Z_MM_PER_RAD, 5)
 
 
@@ -279,7 +279,7 @@ class HeatState(State):
     def __init__(self):
         super().__init__()
         end_tracking_loop()
-        self.event_map['done heating'] = PrintState
+        self.event_map['done heating'] = JogOffsetState
 
     def run(self):
         super().run()
