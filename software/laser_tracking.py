@@ -20,12 +20,12 @@ def run_tracking_loop(debug=False):
     with PiCamera() as camera:
         camera.resolution = RESOLUTION
         camera.framerate = FRAMERATE
-        camera.shutter_speed = 1000
+        camera.shutter_speed = 3000
         raw_capture = PiRGBArray(camera, size=RESOLUTION)
         for raw in camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
             image = raw.array.copy()
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            laplacian = cv2.Laplacian(image, cv2.CV_64F)
+            # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            # laplacian = cv2.Laplacian(image, cv2.CV_64F)
             # lower = np.array([0, 0, 40])
             # upper = np.array([255, 255, 255])
             # mask = cv2.inRange(image, lower, upper)
