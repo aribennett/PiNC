@@ -261,7 +261,7 @@ class Jog00State(JogState):
     def __init__(self):
         super().__init__()
         self.event_map['jog done'] = HeatState
-        self.set_jog_target(0, 0, 0, 5)
+        self.set_jog_target(-1, -1, 0, 5)
 
 
 class JogOffsetState(JogState):
