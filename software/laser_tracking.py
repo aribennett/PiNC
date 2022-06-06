@@ -48,7 +48,7 @@ def run_tracking_loop(debug=False):
             #     laser_x = 0
             if debug:
                 print(laser_x)
-                cv2.imwrite("laser.bmp", image)
+                cv2.imwrite("laser.bmp", red)
             raw_capture.truncate(0)
             if kill_loop:
                 break
