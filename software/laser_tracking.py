@@ -27,8 +27,8 @@ def run_tracking_loop(debug=False):
             # image[:, :, 0] = 0
             # image[:, :, 1] = 0
             hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-            mask_red1 = cv2.inRange(hsv, (0, 70, 200), (10, 255, 255))
-            mask_red2 = cv2.inRange(hsv, (170, 70, 200), (180, 255, 255))
+            mask_red1 = cv2.inRange(hsv, (0, 70, 50), (10, 255, 255))
+            mask_red2 = cv2.inRange(hsv, (170, 70, 50), (180, 255, 255))
             imask_red1 = mask_red1 > 0
             imask_red2 = mask_red2 > 0
             red = np.zeros_like(image, np.uint8)
@@ -48,7 +48,7 @@ def run_tracking_loop(debug=False):
                 laser_x = 0
             if debug:
                 print(laser_x)
-                cv2.imwrite("laser.bmp", image)
+                cv2.imwrite("laser.bmp", red)
             raw_capture.truncate(0)
             if kill_loop:
                 break
