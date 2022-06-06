@@ -41,7 +41,7 @@ def run_tracking_loop(debug=False):
             # mask = cv2.inRange(image, lower, upper)
             # image = cv2.
             M = cv2.moments(image)
-            calculate x,y coordinate of center
+            # calculate x,y coordinate of center
             if M["m00"] != 0:
                 laser_x = int(M["m01"] / M["m00"])
             else:
