@@ -14,7 +14,7 @@ from thermistor import get_thermistor_temp, get_ntc100k_temp
 
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
-E_MM_PER_RAD = .85
+E_MM_PER_RAD = .75
 FINE_Z = 32.25
 
 # ------ Debug Variables --------
@@ -26,7 +26,7 @@ v_errory = 0
 
 jog_controller = None
 
-with open('gcode_examples/sw.gcode', 'r') as f:
+with open('gcode_examples/sphere.gcode', 'r') as f:
     gcode = f.read()
 
 path_planner = GcodeSolver(gcode, start_position=[-XY_MM_PER_RAD, -XY_MM_PER_RAD, 0])
