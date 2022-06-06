@@ -24,8 +24,16 @@ def run_tracking_loop(debug=False):
         raw_capture = PiRGBArray(camera, size=RESOLUTION)
         for raw in camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
             image = raw.array.copy()
-            image[:, :, 0] = 0
-            image[:, :, 1] = 0
+            # image[:, :, 0] = 0
+            # image[:, :, 1] = 0
+            hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+            mask_red1 = cv2.inRange(hsv, (0, 70, 50), (10, 255, 255))
+            mask_red2 = cv2.inRange(hsv, (170, 70, 50), (180, 255, 255))
+            imask_red1 = mask_red1 > 0
+            imask_red2 = mask_red2 > 0
+            red = np.zeros_like(image, np.uint8)
+            red[imask_red1] = image[imask_red1]
+            red[imask_red2] = image[imask_red2]
             # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             # laplacian = cv2.Laplacian(image, cv2.CV_64F)
             # lower = np.array([0, 0, 40])
