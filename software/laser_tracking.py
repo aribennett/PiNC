@@ -20,7 +20,7 @@ def run_tracking_loop(debug=False):
     with PiCamera() as camera:
         camera.resolution = RESOLUTION
         camera.framerate = FRAMERATE
-        camera.shutter_speed = 200
+        camera.shutter_speed = 1000
         raw_capture = PiRGBArray(camera, size=RESOLUTION)
         for raw in camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
             image = raw.array.copy()
@@ -38,6 +38,7 @@ def run_tracking_loop(debug=False):
                 laser_x = 0
             if debug:
                 print(laser_x)
+                cv2.imwrite("laser.bmp", laplacian)
             raw_capture.truncate(0)
             if kill_loop:
                 break
