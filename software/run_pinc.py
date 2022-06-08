@@ -16,7 +16,7 @@ XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = .75
 # FINE_Z = 32.25
-FINE_Z = 34.7
+FINE_Z = 30
 
 # ------ Debug Variables --------
 errorx = 0
