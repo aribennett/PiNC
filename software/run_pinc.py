@@ -16,7 +16,7 @@ XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = .75
 # FINE_Z = 32.25
-FINE_Z = 33.5
+FINE_Z = 33.7
 
 # ------ Debug Variables --------
 errorx = 0
@@ -321,7 +321,7 @@ class PrintState(State):
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
         self.epos = main.get_motor_state(5)[0] - self.home_e
         global errorx, errory, v_errorx, v_errory
-        KP = 200
+        KP = 15
         KPZ = 50
         KP_VELOCITY = .75
         positions, velocities = path_planner.get_solution(time()-self.start_time)
@@ -342,10 +342,10 @@ class PrintState(State):
         v_errory = b_velocity_nominal - self.bvel
 
         errorx = a_nominal - self.apos
-        control3 = KP * errorx + KP_VELOCITY*v_errorx
+        control3 = KP * errorx + a_velocity_nominal
 
         errory = b_nominal - self.bpos
-        control4 = KP * errory + KP_VELOCITY*v_errory
+        control4 = KP * errory + b_velocity_nominal
 
         error_e = e_nominal-self.epos
         control_inpute = error_e*100
