@@ -19,7 +19,7 @@ def run_tracking_loop(debug=False):
     with PiCamera() as camera:
         camera.resolution = RESOLUTION
         camera.framerate = FRAMERATE
-        camera.shutter_speed = 3000
+        camera.shutter_speed = 200
         raw_capture = PiRGBArray(camera, size=RESOLUTION)
         for raw in camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
             image = raw.array.copy()

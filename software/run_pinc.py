@@ -15,7 +15,8 @@ from thermistor import get_thermistor_temp, get_ntc100k_temp
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = .75
-FINE_Z = 32.25
+# FINE_Z = 32.25
+FINE_Z = 25
 
 # ------ Debug Variables --------
 errorx = 0
@@ -329,7 +330,7 @@ class PrintState(State):
         y_nominal = position[1]/XY_MM_PER_RAD
         a_nominal, b_nominal = corexy_transform(x_nominal, y_nominal)
         
-        z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z/Z_MM_PER_RAD  # add in fine homeing 
+        z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z/Z_MM_PER_RAD
         e_nominal = position[3]/E_MM_PER_RAD
 
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
@@ -348,8 +349,6 @@ class PrintState(State):
 
         error_e = e_nominal-self.epos
         control_inpute = error_e*100
-
-        # control3, control4 = corexy_transform(control_inputx, control_inputy)
 
         errorz2 = z_nominal - self.z2pos
         control_inputz2 = KPZ*errorz2
