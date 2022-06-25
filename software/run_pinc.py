@@ -323,21 +323,21 @@ class PrintState(State):
         global errorx, errory, v_errorx, v_errory
         KP = 15
         KPZ = 50
-        KP_VELOCITY = .75
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
         y_nominal = position[1]/XY_MM_PER_RAD
         a_nominal, b_nominal = corexy_transform(x_nominal, y_nominal)
-        
+
         z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z/Z_MM_PER_RAD
         e_nominal = position[3]/E_MM_PER_RAD
 
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
         y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
+        z_velocity_nominal = -velocities[2]/Z_MM_PER_RAD
+        e_velocity_nominal = velocities[3]/E_MM_PER_RAD
         a_velocity_nominal, b_velocity_nominal = corexy_transform(x_velocity_nominal, y_velocity_nominal)
 
-        z_velocity_nominal = velocities[2]/Z_MM_PER_RAD
         v_errorx = a_velocity_nominal - self.avel
         v_errory = b_velocity_nominal - self.bvel
 
@@ -348,14 +348,14 @@ class PrintState(State):
         control4 = KP * errory + b_velocity_nominal
 
         error_e = e_nominal-self.epos
-        control_inpute = error_e*100
+        control_inpute = error_e*10 + e_velocity_nominal
 
         errorz2 = z_nominal - self.z2pos
-        control_inputz2 = KPZ*errorz2
+        control_inputz2 = KPZ*errorz2 + z_velocity_nominal
         errorz1 = z_nominal - self.z1pos
-        control_inputz1 = KPZ*errorz1
+        control_inputz1 = KPZ*errorz1 + z_velocity_nominal
         errorz0 = z_nominal - self.z0pos
-        control_inputz0 = KPZ*errorz0
+        control_inputz0 = KPZ*errorz0 + z_velocity_nominal
 
         temp_error = HeatState.NOMINAL_TEMP - get_thermistor_temp(main.sensors[0].value)[0]
         control = int(np.clip(temp_error*1000, 0, 4096))
@@ -397,7 +397,7 @@ if __name__ == "__main__":
         sleep(.1)
         # print(xy, get_thermistor_temp(main.sensors[0].value)[0], get_ntc100k_temp(main.sensors[1].value)[0])
 
-        print(f"{errorx*XY_MM_PER_RAD:9.4f}, {errory*XY_MM_PER_RAD:9.4f}, {v_errorx*XY_MM_PER_RAD:9.4f}, {v_errory*XY_MM_PER_RAD:9.4f}, {get_thermistor_temp(main.sensors[0].value)[0]:9.4f}")
+        print(f"{errorx*XY_MM_PER_RAD:9.4f}, {errory*XY_MM_PER_RAD:9.4f}, {v_errorx*XY_MM_PER_RAD:9.4f}, {v_errory*XY_MM_PER_RAD:9.4f}, {get_thermistor_temp(main.sensors[0].value)[0]:9.4f}", end='\r')
         # # print(get_thermistor_temp(main.sensors[0].value))
         #     # print(get_laser_displacement())
         #     # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)

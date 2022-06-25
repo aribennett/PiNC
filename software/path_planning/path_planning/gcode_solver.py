@@ -68,7 +68,6 @@ class GcodeSolver(object):
         self.posistion_array = self.output_array[:, 0:4]
         self.velocity_array = self.output_array[:, 6:10]
 
-
     def get_solution(self, time):
         insert_index = np.searchsorted(self.time_array, time)
         interp = (time - self.time_array[insert_index-1])/(self.time_array[insert_index] - self.time_array[insert_index-1])
