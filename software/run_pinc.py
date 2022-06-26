@@ -323,7 +323,7 @@ class PrintState(State):
         self.epos = main.get_motor_state(5)[0] - self.home_e
         global errorx, errory, v_errorx, v_errory
         KP = 15
-        KPZ = 50
+        KPZ = 5
         positions, velocities = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
@@ -335,7 +335,7 @@ class PrintState(State):
 
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
         y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
-        z_velocity_nominal = -velocities[2]/Z_MM_PER_RAD
+        z_velocity_nominal = 0;#velocities[2]/Z_MM_PER_RAD
         e_velocity_nominal = velocities[3]/E_MM_PER_RAD
         a_velocity_nominal, b_velocity_nominal = corexy_transform(x_velocity_nominal, y_velocity_nominal)
 
