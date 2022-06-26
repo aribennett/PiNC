@@ -6,6 +6,7 @@
 #include <GPIOOutput.h>
 #include <PWMOutput.h>
 #include <ADCData.h>
+#include <DigitalData.h>
 
 #define R_SENSE 0.11f // SilentStepStick series use 0.11
 
@@ -44,12 +45,12 @@ StepperHFC b_driver(8, 9, 38, &b_enc, 8192);
 GPIOOutput laser(LASER_ON, LOW);
 GPIOOutput fan1(FAN1_ON, LOW);
 GPIOOutput fan2(FAN2_ON, LOW);
-GPIOOutput fan3(FAN3_ON, LOW);
 PWMOutput hotend(SPINDLE_ON, LOW);
 GPIOOutput heatbed(HEATBED_ON, LOW);
 
 ADCData hotendThermistor(HOTEND_THERMISTOR);
 ADCData heatbedThermistor(HEATBED_THERMISTOR);
+DigitalData bedLevelSensor(FAN3_ON);
 
 void setup()
 {
@@ -78,21 +79,21 @@ void setup()
     laser.coldStart();
     fan1.coldStart();
     fan2.coldStart();
-    fan3.coldStart();
     hotend.coldStart();
     heatbed.coldStart();
     outputList.addOutput(&laser);
     outputList.addOutput(&fan1);
     outputList.addOutput(&fan2);
-    outputList.addOutput(&fan3);
     outputList.addOutput(&hotend);
     outputList.addOutput(&heatbed);    
 
     // Inputs
     hotendThermistor.coldStart();
     heatbedThermistor.coldStart();
+    bedLevelSensor.coldStart();
     dataList.addData(&hotendThermistor);
     dataList.addData(&heatbedThermistor);
+    dataList.addData(&bedLevelSensor);
 
     startMotorTimer();
 }
