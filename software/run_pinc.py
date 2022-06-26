@@ -13,9 +13,8 @@ from thermistor import get_thermistor_temp, get_ntc100k_temp
 
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
-E_MM_PER_RAD = .75
-# FINE_Z = 32.25
-FINE_Z = 0.7
+E_MM_PER_RAD = .70
+FINE_Z = 0.8
 
 # ------ Debug Variables --------
 errorx = 0
@@ -26,7 +25,7 @@ v_errory = 0
 
 jog_controller = None
 
-with open('gcode_examples/test_walls.gcode', 'r') as f:
+with open('gcode_examples/benchy.gcode', 'r') as f:
     gcode = f.read()
 
 path_planner = GcodeSolver(gcode, start_position=[-XY_MM_PER_RAD, -XY_MM_PER_RAD, 0])
@@ -276,7 +275,7 @@ class JogOffsetState(JogState):
 
 
 class HeatState(State):
-    NOMINAL_TEMP = 215
+    NOMINAL_TEMP = 225
     NOMINAL_TEMP_BED = 60
 
     def __init__(self):
@@ -331,7 +330,7 @@ class PrintState(State):
         y_nominal = position[1]/XY_MM_PER_RAD
         a_nominal, b_nominal = corexy_transform(x_nominal, y_nominal)
 
-        if position[2] > 1 and not self.enabled_fan:
+        if position[2] > 2 and not self.enabled_fan:
             self.enabled_fan = True
             main.add_output_command(pkt.pack_OutputCommandPacket(2, 1))
 
