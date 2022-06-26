@@ -289,8 +289,8 @@ class HeatState(State):
         control = int(np.clip(temp_error*1000, 0, 4096))
         bed_control = int(get_thermistor_temp(main.sensors[1].value)[0] < HeatState.NOMINAL_TEMP_BED)
 
-        main.add_output_command(pkt.pack_OutputCommandPacket(4, control))
-        main.add_output_command(pkt.pack_OutputCommandPacket(5, bed_control))
+        main.add_output_command(pkt.pack_OutputCommandPacket(3, control))
+        main.add_output_command(pkt.pack_OutputCommandPacket(4, bed_control))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=0))
@@ -362,8 +362,8 @@ class PrintState(State):
         control = int(np.clip(temp_error*1000, 0, 4096))
         bed_control = int(get_thermistor_temp(main.sensors[1].value)[0] < HeatState.NOMINAL_TEMP_BED)
 
-        main.add_output_command(pkt.pack_OutputCommandPacket(4, control))
-        main.add_output_command(pkt.pack_OutputCommandPacket(5, bed_control))
+        main.add_output_command(pkt.pack_OutputCommandPacket(3, control))
+        main.add_output_command(pkt.pack_OutputCommandPacket(4, bed_control))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=control_inputz0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=control_inputz1))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=control_inputz2))
