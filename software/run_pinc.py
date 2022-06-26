@@ -177,12 +177,12 @@ class HomeZState(State):
     def __init__(self):
         super().__init__()
         self.motor_index = 'all'
+        self.z_nominal = 10
 
     def run(self):
-        z_nominal = .5
-        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
-        main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=self.z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=self.z_nominal))
+        main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=self.z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
         main.send_command()
@@ -227,6 +227,7 @@ class HomeZ0State(HomeZState):
         super().__init__()
         self.motor_index = 0
         self.event_map['z home'] = JogHome1State
+        self.z_nominal = 3
 
 
 class JogHome1State(JogState):
@@ -241,6 +242,7 @@ class HomeZ1State(HomeZState):
         super().__init__()
         self.event_map['z home'] = JogHome2State
         self.motor_index = 1
+        self.z_nominal = 3
 
 
 class JogHome2State(JogState):
@@ -255,6 +257,7 @@ class HomeZ2State(HomeZState):
         super().__init__()
         self.event_map['z home'] = Jog00State
         self.motor_index = 2
+        self.z_nominal = 3
 
 
 class Jog00State(JogState):
