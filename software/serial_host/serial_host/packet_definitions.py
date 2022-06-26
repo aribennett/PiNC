@@ -21,13 +21,15 @@ class MotorCommand():
 
 
 HeaderPacket = namedtuple('HeaderPacket', 'boardid command motorCount componentCount ')
-MotorStatePacket = namedtuple('MotorStatePacket', 'motorId theta omega alpha ')
+MotorStatePacket = namedtuple('MotorStatePacket', 'theta omega alpha ')
 MotorCommandPacket = namedtuple('MotorCommandPacket', 'motorId motorCommand control ')
-ComponentPacket = namedtuple('ComponentPacket', 'componentId value ')
+ComponentPacket = namedtuple('ComponentPacket', 'value ')
+OutputCommandPacket = namedtuple('OutputCommandPacket', 'outputId value ')
 size_HeaderPacket = 4
-size_MotorStatePacket = 9
+size_MotorStatePacket = 8
 size_MotorCommandPacket = 6
-size_ComponentPacket = 3
+size_ComponentPacket = 2
+size_OutputCommandPacket = 3
 
 
 def unpack_HeaderPacket(bytes):
@@ -39,11 +41,11 @@ def pack_HeaderPacket(boardid=0, command=0, motorCount=0, componentCount=0):
 
 
 def unpack_MotorStatePacket(bytes):
-    return MotorStatePacket._make(unpack('=Bfhh', bytes))
+    return MotorStatePacket._make(unpack('=fhh', bytes))
 
 
-def pack_MotorStatePacket(motorId=0, theta=0, omega=0, alpha=0):
-    return pack('=Bfhh', motorId, theta, omega, alpha)
+def pack_MotorStatePacket(theta=0, omega=0, alpha=0):
+    return pack('=fhh', theta, omega, alpha)
 
 
 def unpack_MotorCommandPacket(bytes):
@@ -55,8 +57,16 @@ def pack_MotorCommandPacket(motorId=0, motorCommand=0, control=0):
 
 
 def unpack_ComponentPacket(bytes):
-    return ComponentPacket._make(unpack('=BH', bytes))
+    return ComponentPacket._make(unpack('=H', bytes))
 
 
-def pack_ComponentPacket(componentId=0, value=0):
-    return pack('=BH', componentId, value)
+def pack_ComponentPacket(value=0):
+    return pack('=H', value)
+
+
+def unpack_OutputCommandPacket(bytes):
+    return OutputCommandPacket._make(unpack('=BH', bytes))
+
+
+def pack_OutputCommandPacket(outputId=0, value=0):
+    return pack('=BH', outputId, value)

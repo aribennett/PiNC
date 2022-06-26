@@ -39,7 +39,6 @@ MotorStatePacket Motor::getMotorState()
     toSend.theta = _theta;
     toSend.omega = (int16_t)(_omega*100);
     toSend.alpha = (int16_t)(_alpha*100);
-    toSend.motorId = _id;
     return(toSend);
 }
 

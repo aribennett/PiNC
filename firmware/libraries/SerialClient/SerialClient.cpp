@@ -53,7 +53,7 @@ void SerialClient::handleInputPacket()
     _lastRxTime = millis();
 
     MotorCommandPacket* motorPackets = (MotorCommandPacket*)(_inputBuffer+sizeof(HeaderPacket));
-    ComponentPacket* outputPackets = (ComponentPacket*)(_inputBuffer+sizeof(HeaderPacket)+sizeof(MotorCommandPacket)*motorCount);
+    OutputCommandPacket* outputPackets = (OutputCommandPacket*)(_inputBuffer+sizeof(HeaderPacket)+sizeof(MotorCommandPacket)*motorCount);
     switch (_headerPointer->command)
     {
     case REPORT_STATUS:
@@ -104,7 +104,7 @@ void SerialClient::handleInputPacket()
         }
         for(uint8_t i = 0; i < outputCount; ++i)
         {
-            outputList.getOutput(outputPackets[i].componentId)->setOutput(outputPackets[i].value);
+            outputList.getOutput(outputPackets[i].outputId)->setOutput(outputPackets[i].value);
         }
         break;
     

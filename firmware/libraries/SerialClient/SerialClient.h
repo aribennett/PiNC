@@ -35,12 +35,11 @@ static_assert(sizeof(HeaderPacket) == 4, "Header packet packing issue");
 
 struct MotorStatePacket
 {
-    uint8_t motorId;
     float theta;
     int16_t omega;
     int16_t alpha;
 } __attribute__ ((packed));
-static_assert(sizeof(MotorStatePacket) == 9, "Axis packet packing issue");
+static_assert(sizeof(MotorStatePacket) == 8, "Axis packet packing issue");
 
 struct MotorCommandPacket
 {
@@ -52,10 +51,16 @@ static_assert(sizeof(MotorCommandPacket) == 6, "Axis packet packing issue");
 
 struct ComponentPacket
 {
-    uint8_t componentId;
     uint16_t value;
 } __attribute__ ((packed));
-static_assert(sizeof(ComponentPacket) ==3, "Output command packing issue");
+static_assert(sizeof(ComponentPacket) == 2, "Output command packing issue");
+
+struct OutputCommandPacket
+{
+    uint8_t outputId;
+    uint16_t value;
+} __attribute__ ((packed));
+static_assert(sizeof(OutputCommandPacket) == 3, "Output command packing issue");
 
 class SerialClient
 {

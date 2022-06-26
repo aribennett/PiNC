@@ -18,11 +18,11 @@ class RobotInterface(object):
         unpack_index = pkt.size_HeaderPacket
         for i in range(header.motorCount):
             motor_packet = pkt.unpack_MotorStatePacket(hid_msg[unpack_index:unpack_index+pkt.size_MotorStatePacket])
-            self.motors[motor_packet.motorId] = motor_packet
+            self.motors[i] = motor_packet
             unpack_index += pkt.size_MotorStatePacket
         for i in range(header.componentCount):
             sensor_packet = pkt.unpack_ComponentPacket(hid_msg[unpack_index:unpack_index+pkt.size_ComponentPacket])
-            self.sensors[sensor_packet.componentId] = sensor_packet
+            self.sensors[i] = sensor_packet
             unpack_index += pkt.size_ComponentPacket
 
     def get_motor_state(self, index=0):

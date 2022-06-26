@@ -21,7 +21,6 @@ void DataList::runData()
 ComponentPacket Data::getData()
 {
     ComponentPacket toSend;
-    toSend.componentId = _id;
     toSend.value = _data;
     return(toSend);
 }
