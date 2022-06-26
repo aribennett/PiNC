@@ -187,7 +187,7 @@ class HomeZState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
         main.send_command()
 
-        if main.sensors[2] != 0:
+        if main.sensors[2].value != 0:
             if self.motor_index == 0:
                 HomeState.home_0 = main.get_motor_state(0)[0]
             elif self.motor_index == 1:
