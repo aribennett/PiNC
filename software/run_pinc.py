@@ -2,7 +2,6 @@ from serial_host import packet_definitions as pkt
 from serial_host.robot_interface import RobotInterface
 from path_planning.gcode_solver import GcodeSolver
 from kinematics import corexy_inverse, corexy_transform, z0, z1, z2, center_home
-from laser_tracking import get_laser_displacement, run_tracking_loop, end_tracking_loop
 from threading import Thread
 import numpy as np
 from time import time, sleep
@@ -16,7 +15,7 @@ XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = .75
 # FINE_Z = 32.25
-FINE_Z = 33.7
+FINE_Z = 0
 
 # ------ Debug Variables --------
 errorx = 0
@@ -145,9 +144,9 @@ class HomeState(State):
         self.event_map['found home'] = JogHomeCenterState
 
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
-        main.add_output_command(pkt.pack_ComponentPacket(0, 1))
-        main.add_output_command(pkt.pack_ComponentPacket(1, 1))
-        main.add_output_command(pkt.pack_ComponentPacket(2, 0))
+        main.add_output_command(pkt.pack_OutputCommandPacket(0, 1))
+        main.add_output_command(pkt.pack_OutputCommandPacket(1, 1))
+        main.add_output_command(pkt.pack_OutputCommandPacket(2, 0))
         main.send_command()
         self.last_home = main.get_motor_state(4)[0]
         self.last_timeout = -1
@@ -180,7 +179,7 @@ class HomeZState(State):
         self.motor_index = 'all'
 
     def run(self):
-        z_nominal = np.clip(-get_laser_displacement()/10, -10, 10)
+        z_nominal = .5
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=z_nominal))
@@ -188,7 +187,7 @@ class HomeZState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
         main.send_command()
 
-        if z_nominal == 0:
+        if main.sensors[2] != 0:
             if self.motor_index == 0:
                 HomeState.home_0 = main.get_motor_state(0)[0]
             elif self.motor_index == 1:
@@ -279,7 +278,6 @@ class HeatState(State):
 
     def __init__(self):
         super().__init__()
-        end_tracking_loop()
         self.event_map['done heating'] = JogOffsetState
 
     def run(self):
@@ -288,8 +286,8 @@ class HeatState(State):
         control = int(np.clip(temp_error*1000, 0, 4096))
         bed_control = int(get_thermistor_temp(main.sensors[1].value)[0] < HeatState.NOMINAL_TEMP_BED)
 
-        main.add_output_command(pkt.pack_ComponentPacket(4, control))
-        main.add_output_command(pkt.pack_ComponentPacket(5, bed_control))
+        main.add_output_command(pkt.pack_OutputCommandPacket(4, control))
+        main.add_output_command(pkt.pack_OutputCommandPacket(5, bed_control))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=0))
@@ -309,7 +307,7 @@ class PrintState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
-        main.add_output_command(pkt.pack_ComponentPacket(0, 0))
+        main.add_output_command(pkt.pack_OutputCommandPacket(0, 0))
         main.send_command()
 
     def run(self):
@@ -361,8 +359,8 @@ class PrintState(State):
         control = int(np.clip(temp_error*1000, 0, 4096))
         bed_control = int(get_thermistor_temp(main.sensors[1].value)[0] < HeatState.NOMINAL_TEMP_BED)
 
-        main.add_output_command(pkt.pack_ComponentPacket(4, control))
-        main.add_output_command(pkt.pack_ComponentPacket(5, bed_control))
+        main.add_output_command(pkt.pack_OutputCommandPacket(4, control))
+        main.add_output_command(pkt.pack_OutputCommandPacket(5, bed_control))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=control_inputz0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=control_inputz1))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=control_inputz2))
@@ -386,10 +384,6 @@ if __name__ == "__main__":
     os.system(f"taskset -p -c 3 {os.getpid()}")
     main = RobotInterface()
     start_time = time()
-    tracking_thread = Thread(target=run_tracking_loop, daemon=True)
-    tracking_thread.start()
-    print("Started tracking")
-    sleep(2)
     embedded_thread = Thread(target=embedded_service, daemon=True)
     embedded_thread.start()
     print("Started controls")
