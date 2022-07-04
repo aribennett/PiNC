@@ -16,6 +16,7 @@ class GcodeSolver(object):
         vy = 0
         vz = 0
         ve = 0
+        cooling = 0
 
         e_cache = 0
 
@@ -24,6 +25,8 @@ class GcodeSolver(object):
         for line in lines:
             if line.command == ('G', 92) and 'E' in line.params:
                 e_cache = e
+            if line.command == ('M', 106):
+                cooling = line.params['S']
             if line.command == ('G', 1):
                 prev = self.motion_list[-1]
                 if 'X' in line.params:
@@ -61,12 +64,13 @@ class GcodeSolver(object):
                     output = False
 
                 if output:
-                    self.motion_list.append([x, y, z, e, f, t, vx, vy, vz, ve])
+                    self.motion_list.append([x, y, z, e, f, t, vx, vy, vz, ve, cooling])
 
         self.output_array = np.array(self.motion_list)
         self.time_array = self.output_array[:, 5]
         self.posistion_array = self.output_array[:, 0:4]
         self.velocity_array = self.output_array[:, 6:10]
+        self.cooling_array = self.output_array[:, 10]
 
     def get_solution(self, time):
         insert_index = np.searchsorted(self.time_array, time)
@@ -74,4 +78,5 @@ class GcodeSolver(object):
         axis_interp = np.transpose(np.tile(interp, (4, 1)))
         position = axis_interp*(self.posistion_array[insert_index] - self.posistion_array[insert_index-1]) + self.posistion_array[insert_index-1]
         velocity = self.velocity_array[insert_index]
-        return position, velocity
+        cooling = self.cooling_array[insert_index]
+        return position, velocity, cooling

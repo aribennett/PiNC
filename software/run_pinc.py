@@ -15,6 +15,7 @@ XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = .70
 FINE_Z = 0.8
+PRESSURE_ADVANCE = 1.005
 
 # ------ Debug Variables --------
 errorx = 0
@@ -145,7 +146,7 @@ class HomeState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_OutputCommandPacket(0, 1))
         main.add_output_command(pkt.pack_OutputCommandPacket(1, 1))
-        main.add_output_command(pkt.pack_OutputCommandPacket(2, 2048))
+        main.add_output_command(pkt.pack_OutputCommandPacket(2, 0))
         main.send_command()
         self.last_home = main.get_motor_state(4)[0]
         self.last_timeout = -1
@@ -324,15 +325,11 @@ class PrintState(State):
         global errorx, errory, v_errorx, v_errory
         KP = 15
         KPZ = 50
-        positions, velocities = path_planner.get_solution(time()-self.start_time)
+        positions, velocities, cooling = path_planner.get_solution(time()-self.start_time)
         position = positions[0]
         x_nominal = position[0]/XY_MM_PER_RAD
         y_nominal = position[1]/XY_MM_PER_RAD
         a_nominal, b_nominal = corexy_transform(x_nominal, y_nominal)
-
-        if position[2] > 2 and not self.enabled_fan:
-            self.enabled_fan = True
-            main.add_output_command(pkt.pack_OutputCommandPacket(2, 1024))
 
         z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z/Z_MM_PER_RAD
         e_nominal = position[3]/E_MM_PER_RAD
@@ -340,7 +337,7 @@ class PrintState(State):
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
         y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
         z_velocity_nominal = 0;#velocities[2]/Z_MM_PER_RAD # NEED TO FIX
-        e_velocity_nominal = velocities[3]/E_MM_PER_RAD
+        e_velocity_nominal = (velocities[3]/E_MM_PER_RAD)*PRESSURE_ADVANCE
         a_velocity_nominal, b_velocity_nominal = corexy_transform(x_velocity_nominal, y_velocity_nominal)
 
         v_errorx = a_velocity_nominal - self.avel
@@ -368,6 +365,7 @@ class PrintState(State):
 
         main.add_output_command(pkt.pack_OutputCommandPacket(3, control))
         main.add_output_command(pkt.pack_OutputCommandPacket(4, bed_control))
+        main.add_output_command(pkt.pack_OutputCommandPacket(2, int(cooling*8)))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=control_inputz0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=control_inputz1))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=control_inputz2))
