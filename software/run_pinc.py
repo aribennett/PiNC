@@ -145,7 +145,7 @@ class HomeState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_OutputCommandPacket(0, 1))
         main.add_output_command(pkt.pack_OutputCommandPacket(1, 1))
-        main.add_output_command(pkt.pack_OutputCommandPacket(2, 0))
+        main.add_output_command(pkt.pack_OutputCommandPacket(2, 2048))
         main.send_command()
         self.last_home = main.get_motor_state(4)[0]
         self.last_timeout = -1
@@ -332,7 +332,7 @@ class PrintState(State):
 
         if position[2] > 2 and not self.enabled_fan:
             self.enabled_fan = True
-            main.add_output_command(pkt.pack_OutputCommandPacket(2, 1))
+            main.add_output_command(pkt.pack_OutputCommandPacket(2, 1024))
 
         z_nominal = -position[2]/Z_MM_PER_RAD + FINE_Z/Z_MM_PER_RAD
         e_nominal = position[3]/E_MM_PER_RAD

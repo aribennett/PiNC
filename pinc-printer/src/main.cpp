@@ -44,7 +44,7 @@ StepperHFC b_driver(8, 9, 38, &b_enc, 8192);
 
 GPIOOutput laser(LASER_ON, LOW);
 GPIOOutput fan1(FAN1_ON, LOW);
-GPIOOutput fan2(FAN2_ON, LOW);
+PWMOutput fan2(FAN2_ON, LOW);
 PWMOutput hotend(SPINDLE_ON, LOW);
 GPIOOutput heatbed(HEATBED_ON, LOW);
 
