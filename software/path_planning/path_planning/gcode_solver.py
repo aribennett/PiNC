@@ -20,7 +20,7 @@ class GcodeSolver(object):
 
         e_cache = 0
 
-        self.motion_list = [[x, y, z, e, f, t, vx, vy, vz, ve]]
+        self.motion_list = [[x, y, z, e, f, t, vx, vy, vz, ve, cooling]]
 
         for line in lines:
             if line.command == ('G', 92) and 'E' in line.params:
