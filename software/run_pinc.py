@@ -50,7 +50,7 @@ def handle_events():
 class InitState(State):
     def __init__(self):
         super().__init__()
-        self.event_map['init'] = HomeState
+        self.event_map['init'] = HeatState
 
     def run(self):
         post_event('init')
@@ -263,7 +263,7 @@ class HomeZ2State(HomeZState):
 class Jog00State(JogState):
     def __init__(self):
         super().__init__()
-        self.event_map['jog done'] = HeatState
+        self.event_map['jog done'] = JogOffsetState
         self.set_jog_target(-1, -1, 0, 5)
 
 
@@ -281,7 +281,7 @@ class HeatState(State):
 
     def __init__(self):
         super().__init__()
-        self.event_map['done heating'] = JogOffsetState
+        self.event_map['done heating'] = HomeState
 
     def run(self):
         super().run()
