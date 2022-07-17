@@ -15,7 +15,7 @@ XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = .70
 FINE_Z = 0.8
-PRESSURE_ADVANCE = 1.005
+PRESSURE_ADVANCE = 1.01
 
 # ------ Debug Variables --------
 errorx = 0
@@ -26,7 +26,7 @@ v_errory = 0
 
 jog_controller = None
 
-with open('gcode_examples/minibenchy.gcode', 'r') as f:
+with open('gcode_examples/benchy.gcode', 'r') as f:
     gcode = f.read()
 
 path_planner = GcodeSolver(gcode, start_position=[-XY_MM_PER_RAD, -XY_MM_PER_RAD, 0])

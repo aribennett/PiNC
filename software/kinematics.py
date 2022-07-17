@@ -18,3 +18,5 @@ if __name__ == '__main__':
     print(corexy_transform(*corexy_inverse(-20, 50)))
     print(corexy_transform(*corexy_inverse(20, -50)))
     print(corexy_transform(*corexy_inverse(-20, -50)))
+        
+        
