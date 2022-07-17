@@ -7,3 +7,4 @@ python xbox360 controller
 enable camera
 sudo wget https://datasheets.raspberrypi.org/cmio/dt-blob-cam1.bin -O /boot/dt-blob.bin
 sudo wget https://www.pjrc.com/teensy/00-teensy.rules -O /etc/udev/rules.d/00-teensy.rules
+sudo apt-get install xinit

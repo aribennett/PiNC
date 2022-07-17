@@ -11,6 +11,9 @@ from pinc_state import State
 import logging
 from thermistor import get_thermistor_temp, get_ntc100k_temp
 
+
+os.chdir(os.path.dirname(__file__))
+
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = .70
