@@ -37,15 +37,16 @@ class RobotInterface(object):
         self.output_command_count += 1
 
     def send_command(self):
-        control_packet = pkt.pack_HeaderPacket(
-            command=pkt.SerialCommand.RUN,
-            motorCount=self.motor_command_count,
-            componentCount=self.output_command_count
-        )
-        control_packet += self.motor_command_queue
-        control_packet += self.output_command_queue
-        write(control_packet)
-        self.motor_command_queue = b''
-        self.motor_command_count = 0
-        self.output_command_queue = b''
-        self.output_command_count = 0
+        if self.motor_command_count > 0 or self.output_command_count > 0:
+            control_packet = pkt.pack_HeaderPacket(
+                command=pkt.SerialCommand.RUN,
+                motorCount=self.motor_command_count,
+                componentCount=self.output_command_count
+            )
+            control_packet += self.motor_command_queue
+            control_packet += self.output_command_queue
+            write(control_packet)
+            self.motor_command_queue = b''
+            self.motor_command_count = 0
+            self.output_command_queue = b''
+            self.output_command_count = 0

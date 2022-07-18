@@ -11,14 +11,13 @@ from pinc_state import State
 import logging
 from thermistor import get_thermistor_temp, get_ntc100k_temp
 
-
 os.chdir(os.path.dirname(__file__))
 
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
-E_MM_PER_RAD = .70
+E_MM_PER_RAD = .73
 FINE_Z = 0.8
-PRESSURE_ADVANCE = 1.01
+PRESSURE_ADVANCE = 1.005
 
 # ------ Debug Variables --------
 errorx = 0
@@ -29,7 +28,7 @@ v_errory = 0
 
 jog_controller = None
 
-with open('gcode_examples/jotl_tray.gcode', 'r') as f:
+with open('gcode_examples/sw.gcode', 'r') as f:
     gcode = f.read()
 
 path_planner = GcodeSolver(gcode, start_position=[-XY_MM_PER_RAD, -XY_MM_PER_RAD, 0])
@@ -48,6 +47,7 @@ def handle_events():
         event = event_queue.get()
         logging.info(event)
         state = state.on_event(event)
+        main.send_command()
 
 
 class InitState(State):
@@ -78,7 +78,6 @@ class JogState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
-        main.send_command()
 
     def set_jog_target(self, x, y, z, time):
         self.jog_time = time
@@ -101,7 +100,6 @@ class JogState(State):
             main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=0))
             main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
             main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
-            main.send_command()
             post_event('jog done')
         else:
             x_nominal = interp*(self.x_target - self.xstart) + self.xstart
@@ -128,7 +126,6 @@ class JogState(State):
             main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=control_2))
             main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control_3))
             main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control_4))
-            main.send_command()
 
 
 class HomeState(State):
@@ -152,7 +149,6 @@ class HomeState(State):
         main.add_output_command(pkt.pack_OutputCommandPacket(2, 0))
         main.add_output_command(pkt.pack_OutputCommandPacket(3, 0))
         main.add_output_command(pkt.pack_OutputCommandPacket(4, 0))
-        main.send_command()
         self.last_home = main.get_motor_state(4)[0]
         self.last_timeout = -1
 
@@ -160,9 +156,6 @@ class HomeState(State):
         # init time on first run
         if self.last_timeout == -1:
             self.last_timeout = time() + 0.1
-
-        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=-HomeState.HOMING_SPEED))
-        main.send_command()
 
         if abs(main.get_motor_state(4)[0] - self.last_home) > HomeState.HOME_THRESHHOLD:
             self.last_timeout = time()
@@ -174,8 +167,10 @@ class HomeState(State):
             HomeState.home_3 = main.get_motor_state(3)[0]
             HomeState.home_4 = main.get_motor_state(4)[0]
             main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
-            main.send_command()
             post_event('found home')
+            return
+
+        main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=-HomeState.HOMING_SPEED))
 
 
 class HomeZState(State):
@@ -190,7 +185,6 @@ class HomeZState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=self.z_nominal))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
-        main.send_command()
 
         if main.sensors[2].value != 0:
             if self.motor_index == 0:
@@ -210,7 +204,6 @@ class JogHomeCenterState(JogState):
     def __init__(self):
         super().__init__()
         self.event_map['jog done'] = HomeCenterState
-
         self.set_jog_target(center_home[0], center_home[1], -50, 2)
 
 
@@ -301,7 +294,6 @@ class HeatState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=0))
-        main.send_command()
 
         if abs(temp_error) < 5:
             post_event('done heating')
@@ -317,7 +309,6 @@ class PrintState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.ENABLE))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.ENABLE))
         main.add_output_command(pkt.pack_OutputCommandPacket(0, 0))
-        main.send_command()
 
     def run(self):
         super().run()
@@ -377,7 +368,6 @@ class PrintState(State):
         main.add_motor_command(pkt.pack_MotorCommandPacket(3, pkt.MotorCommand.SET_OMEGA, control=control3))
         main.add_motor_command(pkt.pack_MotorCommandPacket(4, pkt.MotorCommand.SET_OMEGA, control=control4))
         main.add_motor_command(pkt.pack_MotorCommandPacket(5, pkt.MotorCommand.SET_OMEGA, control=control_inpute))
-        main.send_command()
 
 
 def embedded_service():
@@ -387,6 +377,7 @@ def embedded_service():
         main.run()
         handle_events()
         state.run()
+        main.send_command()
 
 
 if __name__ == "__main__":
@@ -399,9 +390,4 @@ if __name__ == "__main__":
     print("Started controls")
     while True:
         sleep(.1)
-        # print(xy, get_thermistor_temp(main.sensors[0].value)[0], get_ntc100k_temp(main.sensors[1].value)[0])
-
         print(f"{errorx*XY_MM_PER_RAD:9.4f}, {errory*XY_MM_PER_RAD:9.4f}, {v_errorx*XY_MM_PER_RAD:9.4f}, {v_errory*XY_MM_PER_RAD:9.4f}, {get_thermistor_temp(main.sensors[0].value)[0]:9.4f}", end='\r')
-        # # print(get_thermistor_temp(main.sensors[0].value))
-        #     # print(get_laser_displacement())
-        #     # print(HomeState.home_0, HomeState.home_1, HomeState.home_2)
