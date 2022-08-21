@@ -361,7 +361,7 @@ class PrintState(State):
 
         main.add_output_command(pkt.pack_OutputCommandPacket(3, control))
         main.add_output_command(pkt.pack_OutputCommandPacket(4, bed_control))
-        main.add_output_command(pkt.pack_OutputCommandPacket(2, int(cooling*8)))
+        main.add_output_command(pkt.pack_OutputCommandPacket(2, int(cooling*16)))
         main.add_motor_command(pkt.pack_MotorCommandPacket(0, pkt.MotorCommand.SET_OMEGA, control=control_inputz0))
         main.add_motor_command(pkt.pack_MotorCommandPacket(1, pkt.MotorCommand.SET_OMEGA, control=control_inputz1))
         main.add_motor_command(pkt.pack_MotorCommandPacket(2, pkt.MotorCommand.SET_OMEGA, control=control_inputz2))
