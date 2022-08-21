@@ -28,7 +28,7 @@ v_errory = 0
 
 jog_controller = None
 
-with open('gcode_examples/sw.gcode', 'r') as f:
+with open('gcode_examples/benchy.gcode', 'r') as f:
     gcode = f.read()
 
 path_planner = GcodeSolver(gcode, start_position=[-XY_MM_PER_RAD, -XY_MM_PER_RAD, 0])
