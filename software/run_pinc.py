@@ -16,7 +16,7 @@ os.chdir(os.path.dirname(__file__))
 XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = .73
-FINE_Z = 0.6
+FINE_Z = 0.7
 PRESSURE_ADVANCE = 1.005
 
 # ------ Debug Variables --------
