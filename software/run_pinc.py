@@ -316,6 +316,7 @@ class PrintState(State):
         super().run()
         self.apos, self.bpos = main.get_motor_state(3)[0] - HomeState.home_3, main.get_motor_state(4)[0] - HomeState.home_4
         self.avel, self.bvel = main.get_motor_state(3)[1], main.get_motor_state(4)[1]
+        self.evel = main.get_motor_state(5)[1]
         self.z0pos = main.get_motor_state(0)[0] - HomeState.home_0
         self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
@@ -340,6 +341,7 @@ class PrintState(State):
 
         v_errorx = a_velocity_nominal - self.avel
         v_errory = b_velocity_nominal - self.bvel
+        v_errore = e_velocity_nominal # - self.evel
 
         errorx = a_nominal - self.apos
         control3 = KP * errorx + a_velocity_nominal
