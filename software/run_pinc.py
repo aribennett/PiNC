@@ -17,7 +17,7 @@ XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = .73
 FINE_Z = 0.7
-# PRESSURE_ADVANCE = 1.005
+PRESSURE_ADVANCE = 1.1
 
 # ------ Debug Variables --------
 errorx = 0
@@ -341,7 +341,7 @@ class PrintState(State):
 
         v_errorx = a_velocity_nominal - self.avel
         v_errory = b_velocity_nominal - self.bvel
-        v_errore = e_velocity_nominal # - self.evel
+        v_errore = e_velocity_nominal - self.evel
 
         errorx = a_nominal - self.apos
         control3 = KP * errorx + a_velocity_nominal
@@ -350,7 +350,7 @@ class PrintState(State):
         control4 = KP * errory + b_velocity_nominal
 
         errore = e_nominal-self.epos
-        control_inpute = errore*100 + e_velocity_nominal
+        control_inpute = errore*100 + e_velocity_nominal * PRESSURE_ADVANCE
 
         errorz2 = z_nominal - self.z2pos
         control_inputz2 = KPZ*errorz2 + z_velocity_nominal
