@@ -45,19 +45,24 @@ class GcodeSolver(object):
                     dx = x - prev[0]
                     dy = y - prev[1]
                     dz = z - prev[2]
+                    de = e - prev[3]
                     distance = np.sqrt(np.square(dx) + np.square(dy) + np.square(dz))
                     dt = distance/f
                     vx = dx/dt
                     vy = dy/dt
                     vz = dz/dt
+                    ve = de/dt
                     t += dt
 
                 elif e != self.motion_list[-1][3]:
                     # solely extruder move
+                    dt = abs(prev[3]-e)/f
                     vx = 0
                     vy = 0
                     vz = 0
-                    t += abs(prev[3]-e)/f
+                    de = e - prev[3]
+                    ve = de/dt
+                    t += dt
 
                 else:
                     # Feed rate change

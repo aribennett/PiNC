@@ -17,13 +17,15 @@ XY_MM_PER_RAD = 6.36619783227
 Z_MM_PER_RAD = 0.63661977236
 E_MM_PER_RAD = .73
 FINE_Z = 0.7
-PRESSURE_ADVANCE = 1.005
+# PRESSURE_ADVANCE = 1.005
 
 # ------ Debug Variables --------
 errorx = 0
 errory = 0
+errore = 0
 v_errorx = 0
 v_errory = 0
+v_errore = 0
 # -------------------------------
 
 jog_controller = None
@@ -318,7 +320,7 @@ class PrintState(State):
         self.z1pos = main.get_motor_state(1)[0] - HomeState.home_1
         self.z2pos = main.get_motor_state(2)[0] - HomeState.home_2
         self.epos = main.get_motor_state(5)[0] - self.home_e
-        global errorx, errory, v_errorx, v_errory
+        global errorx, errory, v_errorx, v_errory, errore, v_errore
         KP = 15
         KPZ = 50
         positions, velocities, cooling = path_planner.get_solution(time()-self.start_time)
@@ -333,7 +335,7 @@ class PrintState(State):
         x_velocity_nominal = velocities[0]/XY_MM_PER_RAD
         y_velocity_nominal = velocities[1]/XY_MM_PER_RAD
         z_velocity_nominal = 0;#velocities[2]/Z_MM_PER_RAD # NEED TO FIX
-        e_velocity_nominal = (velocities[3]/E_MM_PER_RAD)*PRESSURE_ADVANCE
+        e_velocity_nominal = velocities[3]/E_MM_PER_RAD
         a_velocity_nominal, b_velocity_nominal = corexy_transform(x_velocity_nominal, y_velocity_nominal)
 
         v_errorx = a_velocity_nominal - self.avel
@@ -345,8 +347,8 @@ class PrintState(State):
         errory = b_nominal - self.bpos
         control4 = KP * errory + b_velocity_nominal
 
-        error_e = e_nominal-self.epos
-        control_inpute = error_e*100 + e_velocity_nominal
+        errore = e_nominal-self.epos
+        control_inpute = errore*100 + e_velocity_nominal
 
         errorz2 = z_nominal - self.z2pos
         control_inputz2 = KPZ*errorz2 + z_velocity_nominal
@@ -390,4 +392,4 @@ if __name__ == "__main__":
     print("Started controls")
     while True:
         sleep(.1)
-        print(f"{errorx*XY_MM_PER_RAD:9.4f}, {errory*XY_MM_PER_RAD:9.4f}, {v_errorx*XY_MM_PER_RAD:9.4f}, {v_errory*XY_MM_PER_RAD:9.4f}, {get_thermistor_temp(main.sensors[0].value)[0]:9.4f}", end='\r')
+        print(f"{errorx*XY_MM_PER_RAD:9.4f}, {errory*XY_MM_PER_RAD:9.4f}, {errore:9.4f}, {v_errorx*XY_MM_PER_RAD:9.4f}, {v_errory*XY_MM_PER_RAD:9.4f},{v_errore:9.4f}", end='\r')
